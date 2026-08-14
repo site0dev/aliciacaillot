@@ -1,0 +1,2485 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Alicia Caillot · Rencontre sensorielle</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+
+    <style>
+        /* ===== RESET & VARIABLES ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --black: #0a0a0a;
+            --gold: #c9a84c;
+            --gold-dim: rgba(201, 168, 76, 0.15);
+            --white: #f5f0eb;
+            --bordeaux: #6b1d2a;
+            --gray: #8a8580;
+
+            --font-serif: 'Playfair Display', serif;
+            --font-sans: 'Inter', sans-serif;
+
+            --transition: 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background: var(--black);
+            color: var(--white);
+            font-family: var(--font-sans);
+            font-weight: 300;
+            line-height: 1.7;
+            opacity: 0;
+            animation: fadeInBody 0.8s ease forwards;
+        }
+
+        @keyframes fadeInBody {
+            to {
+                opacity: 1;
+            }
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        img {
+            display: block;
+            max-width: 100%;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        .section-title {
+            font-family: var(--font-serif);
+            font-size: 2.6rem;
+            font-weight: 400;
+            letter-spacing: 2px;
+            color: var(--gold);
+            margin-bottom: 2rem;
+            border-bottom: 1px solid var(--gold-dim);
+            padding-bottom: 0.6rem;
+            display: inline-block;
+        }
+
+        .section-title i {
+            margin-right: 12px;
+            font-size: 1.8rem;
+        }
+
+        .gold-text {
+            color: var(--gold);
+        }
+
+        /* ===== AGE VERIFICATION ===== */
+        #age-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            background: rgba(10, 10, 10, 0.92);
+            backdrop-filter: blur(8px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.8s ease, visibility 0.8s ease;
+        }
+
+        #age-overlay.hidden {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        .age-card {
+            background: #141414;
+            border: 1px solid var(--gold);
+            border-radius: 16px;
+            padding: 48px 40px;
+            max-width: 520px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
+        }
+
+        .age-card h2 {
+            font-family: var(--font-serif);
+            font-size: 2.4rem;
+            color: var(--gold);
+            margin-bottom: 12px;
+        }
+
+        .age-card p {
+            color: var(--gray);
+            margin-bottom: 32px;
+            font-size: 1rem;
+        }
+
+        .age-btn-group {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn-age-yes {
+            background: var(--gold);
+            color: var(--black);
+            border: none;
+            padding: 14px 40px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: var(--transition);
+            font-family: var(--font-sans);
+        }
+
+        .btn-age-yes:hover {
+            transform: scale(1.04);
+            box-shadow: 0 0 25px rgba(201, 168, 76, 0.3);
+        }
+
+        .btn-age-no {
+            background: transparent;
+            color: var(--gray);
+            border: 1px solid var(--gray);
+            padding: 14px 32px;
+            font-weight: 400;
+            font-size: 1rem;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: var(--transition);
+            font-family: var(--font-sans);
+        }
+
+        .btn-age-no:hover {
+            border-color: var(--bordeaux);
+            color: var(--bordeaux);
+        }
+
+        .age-card small {
+            display: block;
+            margin-top: 24px;
+            color: #555;
+            font-size: 0.75rem;
+        }
+
+        /* ===== NAVIGATION ===== */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 100;
+            background: rgba(10, 10, 10, 0.85);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(201, 168, 76, 0.15);
+            padding: 12px 0;
+            transition: var(--transition);
+        }
+
+        nav .container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+        }
+
+        .logo {
+            font-family: var(--font-serif);
+            font-size: 1.6rem;
+            color: var(--gold);
+            letter-spacing: 2px;
+        }
+
+        .logo span {
+            font-weight: 300;
+            color: var(--white);
+            font-size: 0.9rem;
+            margin-left: 6px;
+            letter-spacing: 1px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 28px;
+            list-style: none;
+            font-size: 0.85rem;
+            font-weight: 400;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+        }
+
+        .nav-links a {
+            transition: var(--transition);
+            border-bottom: 1px solid transparent;
+            padding-bottom: 4px;
+        }
+
+        .nav-links a:hover {
+            color: var(--gold);
+            border-bottom-color: var(--gold);
+        }
+
+        .nav-social {
+            display: flex;
+            gap: 16px;
+            font-size: 1.1rem;
+        }
+
+        .nav-social a {
+            transition: var(--transition);
+            color: var(--gray);
+        }
+
+        .nav-social a:hover {
+            color: var(--gold);
+            transform: translateY(-2px);
+        }
+
+        .nav-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--white);
+            font-size: 1.6rem;
+            cursor: pointer;
+        }
+
+        /* ===== HERO ===== */
+        #hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 120px 24px 80px;
+            background: radial-gradient(
+                circle at 70% 30%,
+                #1a1410 0%,
+                var(--black) 80%
+            );
+            position: relative;
+        }
+
+        #hero::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 1px;
+            background: linear-gradient(
+                90deg,
+                transparent,
+                var(--gold),
+                transparent
+            );
+        }
+
+        .hero-content h1 {
+            font-family: var(--font-serif);
+            font-size: clamp(3rem, 10vw, 5.5rem);
+            font-weight: 400;
+            color: var(--white);
+            line-height: 1.1;
+        }
+
+        .hero-content h1 .gold-text {
+            display: block;
+            font-style: italic;
+        }
+
+        .hero-content .subtitle {
+            font-size: 1.2rem;
+            color: var(--gray);
+            margin: 20px 0 32px;
+            letter-spacing: 3px;
+            font-weight: 300;
+        }
+
+        .hero-content .subtitle i {
+            color: var(--gold);
+            margin: 0 8px;
+        }
+
+        .hero-badges {
+            display: flex;
+            justify-content: center;
+            gap: 32px;
+            flex-wrap: wrap;
+            margin-top: 32px;
+            font-size: 0.85rem;
+            color: var(--gray);
+        }
+
+        .hero-badges span i {
+            color: var(--gold);
+            margin-right: 8px;
+        }
+
+        .btn-cta {
+            display: inline-block;
+            margin-top: 24px;
+            padding: 16px 48px;
+            border: 1px solid var(--gold);
+            border-radius: 50px;
+            font-weight: 500;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            transition: var(--transition);
+            background: transparent;
+            color: var(--gold);
+            cursor: pointer;
+        }
+
+        .btn-cta:hover {
+            background: var(--gold);
+            color: var(--black);
+            box-shadow: 0 0 40px rgba(201, 168, 76, 0.2);
+        }
+
+        /* ===== SECTIONS ===== */
+        section {
+            padding: 80px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.02);
+        }
+
+        section:nth-child(even) {
+            background: #0f0f0f;
+        }
+
+        /* ===== PRESTATIONS ===== */
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(
+                auto-fit,
+                minmax(220px, 1fr)
+            );
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .service-cat {
+            background: rgba(255, 255, 255, 0.02);
+            border-left: 2px solid var(--gold);
+            padding: 20px 20px 16px;
+            border-radius: 4px;
+            transition: var(--transition);
+        }
+
+        .service-cat:hover {
+            background: rgba(201, 168, 76, 0.05);
+            transform: translateY(-4px);
+        }
+
+        .service-cat h4 {
+            font-family: var(--font-serif);
+            color: var(--gold);
+            font-size: 1.1rem;
+            margin-bottom: 8px;
+            letter-spacing: 1px;
+        }
+
+        .service-cat h4 i {
+            margin-right: 8px;
+            font-size: 0.9rem;
+        }
+
+        .service-cat ul {
+            list-style: none;
+            font-size: 0.9rem;
+            color: #ccc;
+            line-height: 1.9;
+        }
+
+        .service-cat ul li::before {
+            content: '✦ ';
+            color: var(--gold);
+            font-size: 0.6rem;
+        }
+
+        /* ===== TARIFS ===== */
+        .tarifs-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 1rem;
+        }
+
+        .tarifs-table th {
+            font-family: var(--font-serif);
+            color: var(--gold);
+            font-weight: 400;
+            text-align: left;
+            padding: 12px 8px 12px 0;
+            border-bottom: 1px solid var(--gold-dim);
+            letter-spacing: 1px;
+        }
+
+        .tarifs-table td {
+            padding: 14px 8px 14px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+            color: #ddd;
+        }
+
+        .tarifs-table td:last-child {
+            font-weight: 500;
+            color: var(--white);
+            font-size: 1.1rem;
+        }
+
+        .tarif-note {
+            color: var(--gray);
+            font-size: 0.85rem;
+            margin-top: 8px;
+            font-style: italic;
+        }
+
+        /* ===== GALERIE ===== */
+        #gallery {
+            background: #0a0a0a;
+        }
+
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(
+                auto-fill,
+                minmax(220px, 1fr)
+            );
+            gap: 18px;
+            margin-top: 20px;
+        }
+
+        .gallery-grid .gallery-item {
+            aspect-ratio: 3 / 4;
+            object-fit: cover;
+            width: 100%;
+            border-radius: 6px;
+            border: 1px solid rgba(201, 168, 76, 0.1);
+            transition: var(--transition);
+            background: #1a1a1a;
+            filter: grayscale(0.2);
+        }
+
+        .gallery-grid .gallery-item:hover {
+            transform: scale(1.02);
+            border-color: var(--gold);
+            filter: grayscale(0);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.6);
+        }
+
+        .gallery-loader {
+            color: var(--gray);
+            text-align: center;
+            padding: 40px 0;
+            font-size: 0.9rem;
+            width: 100%;
+        }
+
+        .gallery-loader i {
+            color: var(--gold);
+            margin-right: 10px;
+        }
+
+        /* ===== À PROPOS ===== */
+        .about-text {
+            max-width: 760px;
+            font-size: 1.05rem;
+            color: #ccc;
+            line-height: 2;
+        }
+
+        .about-text .highlight {
+            color: var(--gold);
+            font-family: var(--font-serif);
+            font-size: 1.2rem;
+        }
+
+        /* ===== CONTACT ===== */
+        .contact-wrapper {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 48px;
+            margin-top: 16px;
+        }
+
+        .contact-form input,
+        .contact-form textarea,
+        .contact-form select {
+            width: 100%;
+            padding: 14px 16px;
+            margin-bottom: 16px;
+            background: #141414;
+            border: 1px solid #2a2a2a;
+            border-radius: 8px;
+            color: var(--white);
+            font-family: var(--font-sans);
+            font-size: 0.95rem;
+            transition: var(--transition);
+        }
+
+        .contact-form input:focus,
+        .contact-form textarea:focus,
+        .contact-form select:focus {
+            outline: none;
+            border-color: var(--gold);
+            box-shadow: 0 0 0 3px rgba(201, 168, 76, 0.1);
+        }
+
+        .contact-form label {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--gray);
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        .contact-form .btn-submit {
+            background: var(--gold);
+            color: var(--black);
+            border: none;
+            padding: 16px 32px;
+            font-weight: 600;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 1rem;
+            width: auto;
+        }
+
+        .contact-form .btn-submit:hover {
+            transform: scale(1.03);
+            box-shadow: 0 0 30px rgba(201, 168, 76, 0.2);
+        }
+
+        .contact-social h4 {
+            font-family: var(--font-serif);
+            color: var(--gold);
+            font-size: 1.4rem;
+            margin-bottom: 16px;
+        }
+
+        .social-item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 14px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+        }
+
+        .social-item i {
+            width: 28px;
+            font-size: 1.3rem;
+            color: var(--gold);
+            text-align: center;
+        }
+
+        .social-item .social-label {
+            font-weight: 400;
+            color: var(--gray);
+            min-width: 90px;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .social-item .social-value {
+            font-weight: 400;
+            color: var(--white);
+        }
+
+        .social-item .social-value a {
+            transition: var(--transition);
+        }
+
+        .social-item .social-value a:hover {
+            color: var(--gold);
+        }
+
+        .signal-copy-btn {
+            background: none;
+            border: 1px solid var(--gold-dim);
+            color: var(--white);
+            padding: 4px 16px;
+            border-radius: 30px;
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: var(--transition);
+            font-family: var(--font-sans);
+            margin-left: 12px;
+        }
+
+        .signal-copy-btn:hover {
+            background: var(--gold);
+            color: var(--black);
+        }
+
+        /* ===== FOOTER ===== */
+        footer {
+            padding: 40px 0;
+            border-top: 1px solid rgba(255, 255, 255, 0.04);
+            font-size: 0.75rem;
+            color: #555;
+            text-align: center;
+        }
+
+        footer a {
+            color: var(--gray);
+            transition: var(--transition);
+        }
+
+        footer a:hover {
+            color: var(--gold);
+        }
+
+        footer .legal {
+            margin-top: 12px;
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            flex-wrap: wrap;
+        }
+
+        /* ===== TOAST ===== */
+        #toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(80px);
+            background: var(--gold);
+            color: var(--black);
+            padding: 12px 32px;
+            border-radius: 50px;
+            font-weight: 500;
+            opacity: 0;
+            transition: var(--transition);
+            z-index: 999;
+            pointer-events: none;
+            font-size: 0.9rem;
+        }
+
+        #toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+
+            .nav-links,
+            .nav-social {
+                display: none;
+            }
+
+            .nav-toggle {
+                display: block;
+            }
+
+            .nav-links.open {
+                display: flex;
+                flex-direction: column;
+                gap: 12px;
+                width: 100%;
+                padding: 20px 0 10px;
+                border-top: 1px solid rgba(255, 255, 255, 0.05);
+                margin-top: 12px;
+            }
+
+            .nav-links.open a {
+                font-size: 0.9rem;
+            }
+
+            .nav-social.open {
+                display: flex;
+                justify-content: center;
+                width: 100%;
+                padding: 8px 0 4px;
+            }
+
+            .section-title {
+                font-size: 2rem;
+            }
+
+            .tarifs-table {
+                font-size: 0.85rem;
+            }
+
+            .age-card {
+                padding: 32px 20px;
+            }
+
+            .hero-content h1 {
+                font-size: 2.8rem;
+            }
+
+            .contact-wrapper {
+                grid-template-columns: 1fr;
+                gap: 32px;
+            }
+        }
+
+        @media (max-width: 480px) {
+
+            .hero-badges {
+                flex-direction: column;
+                gap: 8px;
+                align-items: center;
+            }
+
+            .gallery-grid {
+                grid-template-columns: repeat(
+                    auto-fill,
+                    minmax(150px, 1fr)
+                );
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- ===== AGE VERIFICATION ===== -->
+    <div id="age-overlay" role="dialog">
+
+        <div class="age-card">
+
+            <h2>✦ Alicia</h2>
+
+            <p>
+                Ce site s'adresse à un public majeur.<br />
+                Confirmez votre âge pour accéder à l'univers d'Alicia.
+            </p>
+
+            <div class="age-btn-group">
+
+                <button class="btn-age-yes" id="age-yes">
+                    J'ai plus de 18 ans
+                </button>
+
+                <button class="btn-age-no" id="age-no">
+                    Je quitte
+                </button>
+
+            </div>
+
+            <small>
+                En entrant, vous acceptez nos conditions générales
+                et notre politique de confidentialité.
+            </small>
+
+        </div>
+    </div>
+
+
+    <!-- ===== TOAST ===== -->
+    <div id="toast">
+        ✓ Identifiant copié
+    </div>
+
+
+    <!-- ===== NAVIGATION ===== -->
+    <nav>
+
+        <div class="container">
+
+            <div class="logo">
+                Alicia <span>Caillot</span>
+            </div>
+
+            <button
+                class="nav-toggle"
+                id="navToggle"
+                aria-label="Menu"
+            >
+                <i class="fas fa-bars"></i>
+            </button>
+
+            <ul class="nav-links" id="navLinks">
+
+                <li>
+                    <a href="#hero">Accueil</a>
+                </li>
+
+                <li>
+                    <a href="#services">Prestations</a>
+                </li>
+
+                <li>
+                    <a href="#tarifs">Tarifs</a>
+                </li>
+
+                <li>
+                    <a href="#gallery">Galerie</a>
+                </li>
+
+                <li>
+                    <a href="#contact">Contact</a>
+                </li>
+
+            </ul>
+
+            <div class="nav-social" id="navSocial">
+
+                <a
+                    href="https://x.com/Ldeplacement"
+                    target="_blank"
+                    rel="noopener"
+                    aria-label="X"
+                >
+                    <i class="fab fa-x-twitter"></i>
+                </a>
+
+                <a
+                    href="https://instagram.com/aliciacaillot1"
+                    target="_blank"
+                    rel="noopener"
+                    aria-label="Instagram"
+                >
+                    <i class="fab fa-instagram"></i>
+                </a>
+
+                <a
+                    href="#"
+                    id="signalNavBtn"
+                    aria-label="Signal"
+                >
+                    <i class="fab fa-signal-messenger"></i>
+                </a>
+
+            </div>
+
+        </div>
+
+    </nav>
+
+
+    <!-- ===== HERO ===== -->
+    <section id="hero">
+
+        <div class="hero-content">
+
+            <h1>
+                Alicia
+                <span class="gold-text">
+                    Caillot
+                </span>
+            </h1>
+
+            <p class="subtitle">
+                <i>✦</i>
+                L'art de la rencontre sensorielle,
+                en toute discrétion
+                <i>✦</i>
+            </p>
+
+            <div class="hero-badges">
+
+                <span>
+                    <i class="fas fa-shield-alt"></i>
+                    Discrétion absolue
+                </span>
+
+                <span>
+                    <i class="fas fa-hand-sparkles"></i>
+                    Hygiène irréprochable
+                </span>
+
+                <span>
+                    <i class="fas fa-heart"></i>
+                    Accueil bienveillant
+                </span>
+
+                <span>
+                    <i class="fas fa-lock"></i>
+                    Échanges chiffrés (Signal)
+                </span>
+
+            </div>
+
+            <a href="#contact" class="btn-cta">
+                Prendre rendez-vous
+            </a>
+
+        </div>
+
+    </section>
+
+
+    <!-- ===== PRESTATIONS ===== -->
+    <section id="services">
+
+        <div class="container">
+
+            <h2 class="section-title">
+                <i class="fas fa-feather-alt"></i>
+                Mes prestations
+            </h2>
+
+            <p
+                style="color:var(--gray); margin-bottom:24px; max-width:700px;"
+            >
+                Chaque moment est unique.
+                Je vous propose une palette d'expériences sensorielles,
+                toujours dans le respect et l'écoute.
+            </p>
+
+            <div class="services-grid">
+
+                <div class="service-cat">
+
+                    <h4>
+                        <i class="fas fa-hands"></i>
+                        Massages
+                    </h4>
+
+                    <ul>
+                        <li>Relaxant</li>
+                        <li>Californien</li>
+                        <li>Prostate</li>
+                        <li>Tantrique</li>
+                    </ul>
+
+                </div>
+
+
+                <div class="service-cat">
+
+                    <h4>
+                        <i class="fas fa-fire"></i>
+                        Jeux sensuels
+                    </h4>
+
+                    <ul>
+                        <li>Strip-tease</li>
+                        <li>Caresses</li>
+                        <li>French kiss</li>
+                        <li>Facesitting</li>
+                        <li>Footjob</li>
+                    </ul>
+
+                </div>
+
+
+                <div class="service-cat">
+
+                    <h4>
+                        <i class="fas fa-kiss"></i>
+                        Préliminaires & rapports
+                    </h4>
+
+                    <ul>
+                        <li>Cunnilingus</li>
+                        <li>Branlette espagnole</li>
+                        <li>Fellation nature</li>
+                        <li>Fellation protégée</li>
+                        <li>Gorge profonde</li>
+                        <li>Rapport protégé</li>
+                        <li>Toutes positions Kamasutra</li>
+                    </ul>
+
+                </div>
+
+
+                <div class="service-cat">
+
+                    <h4>
+                        <i class="fas fa-crown"></i>
+                        Domination
+                    </h4>
+
+                    <ul>
+                        <li>Domination douce (sur demande)</li>
+                        <li>Safe word systématique</li>
+                    </ul>
+
+                </div>
+
+
+                <div class="service-cat">
+
+                    <h4>
+                        <i class="fas fa-video"></i>
+                        Sexcam
+                    </h4>
+
+                    <ul>
+                        <li>Show en direct</li>
+                        <li>Cam à cam</li>
+                        <li>Jouets interactifs</li>
+                        <li>Scénarios sur mesure</li>
+                    </ul>
+
+                </div>
+
+
+                <div class="service-cat">
+
+                    <h4>
+                        <i class="fas fa-camera"></i>
+                        Nudes
+                    </h4>
+
+                    <ul>
+                        <li>Photos intimes</li>
+                        <li>Vidéos personnalisées</li>
+                        <li>Pack sur demande</li>
+                    </ul>
+
+                </div>
+
+
+                <div class="service-cat">
+
+                    <h4>
+                        <i class="fas fa-water"></i>
+                        Spécial
+                    </h4>
+
+                    <ul>
+                        <li>
+                            Urophilie (donneuse) —
+                            uniquement sur demande
+                            et consentement éclairé
+                        </li>
+                    </ul>
+
+                </div>
+
+
+                <div class="service-cat">
+
+                    <h4>
+                        <i class="fas fa-shower"></i>
+                        Confort
+                    </h4>
+
+                    <ul>
+                        <li>Douche avant / après</li>
+                        <li>Serviettes propres et peignoir</li>
+                        <li>Boisson offerte</li>
+                    </ul>
+
+                </div>
+
+            </div>
+
+            <p
+                style="
+                    color:var(--gray);
+                    font-size:0.85rem;
+                    margin-top:24px;
+                    border-left:2px solid var(--gold);
+                    padding-left:16px;
+                "
+            >
+                <i
+                    class="fas fa-info-circle"
+                    style="color:var(--gold);"
+                ></i>
+
+                Tous les rapports sont strictement protégés.
+                Je me réserve le droit de refuser toute prestation
+                en cas de non-respect des règles d'hygiène
+                ou de consentement.
+            </p>
+
+        </div>
+
+    </section>
+
+
+    <!-- ===== TARIFS ===== -->
+    <section id="tarifs">
+
+        <div class="container">
+
+            <h2 class="section-title">
+                <i class="fas fa-euro-sign"></i>
+                Forfaits accompagnement
+            </h2>
+
+            <table class="tarifs-table">
+
+                <thead>
+
+                    <tr>
+                        <th>Durée</th>
+                        <th>Tarif</th>
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    <tr>
+                        <td>15 minutes (express)</td>
+                        <td>50 €</td>
+                    </tr>
+
+                    <tr>
+                        <td>30 minutes</td>
+                        <td>100 €</td>
+                    </tr>
+
+                    <tr>
+                        <td>1 heure</td>
+                        <td>150 €</td>
+                    </tr>
+
+                    <tr>
+                        <td>2 heures</td>
+                        <td>250 €</td>
+                    </tr>
+
+                    <tr>
+                        <td>3 heures</td>
+                        <td>400 €</td>
+                    </tr>
+
+                    <tr>
+                        <td>Nuit (22h – 8h)</td>
+                        <td>500 €</td>
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+            <div class="tarif-note">
+
+                <i
+                    class="fas fa-gem"
+                    style="color:var(--gold);"
+                ></i>
+
+                Les forfaits incluent l'ensemble des préliminaires
+                et le rapport.
+                Certaines pratiques spécifiques peuvent faire
+                l'objet d'un échange préalable.
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- ===== GALERIE ===== -->
+    <section id="gallery">
+
+        <div class="container">
+
+            <h2 class="section-title">
+                <i class="fas fa-images"></i>
+                Galerie
+            </h2>
+
+            <div
+                id="galleryGrid"
+                class="gallery-grid"
+            >
+
+                <div
+                    class="gallery-loader"
+                    id="galleryLoader"
+                >
+                    <i class="fas fa-spinner fa-pulse"></i>
+                    Chargement des portraits...
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- ===== À PROPOS ===== -->
+    <section id="about">
+
+        <div class="container">
+
+            <h2 class="section-title">
+                <i class="fas fa-user"></i>
+                À propos
+            </h2>
+
+            <div class="about-text">
+
+                <p>
+                    <span class="highlight">
+                        Alicia Caillot
+                    </span>,
+                    28 ans, 1m68, cheveux bruns et regard clair.
+                </p>
+
+                <p>
+                    Je cultive une approche où l'
+                    <strong>écoute</strong>
+                    et le
+                    <strong>respect mutuel</strong>
+                    sont la clé d'un moment hors du temps.
+                    Chaque rencontre est une parenthèse sensuelle,
+                    loin du tumulte du quotidien.
+                </p>
+
+                <p>
+                    <i
+                        class="fas fa-check-circle"
+                        style="color:var(--gold);"
+                    ></i>
+                    Je parle français.
+                </p>
+
+                <p
+                    style="
+                        margin-top:16px;
+                        color:var(--gray);
+                        font-size:0.9rem;
+                    "
+                >
+                    <i
+                        class="fas fa-map-pin"
+                        style="color:var(--gold);"
+                    ></i>
+
+                    Déplacements possibles sur demande,
+                    sous réserve de disponibilité.
+                    Pour me suivre au quotidien,
+                    retrouvez-moi sur X et Instagram.
+                </p>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- ===== CONTACT ===== -->
+    <section id="contact">
+
+        <div class="container">
+
+            <h2 class="section-title">
+                <i class="fas fa-envelope"></i>
+                Prendre contact
+            </h2>
+
+            <div class="contact-wrapper">
+
+                <!-- FORMULAIRE -->
+
+                <div>
+
+                    <form
+                        class="contact-form"
+                        id="contactForm"
+                    >
+
+                        <label for="name">
+                            Nom / Prénom
+                        </label>
+
+                        <input
+                            type="text"
+                            id="name"
+                            placeholder="Votre nom"
+                            required
+                        />
+
+
+                        <label for="email">
+                            Email
+                        </label>
+
+                        <input
+                            type="email"
+                            id="email"
+                            placeholder="adresse@exemple.com"
+                            required
+                        />
+
+
+                        <label for="phone">
+                            Téléphone (recommandé)
+                        </label>
+
+                        <input
+                            type="tel"
+                            id="phone"
+                            placeholder="+33 6 XX XX XX XX"
+                        />
+
+
+                        <label for="date">
+                            Date & heure souhaitée
+                        </label>
+
+                        <input
+                            type="datetime-local"
+                            id="date"
+                        />
+
+
+                        <label for="duration">
+                            Durée
+                        </label>
+
+                        <select id="duration">
+
+                            <option value="15min">
+                                15 min
+                            </option>
+
+                            <option value="30min">
+                                30 min
+                            </option>
+
+                            <option
+                                value="1h"
+                                selected
+                            >
+                                1 h
+                            </option>
+
+                            <option value="2h">
+                                2 h
+                            </option>
+
+                            <option value="3h">
+                                3 h
+                            </option>
+
+                            <option value="nuit">
+                                Nuit
+                            </option>
+
+                        </select>
+
+
+                        <label for="message">
+                            Message (optionnel)
+                        </label>
+
+                        <textarea
+                            id="message"
+                            rows="3"
+                            placeholder="Vos envies, vos questions..."
+                        ></textarea>
+
+
+                        <div
+                            style="
+                                margin:16px 0;
+                                display:flex;
+                                align-items:center;
+                                gap:12px;
+                            "
+                        >
+
+                            <input
+                                type="checkbox"
+                                id="ageCheck"
+                                required
+                                style="
+                                    width:18px;
+                                    height:18px;
+                                    accent-color:var(--gold);
+                                "
+                            />
+
+                            <label
+                                for="ageCheck"
+                                style="
+                                    font-size:0.85rem;
+                                    color:var(--gray);
+                                    text-transform:none;
+                                    letter-spacing:0;
+                                "
+                            >
+                                Je certifie avoir plus de 18 ans
+                                et j'accepte les conditions générales.
+                            </label>
+
+                        </div>
+
+
+                        <button
+                            type="submit"
+                            class="btn-submit"
+                        >
+                            <i class="fas fa-paper-plane"></i>
+                            Envoyer la demande
+                        </button>
+
+                    </form>
+
+                    <p
+                        style="
+                            color:#555;
+                            font-size:0.75rem;
+                            margin-top:12px;
+                        "
+                    >
+                        Réponse sous 24h par SMS ou email.
+                    </p>
+
+                </div>
+
+
+                <!-- RÉSEAUX -->
+
+                <div class="contact-social">
+
+                    <h4>
+                        Retrouvez-moi
+                    </h4>
+
+
+                    <div class="social-item">
+
+                        <i class="fab fa-x-twitter"></i>
+
+                        <span class="social-label">
+                            X
+                        </span>
+
+                        <span class="social-value">
+
+                            <a
+                                href="https://x.com/Ldeplacement"
+                                target="_blank"
+                                rel="noopener"
+                            >
+                                @Ldeplacement
+                            </a>
+
+                        </span>
+
+                    </div>
+
+
+                    <div class="social-item">
+
+                        <i class="fab fa-instagram"></i>
+
+                        <span class="social-label">
+                            Instagram
+                        </span>
+
+                        <span class="social-value">
+
+                            <a
+                                href="https://instagram.com/aliciacaillot1"
+                                target="_blank"
+                                rel="noopener"
+                            >
+                                @aliciacaillot1
+                            </a>
+
+                        </span>
+
+                    </div>
+
+
+                    <div class="social-item">
+
+                        <i class="fab fa-signal-messenger"></i>
+
+                        <span class="social-label">
+                            Signal
+                        </span>
+
+                        <span class="social-value">
+
+                            Coucou.08
+
+                            <button
+                                class="signal-copy-btn"
+                                id="signalCopyBtn"
+                            >
+                                <i class="fas fa-copy"></i>
+                                Copier
+                            </button>
+
+                        </span>
+
+                    </div>
+
+
+                    <div class="social-item">
+
+                        <i class="fas fa-shield-alt"></i>
+
+                        <span class="social-label">
+                            TeleGuard
+                        </span>
+
+                        <span class="social-value">
+
+                            UKX7E4V24
+
+                            <button
+                                class="signal-copy-btn"
+                                id="teleguardCopyBtn"
+                            >
+                                <i class="fas fa-copy"></i>
+                                Copier
+                            </button>
+
+                        </span>
+
+                    </div>
+
+
+                    <div
+                        style="
+                            margin-top:32px;
+                            padding:16px;
+                            background:rgba(255,255,255,0.02);
+                            border-radius:8px;
+                            border:1px solid rgba(201,168,76,0.1);
+                        "
+                    >
+
+                        <p
+                            style="
+                                font-size:0.85rem;
+                                color:var(--gray);
+                            "
+                        >
+
+                            <i
+                                class="fas fa-lock"
+                                style="color:var(--gold);"
+                            ></i>
+
+                            Les échanges sur Signal et TeleGuard
+                            sont chiffrés de bout en bout.
+                            <br />
+
+                            Utilisez-les pour les confirmations
+                            de dernière minute.
+
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- ===== FOOTER ===== -->
+    <footer>
+
+        <div class="container">
+
+            <p style="letter-spacing:1px;">
+                ✦ Alicia Caillot · 28 ans ✦
+            </p>
+
+            <div class="legal">
+
+                <a
+                    href="#"
+                    id="mentionsBtn"
+                >
+                    Mentions légales & RGPD
+                </a>
+
+                <span>•</span>
+
+                <span>
+                    Hébergé en France (OVH)
+                </span>
+
+                <span>•</span>
+
+                <span>
+                    © 2026 — Tous droits réservés
+                </span>
+
+            </div>
+
+
+            <div
+                id="mentionsText"
+                style="
+                    display:none;
+                    margin-top:20px;
+                    text-align:left;
+                    max-width:700px;
+                    margin-left:auto;
+                    margin-right:auto;
+                    color:#666;
+                    font-size:0.75rem;
+                    line-height:1.8;
+                    border-top:1px solid #222;
+                    padding-top:20px;
+                "
+            >
+
+                <p>
+                    <strong>
+                        Responsable de traitement :
+                    </strong>
+                    Alicia Caillot — contact via le formulaire.
+                </p>
+
+                <p>
+                    <strong>
+                        Hébergeur :
+                    </strong>
+                    OVH SAS, 2 rue Kellermann,
+                    59100 Roubaix, France.
+                </p>
+
+                <p>
+                    <strong>
+                        Données :
+                    </strong>
+                    Les informations collectées via le formulaire
+                    sont conservées 48h après la prise de contact,
+                    puis supprimées.
+                    Vous disposez d'un droit d'accès,
+                    de rectification et de suppression
+                    en nous contactant.
+                </p>
+
+                <p>
+                    <strong>
+                        Clause de non-responsabilité :
+                    </strong>
+                    Alicia Caillot n'exerce aucune activité
+                    de racolage passif ou actif.
+                    Ce site est une vitrine professionnelle
+                    destinée à une clientèle majeure et consentante.
+                </p>
+
+                <p>
+                    <strong>
+                        Cookies :
+                    </strong>
+                    Aucun cookie tiers n'est déposé.
+                    Une session technique est utilisée
+                    pour la vérification d'âge.
+                </p>
+
+            </div>
+
+        </div>
+
+    </footer>
+
+
+    <!-- ===== JAVASCRIPT ===== -->
+    <script>
+
+        (function () {
+
+            'use strict';
+
+
+            /* ==========================================
+               VÉRIFICATION DE L'ÂGE
+            ========================================== */
+
+            const overlay =
+                document.getElementById('age-overlay');
+
+            const ageYes =
+                document.getElementById('age-yes');
+
+            const ageNo =
+                document.getElementById('age-no');
+
+
+            function hideOverlay() {
+
+                overlay.classList.add('hidden');
+
+                sessionStorage.setItem(
+                    'ageVerified',
+                    'true'
+                );
+
+            }
+
+
+            if (
+                sessionStorage.getItem(
+                    'ageVerified'
+                ) === 'true'
+            ) {
+
+                hideOverlay();
+
+            }
+
+
+            ageYes.addEventListener(
+                'click',
+                hideOverlay
+            );
+
+
+            ageNo.addEventListener(
+                'click',
+                function () {
+
+                    document.body.innerHTML =
+                        `
+                        <div
+                            style="
+                                display:flex;
+                                align-items:center;
+                                justify-content:center;
+                                height:100vh;
+                                background:#0a0a0a;
+                                color:#555;
+                                font-family:sans-serif;
+                                flex-direction:column;
+                                gap:16px;
+                            "
+                        >
+
+                            <h2
+                                style="color:#6b1d2a;"
+                            >
+                                Accès refusé
+                            </h2>
+
+                            <p>
+                                Ce site est réservé
+                                aux personnes majeures.
+                            </p>
+
+                        </div>
+                        `;
+
+                }
+            );
+
+
+            /* ==========================================
+               TOAST
+            ========================================== */
+
+            const toast =
+                document.getElementById('toast');
+
+            let toastTimer;
+
+
+            function showToast(msg) {
+
+                toast.textContent =
+                    msg || '✓ Identifiant copié';
+
+                toast.classList.add('show');
+
+                clearTimeout(toastTimer);
+
+                toastTimer = setTimeout(
+                    function () {
+
+                        toast.classList.remove('show');
+
+                    },
+                    2800
+                );
+
+            }
+
+
+            /* ==========================================
+               COPIE
+            ========================================== */
+
+            function setupCopy(
+                selector,
+                text,
+                msg
+            ) {
+
+                const btn =
+                    document.querySelector(selector);
+
+                if (!btn) return;
+
+
+                btn.addEventListener(
+                    'click',
+                    function (e) {
+
+                        e.preventDefault();
+
+
+                        navigator.clipboard
+                            .writeText(text)
+                            .then(function () {
+
+                                showToast(
+                                    msg ||
+                                    '✓ Identifiant copié !'
+                                );
+
+                            })
+                            .catch(function () {
+
+                                const input =
+                                    document.createElement(
+                                        'input'
+                                    );
+
+                                input.value = text;
+
+                                document.body.appendChild(
+                                    input
+                                );
+
+                                input.select();
+
+                                document.execCommand(
+                                    'copy'
+                                );
+
+                                input.remove();
+
+                                showToast(
+                                    msg ||
+                                    '✓ Identifiant copié !'
+                                );
+
+                            });
+
+                    }
+                );
+
+            }
+
+
+            setupCopy(
+                '#signalCopyBtn',
+                'Coucou.08'
+            );
+
+
+            setupCopy(
+                '#signalNavBtn',
+                'Coucou.08'
+            );
+
+
+            setupCopy(
+                '#teleguardCopyBtn',
+                'UKX7E4V24',
+                '✓ Identifiant TeleGuard copié !'
+            );
+
+
+            /* ==========================================
+               MENU MOBILE
+            ========================================== */
+
+            const toggle =
+                document.getElementById('navToggle');
+
+            const links =
+                document.getElementById('navLinks');
+
+            const social =
+                document.getElementById('navSocial');
+
+
+            toggle.addEventListener(
+                'click',
+                function () {
+
+                    links.classList.toggle('open');
+
+                    social.classList.toggle('open');
+
+                    const icon =
+                        toggle.querySelector('i');
+
+                    icon.classList.toggle(
+                        'fa-bars'
+                    );
+
+                    icon.classList.toggle(
+                        'fa-xmark'
+                    );
+
+                }
+            );
+
+
+            document
+                .querySelectorAll('.nav-links a')
+                .forEach(function (link) {
+
+                    link.addEventListener(
+                        'click',
+                        function () {
+
+                            links.classList.remove(
+                                'open'
+                            );
+
+                            social.classList.remove(
+                                'open'
+                            );
+
+                            const icon =
+                                toggle.querySelector('i');
+
+                            icon.classList.add(
+                                'fa-bars'
+                            );
+
+                            icon.classList.remove(
+                                'fa-xmark'
+                            );
+
+                        }
+                    );
+
+                });
+
+
+            /* ==========================================
+               GALERIE
+               
+               RECHERCHE DES PHOTOS 01 À 033
+
+               Exemples recherchés :
+
+               01.jpg
+               02.jpg
+               ...
+               09.jpg
+
+               010.jpg
+               011.jpg
+               012.jpg
+               ...
+               033.jpg
+
+               Le code accepte également :
+               png
+               webp
+               jpeg
+            ========================================== */
+
+
+            const galleryGrid =
+                document.getElementById(
+                    'galleryGrid'
+                );
+
+
+            const loader =
+                document.getElementById(
+                    'galleryLoader'
+                );
+
+
+            // Nombre total de photos
+            const MAX_IMAGES = 33;
+
+
+            // Extensions acceptées
+            const extensions = [
+                'jpg',
+                'jpeg',
+                'png',
+                'webp'
+            ];
+
+
+            /*
+             * Génère les différents noms possibles
+             * pour chaque numéro.
+             *
+             * Exemple :
+             *
+             * 7  -> 07 / 007 / 7
+             * 11 -> 011 / 11 / 11
+             * 33 -> 033 / 33
+             */
+
+            function getPossibleNames(number) {
+
+                const names = [];
+
+
+                // Pour 1 à 9 :
+                // 01.jpg
+                if (number < 10) {
+
+                    names.push(
+                        String(number)
+                            .padStart(2, '0')
+                    );
+
+                }
+
+
+                // Pour 10 à 33 :
+                // 010.jpg / 011.jpg / etc.
+                if (number >= 10) {
+
+                    names.push(
+                        String(number)
+                            .padStart(3, '0')
+                    );
+
+                }
+
+
+                // Nom sans zéro supplémentaire
+                names.push(
+                    String(number)
+                );
+
+
+                // Version 2 chiffres
+                names.push(
+                    String(number)
+                        .padStart(2, '0')
+                );
+
+
+                // Supprime les doublons
+                return [...new Set(names)];
+
+            }
+
+
+            /*
+             * Vérifie si une photo existe
+             */
+
+            async function findImage(number) {
+
+                const names =
+                    getPossibleNames(number);
+
+
+                for (
+                    const name of names
+                ) {
+
+                    for (
+                        const ext of extensions
+                    ) {
+
+                        const url =
+                            name + '.' + ext;
+
+
+                        try {
+
+                            const response =
+                                await fetch(
+                                    url,
+                                    {
+                                        method: 'HEAD',
+                                        cache: 'no-store'
+                                    }
+                                );
+
+
+                            if (response.ok) {
+
+                                return url;
+
+                            }
+
+                        }
+                        catch (error) {
+
+                            // On continue
+                            // avec le nom suivant
+
+                        }
+
+                    }
+
+                }
+
+
+                return null;
+
+            }
+
+
+            /*
+             * Charge les 33 photos
+             */
+
+            async function loadGallery() {
+
+                let foundAny = false;
+
+
+                const fragment =
+                    document.createDocumentFragment();
+
+
+                for (
+                    let i = 1;
+                    i <= MAX_IMAGES;
+                    i++
+                ) {
+
+                    const imageUrl =
+                        await findImage(i);
+
+
+                    if (!imageUrl) {
+
+                        continue;
+
+                    }
+
+
+                    const img =
+                        document.createElement('img');
+
+
+                    img.src = imageUrl;
+
+
+                    img.alt =
+                        'Galerie Alicia ' + i;
+
+
+                    img.className =
+                        'gallery-item';
+
+
+                    img.loading =
+                        'lazy';
+
+
+                    /*
+                     * Si une image ne peut finalement
+                     * pas être chargée, elle est retirée.
+                     */
+
+                    img.onerror =
+                        function () {
+
+                            this.remove();
+
+                        };
+
+
+                    fragment.appendChild(img);
+
+                    foundAny = true;
+
+                }
+
+
+                // Supprimer le chargement
+                if (loader) {
+
+                    loader.remove();
+
+                }
+
+
+                /*
+                 * Si aucune image n'a été trouvée
+                 */
+
+                if (!foundAny) {
+
+                    const emptyMsg =
+                        document.createElement('p');
+
+
+                    emptyMsg.style.color =
+                        '#555';
+
+                    emptyMsg.style.textAlign =
+                        'center';
+
+                    emptyMsg.style.padding =
+                        '40px 0';
+
+
+                    emptyMsg.innerHTML =
+                        `
+                        <i
+                            class="fas fa-image"
+                            style="color:var(--gold);"
+                        ></i>
+
+                        Aucune photo trouvée.
+                        Vérifiez que vos photos
+                        sont bien placées à la racine
+                        du site et portent un nom
+                        comme
+                        <strong>01.jpg</strong>,
+                        <strong>011.jpg</strong>,
+                        <strong>026.jpg</strong>
+                        ou
+                        <strong>033.jpg</strong>.
+                        `;
+
+
+                    galleryGrid.appendChild(
+                        emptyMsg
+                    );
+
+                }
+                else {
+
+                    galleryGrid.appendChild(
+                        fragment
+                    );
+
+                }
+
+            }
+
+
+            /*
+             * Lance la galerie après 300 ms
+             */
+
+            setTimeout(
+                loadGallery,
+                300
+            );
+
+
+            /* ==========================================
+               FORMULAIRE DE CONTACT
+            ========================================== */
+
+            const form =
+                document.getElementById(
+                    'contactForm'
+                );
+
+
+            form.addEventListener(
+                'submit',
+                function (e) {
+
+                    e.preventDefault();
+
+
+                    const ageCheck =
+                        document.getElementById(
+                            'ageCheck'
+                        );
+
+
+                    if (!ageCheck.checked) {
+
+                        alert(
+                            'Veuillez confirmer que vous avez plus de 18 ans.'
+                        );
+
+                        return;
+
+                    }
+
+
+                    const name =
+                        document.getElementById(
+                            'name'
+                        ).value.trim();
+
+
+                    const email =
+                        document.getElementById(
+                            'email'
+                        ).value.trim();
+
+
+                    const phone =
+                        document.getElementById(
+                            'phone'
+                        ).value.trim();
+
+
+                    const date =
+                        document.getElementById(
+                            'date'
+                        ).value;
+
+
+                    const duration =
+                        document.getElementById(
+                            'duration'
+                        ).value;
+
+
+                    const message =
+                        document.getElementById(
+                            'message'
+                        ).value.trim();
+
+
+                    const subject =
+                        `Demande de rendez-vous - ${name || 'Anonyme'}`;
+
+
+                    const body =
+                        `Nom: ${name || 'Non renseigné'}
+Email: ${email || 'Non renseigné'}
+Téléphone: ${phone || 'Non renseigné'}
+Date souhaitée: ${date || 'Non renseignée'}
+Durée: ${duration}
+Message: ${message || 'Aucun message'}`;
+
+
+                    const btn =
+                        form.querySelector(
+                            '.btn-submit'
+                        );
+
+
+                    const original =
+                        btn.innerHTML;
+
+
+                    btn.innerHTML =
+                        '<i class="fas fa-spinner fa-pulse"></i> Préparation...';
+
+
+                    btn.disabled = true;
+
+
+                    setTimeout(
+                        function () {
+
+                            window.location.href =
+                                `mailto:Lorient254@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+
+
+                            btn.innerHTML =
+                                '<i class="fas fa-check"></i> Demande envoyée !';
+
+
+                            btn.style.background =
+                                '#2a7a4a';
+
+
+                            setTimeout(
+                                function () {
+
+                                    btn.innerHTML =
+                                        original;
+
+                                    btn.style.background =
+                                        '';
+
+                                    btn.disabled =
+                                        false;
+
+                                    form.reset();
+
+                                },
+                                3000
+                            );
+
+                        },
+                        800
+                    );
+
+                }
+            );
+
+
+            /* ==========================================
+               MENTIONS LÉGALES
+            ========================================== */
+
+            const mentionsBtn =
+                document.getElementById(
+                    'mentionsBtn'
+                );
+
+
+            const mentionsText =
+                document.getElementById(
+                    'mentionsText'
+                );
+
+
+            if (mentionsBtn) {
+
+                mentionsBtn.addEventListener(
+                    'click',
+                    function (e) {
+
+                        e.preventDefault();
+
+
+                        if (
+                            mentionsText.style.display ===
+                            'none' ||
+                            mentionsText.style.display ===
+                            ''
+                        ) {
+
+                            mentionsText.style.display =
+                                'block';
+
+                        }
+                        else {
+
+                            mentionsText.style.display =
+                                'none';
+
+                        }
+
+                    }
+                );
+
+            }
+
+        })();
+
+    </script>
+
+</body>
+</html>
