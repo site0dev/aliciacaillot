@@ -580,6 +580,115 @@ section:nth-of-type(even){background:#F7F7F7 !important}
 }
 </style>
 
+
+<style id="menu-white-override">
+/* Menu entièrement blanc : aucun bordeaux sur la navigation */
+#menu,
+.menu,
+.menu-toggle,
+#menuToggle,
+#hamburger,
+.hamburger,
+.nav-toggle,
+.mobile-menu,
+.mobile-nav,
+nav .menu,
+header nav {
+  --menu-accent: #FFFFFF !important;
+}
+
+/* Bouton du menu */
+#menuToggle,
+#hamburger,
+.menu-toggle,
+.hamburger,
+.nav-toggle {
+  background: #FFFFFF !important;
+  color: #000000 !important;
+  border: 1px solid #FFFFFF !important;
+  box-shadow: 0 4px 14px rgba(0,0,0,.22) !important;
+}
+
+/* Icônes du bouton */
+#menuToggle i,
+#hamburger i,
+.menu-toggle i,
+.hamburger i,
+.nav-toggle i,
+#menuToggle svg,
+#hamburger svg {
+  color: #000000 !important;
+  fill: #000000 !important;
+}
+
+/* Liens et fond du menu */
+nav,
+nav ul,
+nav .menu,
+#menu,
+.mobile-menu,
+.mobile-nav {
+  background: #FFFFFF !important;
+}
+
+nav a,
+nav .menu a,
+#menu a,
+.mobile-menu a,
+.mobile-nav a {
+  color: #000000 !important;
+  background: #FFFFFF !important;
+  text-shadow: none !important;
+}
+
+nav a:hover,
+nav a:focus,
+nav a:active,
+#menu a:hover,
+#menu a:focus,
+.mobile-menu a:hover,
+.mobile-menu a:focus {
+  color: #000000 !important;
+  background: #F2F2F2 !important;
+}
+
+/* Éléments actifs : blanc/noir, sans bordeaux */
+nav a.active,
+nav a[aria-current="page"],
+#menu a.active,
+.mobile-menu a.active {
+  color: #000000 !important;
+  background: #EAEAEA !important;
+  border-color: #000000 !important;
+}
+
+/* Petite flèche éventuelle du menu */
+nav .arrow,
+nav .chevron,
+#menu .arrow,
+#menu .chevron {
+  color: #000000 !important;
+}
+
+/* Sur fond sombre, le bouton reste très visible */
+@media (max-width: 800px) {
+  #menuToggle,
+  #hamburger,
+  .menu-toggle,
+  .hamburger,
+  .nav-toggle {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 48px !important;
+    height: 48px !important;
+    min-width: 48px !important;
+    min-height: 48px !important;
+    border-radius: 10px !important;
+  }
+}
+</style>
+
 </head>
 <body><div id="site-discreet-note" style="display:none" aria-hidden="true">Site d’information et de prise de contact réservé aux adultes.</div>
 <div id="age-overlay" role="dialog" aria-modal="true" aria-labelledby="age-title">
