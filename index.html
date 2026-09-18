@@ -911,7 +911,7 @@ nav .chevron,
 <!-- ASSISTANT FLOTTANT -->
 <button id="aiFab" type="button" aria-label="Ouvrir la messagerie" aria-expanded="false"><i class="fas fa-comment-dots"></i><span class="ai-dot"></span></button>
 <div class="ai-panel" id="aiPanel" role="dialog" aria-modal="false" aria-labelledby="aiTitle">
-  <div class="ai-head"><div class="ai-avatar"><i class="fas fa-comment-dots"></i></div><div><strong id="aiTitle">Alicia · Assistant</strong><small id="aiSub">En ligne · Réponse instantanée</small></div><button class="ai-close" id="aiClose" type="button" aria-label="Fermer"><i class="fas fa-xmark"></i></button></div>
+  <div class="ai-head"><div class="ai-avatar"><i class="fas fa-comment-dots"></i></div><div><strong id="aiTitle">Alicia · Assistant</strong><small id="aiSub">En ligne · Réponse instantanée</small></div><button class="ai-close" id="aiClose" type="button" aria-label="Fermer"><span aria-hidden="true">×</span></button></div>
   <div class="ai-messages" id="aiMessages"></div>
   <div class="ai-chips" id="aiChips"></div>
   <div class="ai-disclaimer" id="aiDisclaimer">Je réponds à partir des informations actuellement présentes sur cette page.</div>
@@ -1593,6 +1593,255 @@ section{padding:88px 0}
 .ai-typing span:nth-child(2){animation-delay:.15s}
 .ai-typing span:nth-child(3){animation-delay:.3s}
 @keyframes aiBounce{0%,60%,100%{transform:translateY(0);opacity:.45}30%{transform:translateY(-3px);opacity:1}}
+</style>
+
+
+<style id="ai-menu-color-harmonization">
+/* Palette de l'assistant alignée sur le menu du site */
+#aiPanel{
+  background:#fff !important;
+  border:1px solid rgba(126,16,54,.28) !important;
+  box-shadow:0 18px 55px rgba(0,0,0,.28) !important;
+}
+#aiPanel .ai-head,
+#aiPanel .ai-input-wrap{
+  background:#000 !important;
+}
+#aiPanel .ai-head{
+  border-bottom:1px solid rgba(126,16,54,.35) !important;
+}
+#aiPanel .ai-input-wrap{
+  border-top:1px solid rgba(126,16,54,.35) !important;
+}
+#aiPanel .ai-avatar,
+#aiFab,
+#aiPanel .ai-send{
+  background:#8b123b !important;
+  color:#fff !important;
+}
+#aiFab{
+  border:2px solid rgba(255,255,255,.12) !important;
+  box-shadow:0 10px 30px rgba(0,0,0,.38) !important;
+}
+#aiPanel .ai-messages{
+  background:#fff !important;
+}
+#aiPanel .ai-msg.bot{
+  background:#f5f3f3 !important;
+  color:#222 !important;
+  border:1px solid #e2dfe0 !important;
+}
+#aiPanel .ai-msg.user{
+  background:#8b123b !important;
+  color:#fff !important;
+  border-color:#8b123b !important;
+}
+#aiPanel .ai-chip{
+  background:#fff !important;
+  color:#8b123b !important;
+  border:1px solid #8b123b !important;
+}
+#aiPanel .ai-chip:hover{
+  background:#8b123b !important;
+  color:#fff !important;
+}
+#aiPanel .ai-disclaimer{
+  background:#f5f3f3 !important;
+  color:#555 !important;
+  border-top:1px solid #e2dfe0 !important;
+}
+#aiPanel .ai-input{
+  background:#fff !important;
+  color:#222 !important;
+  border:2px solid #8b123b !important;
+}
+#aiPanel .ai-input::placeholder{color:#777 !important}
+#aiPanel .ai-close{
+  color:#fff !important;
+}
+#aiPanel .ai-dot{
+  background:#35c979 !important;
+  border-color:#000 !important;
+}
+#aiPanel .ai-typing{
+  background:#f5f3f3 !important;
+  border-color:#e2dfe0 !important;
+  color:#8b123b !important;
+}
+#aiPanel .ai-typing span{background:#8b123b !important}
+</style>
+
+
+<style id="ai-vivid-color-theme">
+:root{--ai-accent:#00b8ff;--ai-accent-strong:#008ee6;--ai-accent-soft:#e8f8ff;}
+#aiPanel{
+  border-color:rgba(0,184,255,.35) !important;
+}
+#aiPanel .ai-head,
+#aiPanel .ai-input-wrap{
+  background:#000 !important;
+}
+#aiPanel .ai-head{border-bottom-color:rgba(0,184,255,.35) !important;}
+#aiPanel .ai-input-wrap{border-top-color:rgba(0,184,255,.35) !important;}
+
+#aiPanel .ai-avatar,
+#aiFab,
+#aiPanel .ai-send{
+  background:var(--ai-accent) !important;
+  color:#001018 !important;
+}
+#aiFab{
+  border:2px solid rgba(255,255,255,.25) !important;
+  box-shadow:0 10px 30px rgba(0,184,255,.32) !important;
+}
+#aiPanel .ai-msg.user{
+  background:var(--ai-accent) !important;
+  color:#001018 !important;
+  border-color:var(--ai-accent) !important;
+}
+#aiPanel .ai-chip{
+  background:#fff !important;
+  color:var(--ai-accent-strong) !important;
+  border:2px solid var(--ai-accent) !important;
+  font-weight:600 !important;
+}
+#aiPanel .ai-chip:hover{
+  background:var(--ai-accent) !important;
+  color:#001018 !important;
+}
+#aiPanel .ai-input{
+  background:#fff !important;
+  color:#111 !important;
+  border:2px solid var(--ai-accent) !important;
+  box-shadow:0 0 0 3px rgba(0,184,255,.10) !important;
+}
+#aiPanel .ai-input:focus{
+  outline:none !important;
+  border-color:var(--ai-accent-strong) !important;
+  box-shadow:0 0 0 4px rgba(0,184,255,.18) !important;
+}
+#aiPanel .ai-disclaimer{
+  border-top-color:#d9eef6 !important;
+  background:#f7fcff !important;
+}
+#aiPanel .ai-typing{
+  background:var(--ai-accent-soft) !important;
+  border-color:#bcecff !important;
+  color:var(--ai-accent-strong) !important;
+}
+#aiPanel .ai-typing span{background:var(--ai-accent-strong) !important;}
+</style>
+
+
+<style id="ai-white-readable-theme">
+:root{
+  --ai-paper:#f4f1ed;
+  --ai-ink:#111111;
+  --ai-line:#c9c3bd;
+}
+#aiPanel{
+  background:var(--ai-paper) !important;
+  color:var(--ai-ink) !important;
+  border:1px solid #bdb6af !important;
+}
+#aiPanel .ai-head{
+  background:#000 !important;
+  color:#fff !important;
+  border-bottom:1px solid #333 !important;
+}
+#aiPanel .ai-avatar{
+  background:#fff !important;
+  color:#000 !important;
+  border:1px solid #fff !important;
+}
+#aiPanel .ai-close{
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  width:40px !important;
+  height:40px !important;
+  min-width:40px !important;
+  border:2px solid #fff !important;
+  border-radius:50% !important;
+  background:#fff !important;
+  color:#000 !important;
+  opacity:1 !important;
+  visibility:visible !important;
+  font-size:1.35rem !important;
+  line-height:1 !important;
+  cursor:pointer !important;
+  z-index:20 !important;
+}
+#aiPanel .ai-close:hover{
+  background:#e9e5e0 !important;
+  color:#000 !important;
+}
+#aiPanel .ai-messages{
+  background:var(--ai-paper) !important;
+  color:var(--ai-ink) !important;
+}
+#aiPanel .ai-msg.bot{
+  background:#fff !important;
+  color:#111 !important;
+  border:1px solid var(--ai-line) !important;
+}
+#aiPanel .ai-msg.user{
+  background:#111 !important;
+  color:#fff !important;
+  border:1px solid #111 !important;
+}
+#aiPanel .ai-chip{
+  background:#fff !important;
+  color:#111 !important;
+  border:2px solid #111 !important;
+  font-weight:600 !important;
+  box-shadow:none !important;
+}
+#aiPanel .ai-chip:hover{
+  background:#111 !important;
+  color:#fff !important;
+}
+#aiPanel .ai-disclaimer{
+  background:#fff !important;
+  color:#333 !important;
+  border-top:1px solid var(--ai-line) !important;
+}
+#aiPanel .ai-input-wrap{
+  background:#000 !important;
+  border-top:1px solid #333 !important;
+}
+#aiPanel .ai-input{
+  background:#fff !important;
+  color:#111 !important;
+  border:2px solid #111 !important;
+  box-shadow:none !important;
+}
+#aiPanel .ai-input::placeholder{color:#555 !important}
+#aiPanel .ai-send{
+  background:#fff !important;
+  color:#111 !important;
+  border:2px solid #fff !important;
+}
+#aiPanel .ai-send:hover{
+  background:#e9e5e0 !important;
+  color:#000 !important;
+}
+#aiPanel .ai-typing{
+  background:#fff !important;
+  border-color:var(--ai-line) !important;
+  color:#111 !important;
+}
+#aiPanel .ai-typing span{background:#111 !important}
+#aiFab{
+  background:#fff !important;
+  color:#111 !important;
+  border:2px solid #111 !important;
+  box-shadow:0 10px 28px rgba(0,0,0,.25) !important;
+}
+#aiFab .ai-dot{
+  background:#35c979 !important;
+  border-color:#111 !important;
+}
 </style>
 
 </body>
