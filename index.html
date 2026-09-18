@@ -490,7 +490,7 @@ footer, footer * {
 footer a, footer button {
   color:#FFFFFF !important;
 }
-#rootHero { border-bottom:3px solid #7A1230; }
+#hero { border-bottom:3px solid #7A1230; }
 </style>
 
 
@@ -877,9 +877,6 @@ nav .chevron,
 <option value="teleguard">TeleGuard</option>
 </select>
 
-<label for="contactId">Identifiant Telegram ou Instagram</label>
-<input id="contactId" type="text" required placeholder="@votre_identifiant" autocomplete="off">
-
 <label for="date">Date & heure souhaitée</label>
 <input id="date" type="datetime-local">
 
@@ -1221,12 +1218,11 @@ document.getElementById('contactForm').addEventListener('submit',e=>{
   const city=document.getElementById('city').value.trim();
   const phone=document.getElementById('phone').value.trim();
   const app=document.getElementById('contactApp').value;
-  const identifier=document.getElementById('contactId').value.trim().replace(/^@/,'');
   const date=document.getElementById('date').value;
   const duration=document.getElementById('duration').value;
   const message=document.getElementById('message').value.trim();
 
-  if(!app || !identifier || !address || !city){
+  if(!app || !address || !city){
     document.getElementById('formStatus').textContent='Veuillez remplir tous les champs obligatoires.';
     return;
   }
@@ -1240,8 +1236,7 @@ Téléphone : ${phone || 'Non renseigné'}
 Date & heure souhaitée : ${date || 'Non renseignée'}
 Durée : ${duration}
 Message : ${message || 'Aucun message'}
-
-Identifiant de contact : @${identifier}`;
+`;
 
   const status=document.getElementById('formStatus');
 
@@ -1254,7 +1249,7 @@ Identifiant de contact : @${identifier}`;
     }
   } catch(e) {}
 
-  const cleanId=identifier.replace(/^@/,'');
+  const cleanId='';
   if(app==='telegram'){
     status.textContent='Votre demande est préparée et copiée. Ouverture de Telegram…';
     try{ window.location.href='tg://resolve?domain='+encodeURIComponent(cleanId); }catch(e){}
@@ -1302,36 +1297,12 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeLegal();closeL
 
 
 <style id="hero-background-style">
-#hero{
-  position:relative !important;
-  isolation:isolate !important;
-  overflow:hidden !important;
-  background-color:#111 !important;
-  background-position:center center !important;
-  background-size:cover !important;
-  background-repeat:no-repeat !important;
-}
-#hero::before{
-  content:"" !important;
-  position:absolute !important;
-  inset:0 !important;
-  z-index:-1 !important;
-  background:linear-gradient(
-    180deg,
-    rgba(0,0,0,.18) 0%,
-    rgba(0,0,0,.30) 48%,
-    rgba(0,0,0,.52) 100%
-  ) !important;
-  pointer-events:none !important;
-}
-#hero > *{
-  position:relative !important;
-  z-index:1 !important;
-}
-#hero .hero{
-  position:relative !important;
-  z-index:2 !important;
-}
+#hero{position:relative !important;isolation:isolate !important;overflow:hidden !important;min-height:100svh !important;background-color:#111 !important;background-position:center center !important;background-size:cover !important;background-repeat:no-repeat !important;}
+#hero::before{content:"" !important;position:absolute !important;inset:0 !important;z-index:0 !important;background:linear-gradient(180deg,rgba(0,0,0,.18) 0%,rgba(0,0,0,.34) 48%,rgba(0,0,0,.62) 100%) !important;pointer-events:none !important;}
+#hero > *{position:relative !important;z-index:1 !important;}
+#hero .hero{position:relative !important;z-index:2 !important;background:transparent !important;}
+#hero .hero h1,#hero .hero .lead,#hero .hero .eyebrow,#hero .hero .btn{position:relative !important;z-index:3 !important;}
+@media(max-width:760px){#hero{min-height:100svh !important;background-position:center center !important;}}
 </style>
 
 <script id="hero-root-background-loader">
