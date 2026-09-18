@@ -12,6 +12,7 @@
 <meta property="og:locale" content="fr_FR">
 <title>Alicia Caillot</title>
 <link rel="canonical" href="./index.html">
+<link rel="preload" as="image" href="/hero.jpg" fetchpriority="high">
 <link rel="alternate" hreflang="fr-FR" href="./index.html?lang=fr-FR">
 <link rel="alternate" hreflang="fr-BE" href="./index.html?lang=fr-BE">
 <link rel="alternate" hreflang="it-IT" href="./index.html?lang=it-IT">
@@ -831,7 +832,7 @@ nav .chevron,
   </div>
 </div></header>
 <main>
-<section id="hero"><div class="container hero"><h1>Alicia <em>Caillot</em></h1><a class="btn btn-primary" href="#contact"><i class="fas fa-calendar-check"></i><span data-i18n="cta">Prendre contact</span></a></div></section>
+<section id="hero" aria-label="Alicia Caillot"><img class="hero-bg" src="/hero.jpg" alt="" aria-hidden="true" fetchpriority="high" decoding="async"><div class="hero-scrim" aria-hidden="true"></div><div class="container hero"><h1>Alicia <em>Caillot</em></h1><a class="btn btn-primary" href="#contact"><i class="fas fa-calendar-check"></i><span data-i18n="cta">Prendre contact</span></a></div></section>
 <section id="services"><div class="container"><div class="section-head"><h2 class="section-title"><i class="fas fa-feather-alt"></i><span data-i18n="servicesTitle">Prestations</span></h2></div>
 <div class="services-grid">
 <div class="service-cat"><h3 data-i18n="s1t">Massages</h3><ul><li data-i18n="s1a">Relaxant</li><li data-i18n="s1b">Californien</li><li data-i18n="s1c">Prostate</li><li data-i18n="s1d">Tantrique</li></ul></div>
@@ -1124,37 +1125,20 @@ document.getElementById('ageNo').addEventListener('click',()=>{
 const menu=document.getElementById('menu'),navLinks=document.getElementById('navLinks');function setMenu(open){navLinks.classList.toggle('open',open);menu.setAttribute('aria-expanded',String(open));menu.setAttribute('aria-label',open?(translations[locale]||translations['fr-FR']).menuClose:(translations[locale]||translations['fr-FR']).menuOpen);menu.innerHTML=open?'<i class="fas fa-xmark"></i>':'<i class="fas fa-bars"></i>'}menu.addEventListener('click',()=>setMenu(!navLinks.classList.contains('open')));document.querySelectorAll('.nav-links a').forEach(a=>a.addEventListener('click',()=>setMenu(false)));document.addEventListener('click',e=>{if(window.innerWidth<=760&&navLinks.classList.contains('open')&&!e.target.closest('header'))setMenu(false)});
 const toast=document.getElementById('toast');let toastTimer;function showToast(m){toast.textContent=m;toast.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>toast.classList.remove('show'),2200)}
 async function copyText(text){try{await navigator.clipboard.writeText(text);showToast((translations[locale]||translations['fr-FR']).copied)}catch(e){const i=document.createElement('input');i.value=text;document.body.appendChild(i);i.select();document.execCommand('copy');i.remove();showToast((translations[locale]||translations['fr-FR']).copied)}}document.querySelectorAll('[data-copy]').forEach(b=>b.onclick=()=>copyText(b.dataset.copy));document.getElementById('signalNav').onclick=()=>copyText(SIGNAL);
-/* gallery: root files 01–040, extension fallback, 2x2 groups */
+/* gallery: root files, optimized loading */
 const grid=document.getElementById('galleryGrid'),
       galleryPrev=document.getElementById('galleryPrev'),
       galleryNext=document.getElementById('galleryNext'),
       galleryPage=document.getElementById('galleryPage');
 
-const photoExtensions=['jpg','jpeg','png','webp','avif','jfif'];
-const galleryNumbers=Array.from({length:40},(_,i)=>String(i+1).padStart(2,'0'));
-let galleryFiles=[],galleryBatches=[],galleryIndex=0;
+/* Match the repository naming: 01.jpg…09.jpg, then 010.jpg…040.jpg. */
+const galleryFiles=Array.from({length:40},(_,i)=>{
+  const n=i+1;
+  return n<10 ? String(n).padStart(2,'0')+'.jpg' : String(n).padStart(3,'0')+'.jpg';
+});
+let galleryBatches=[],galleryIndex=0;
 
-function findPhoto(number){
-  return new Promise(resolve=>{
-    let pos=0;
-    function test(){
-      if(pos>=photoExtensions.length){ resolve(null); return; }
-      const ext=photoExtensions[pos++];
-      const src=number+'.'+ext;
-      const probe=new Image();
-      probe.onload=()=>resolve(src);
-      probe.onerror=test;
-      probe.src=src+'?v='+Date.now();
-    }
-    test();
-  });
-}
-
-async function loadRootGallery(){
-  grid.innerHTML='<div class="gallery-empty" style="grid-column:1/-1"><i class="fas fa-spinner fa-spin"></i> <span>Chargement des photos…</span></div>';
-  const found=await Promise.all(galleryNumbers.map(findPhoto));
-  galleryFiles=found.filter(Boolean);
-
+function loadRootGallery(){
   grid.innerHTML='';
   galleryBatches=[];
   galleryIndex=0;
@@ -1167,26 +1151,33 @@ async function loadRootGallery(){
       const i=start+j;
       const img=document.createElement('img');
       img.className='gallery-item';
-      img.src=u;
+      img.src='/'+u;
       img.loading=(i<4?'eager':'lazy');
       img.decoding='async';
+      if(i===0) img.fetchPriority='high';
       img.alt=`Alicia Caillot — ${((translations[locale]||translations['fr-FR']).photoAlt||'photo')} ${String(i+1).padStart(2,'0')}`;
-      img.addEventListener('click',()=>openLightbox(u,img.alt));
+      img.addEventListener('error',()=>{
+        /* Compatibility fallback for repositories using 10.jpg…40.jpg. */
+        if(/^\d{3}\.jpg$/.test(u)){
+          img.src='/'+String(i+1).padStart(2,'0')+'.jpg';
+        }else if(!img.dataset.failed){
+          img.dataset.failed='1';
+          img.style.visibility='hidden';
+        }
+      },{once:false});
+      img.addEventListener('click',()=>openLightbox(img.currentSrc||img.src,img.alt));
       batch.appendChild(img);
     });
 
-    /* Keep the 2x2 layout on the final group when fewer than four remain. */
     while(batch.children.length<4){
       const empty=document.createElement('div');
       empty.className='gallery-item gallery-placeholder';
       empty.setAttribute('aria-hidden','true');
       batch.appendChild(empty);
     }
-
     grid.appendChild(batch);
     galleryBatches.push(batch);
   }
-
   updateGallery();
 }
 
@@ -1195,7 +1186,7 @@ function updateGallery(){
   const total=galleryBatches.length;
   galleryPrev.disabled=total<=1 || galleryIndex===0;
   galleryNext.disabled=total<=1 || galleryIndex===total-1;
-  galleryPage.textContent=total?`Groupe ${galleryIndex+1} / ${total} · ${galleryFiles.length} photos`:'';
+  galleryPage.textContent=total?`Groupe ${galleryIndex+1} / ${total} · 40 photos`:'';
 }
 
 galleryPrev.addEventListener('click',()=>{
@@ -1297,54 +1288,54 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeLegal();closeL
 
 
 <style id="hero-background-style">
-#hero{position:relative !important;isolation:isolate !important;overflow:hidden !important;min-height:100svh !important;background-color:#111 !important;background-position:center center !important;background-size:cover !important;background-repeat:no-repeat !important;}
-#hero::before{content:"" !important;position:absolute !important;inset:0 !important;z-index:0 !important;background:linear-gradient(180deg,rgba(0,0,0,.18) 0%,rgba(0,0,0,.34) 48%,rgba(0,0,0,.62) 100%) !important;pointer-events:none !important;}
-#hero > *{position:relative !important;z-index:1 !important;}
-#hero .hero{position:relative !important;z-index:2 !important;background:transparent !important;}
-#hero .hero h1,#hero .hero .lead,#hero .hero .eyebrow,#hero .hero .btn{position:relative !important;z-index:3 !important;}
-@media(max-width:760px){#hero{min-height:100svh !important;background-position:center center !important;}}
+#hero{
+  position:relative !important;
+  isolation:isolate !important;
+  overflow:hidden !important;
+  min-height:100svh !important;
+  padding:110px 0 70px !important;
+  display:grid !important;
+  place-items:center !important;
+  background:#080808 !important;
+}
+#hero .hero-bg{
+  position:absolute !important;
+  inset:0 !important;
+  width:100% !important;
+  height:100% !important;
+  max-width:none !important;
+  object-fit:cover !important;
+  object-position:center center !important;
+  z-index:-2 !important;
+  display:block !important;
+  user-select:none !important;
+  pointer-events:none !important;
+}
+#hero .hero-scrim{
+  position:absolute !important;
+  inset:0 !important;
+  z-index:-1 !important;
+  pointer-events:none !important;
+  background:linear-gradient(180deg,rgba(0,0,0,.22) 0%,rgba(0,0,0,.30) 45%,rgba(0,0,0,.58) 100%) !important;
+}
+#hero .hero{
+  position:relative !important;
+  z-index:2 !important;
+  min-height:0 !important;
+  width:100% !important;
+  background:transparent !important;
+}
+#hero .hero h1,#hero .hero .lead,#hero .hero .eyebrow,#hero .hero .btn{
+  position:relative !important;
+  z-index:3 !important;
+}
+@media(max-width:760px){
+  #hero{min-height:calc(100svh - 68px) !important;padding:95px 0 55px !important;}
+  #hero .hero-bg{object-position:center center !important;}
+}
 </style>
 
-<script id="hero-root-background-loader">
-(function(){
-  const extensions=['webp','jpg','jpeg','png','avif','jfif'];
-  const candidates=[];
 
-  /* First priority: a file named hero at the site root. */
-  extensions.forEach(ext=>candidates.push('/hero.'+ext));
-
-  /* Fallback: the 01..040 photos already used by the gallery. */
-  for(let n=1;n<=40;n++){
-    const number=String(n).padStart(2,'0');
-    extensions.forEach(ext=>candidates.push('/'+number+'.'+ext));
-  }
-
-  function setHeroBackground(src){
-    const hero=document.getElementById('hero');
-    if(!hero)return;
-    hero.style.backgroundImage="url('"+src.replace(/'/g,"%27")+"')";
-    hero.classList.add('hero-background-ready');
-  }
-
-  function test(i){
-    if(i>=candidates.length)return;
-    const img=new Image();
-    img.onload=()=>setHeroBackground(candidates[i]);
-    img.onerror=()=>test(i+1);
-    img.src=candidates[i]+'?v='+Date.now();
-  }
-
-  function init(){
-    if(document.getElementById('hero')) test(0);
-  }
-
-  if(document.readyState==='loading'){
-    document.addEventListener('DOMContentLoaded',init);
-  }else{
-    init();
-  }
-})();
-</script>
 
 </body>
 </html>
