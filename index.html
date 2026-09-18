@@ -909,12 +909,12 @@ nav .chevron,
 <div><div class="social-list"><div class="social-row"><i class="fab fa-x-twitter"></i><span class="label">X</span><span class="value"><a href="https://x.com/Ldeplacement" target="_blank" rel="noopener noreferrer">@Ldeplacement</a></span></div><div class="social-row"><i class="fab fa-instagram"></i><span class="label">Instagram</span><span class="value"><a href="https://instagram.com/aliciacaillot1" target="_blank" rel="noopener noreferrer">@aliciacaillot1</a></span></div><div class="social-row"><i class="fab fa-signal-messenger"></i><span class="label">Signal</span><span class="value">Coucou.08 <button class="copy-btn" data-copy="Coucou.08" data-i18n="copy">Copier</button></span></div><div class="social-row"><i class="fas fa-shield-alt"></i><span class="label">TeleGuard</span><span class="value">UKX7E4V24 <button class="copy-btn" data-copy="UKX7E4V24" data-i18n="copy">Copier</button></span></div><div class="social-row"><i class="fab fa-telegram"></i><span class="label">Telegram</span><span class="value"><a href="https://t.me/simplementmoi19" target="_blank" rel="noopener noreferrer">@simplementmoi19</a></span></div><div class="social-row"><i class="fas fa-envelope"></i><span class="label">E-mail</span><span class="value"><a href="mailto:aliciacaillot@boiseo.online">aliciacaillot@boiseo.online</a></span></div></div></div></div></div></section>
 </main>
 <!-- ASSISTANT FLOTTANT -->
-<button id="aiFab" type="button" aria-label="Ouvrir l’assistant" aria-expanded="false"><i class="fas fa-sparkles"></i><span class="ai-dot"></span></button>
+<button id="aiFab" type="button" aria-label="Ouvrir la messagerie" aria-expanded="false"><i class="fas fa-comment-dots"></i><span class="ai-dot"></span></button>
 <div class="ai-panel" id="aiPanel" role="dialog" aria-modal="false" aria-labelledby="aiTitle">
-  <div class="ai-head"><div class="ai-avatar"><i class="fas fa-sparkles"></i></div><div><strong id="aiTitle">Assistant Alicia</strong><small id="aiSub">Disponible pour vous orienter</small></div><button class="ai-close" id="aiClose" type="button" aria-label="Fermer"><i class="fas fa-xmark"></i></button></div>
+  <div class="ai-head"><div class="ai-avatar"><i class="fas fa-comment-dots"></i></div><div><strong id="aiTitle">Alicia · Assistant</strong><small id="aiSub">En ligne · Réponse instantanée</small></div><button class="ai-close" id="aiClose" type="button" aria-label="Fermer"><i class="fas fa-xmark"></i></button></div>
   <div class="ai-messages" id="aiMessages"></div>
   <div class="ai-chips" id="aiChips"></div>
-  <div class="ai-disclaimer" id="aiDisclaimer">Assistant automatique basé uniquement sur les informations publiées sur ce site.</div>
+  <div class="ai-disclaimer" id="aiDisclaimer">Je réponds à partir des informations actuellement présentes sur cette page.</div>
   <form class="ai-input" id="aiForm"><input id="aiInput" autocomplete="off" maxlength="300" placeholder="Posez votre question…"><button class="ai-send" type="submit" aria-label="Envoyer"><i class="fas fa-arrow-up"></i></button></form>
 </div>
 
@@ -1264,22 +1264,125 @@ Message : ${message || 'Aucun message'}
 });
 /* legal modal */
 const legal=document.getElementById('legalModal');document.getElementById('legalBtn').onclick=()=>{legal.classList.add('open');document.body.classList.add('modal-open')};function closeLegal(){legal.classList.remove('open');document.body.classList.remove('modal-open')}document.getElementById('legalClose').onclick=closeLegal;legal.onclick=e=>{if(e.target===legal)closeLegal()};
-/* assistant local multilingue — connaissances issues uniquement du contenu du site */
-const AI_DATA={
-'fr-FR':{hello:"Bonjour. Je peux vous renseigner sur les prestations publiées, les tarifs, la galerie, les déplacements, les moyens de contact et les informations générales du site.",chips:['Tarifs','Prestations','Contact','Déplacements','Galerie'],sub:'Disponible pour vous orienter',placeholder:'Posez votre question…',copy:'Assistant automatique basé uniquement sur les informations publiées sur ce site.',answers:{tarifs:'Les tarifs publiés sont : 15 min 50 €, 30 min 100 €, 1 h 150 €, 2 h 250 €, 3 h 400 €, nuit (22h–8h) 500 €.',prestations:'La page présente huit catégories : massages, jeux sensuels, préliminaires & rapports, domination, sexcam, nudes, spécial et confort. Les conditions doivent être convenues au préalable.',contact:'Vous pouvez utiliser le formulaire de contact ou les coordonnées X, Instagram, Signal et TeleGuard affichées dans la section Contact.',deplacements:'Des déplacements sont indiqués comme possibles sur demande, sous réserve de disponibilité et des règles applicables localement.',galerie:'La galerie recherche automatiquement les photos 01 à 40 à la racine du site et accepte JPG, JPEG, PNG, WebP, AVIF ou JFIF.',age:'Le site est réservé aux personnes majeures et demande une confirmation d’âge à l’entrée.'}},
-'fr-BE':{hello:'Bonjour. Je peux vous renseigner sur les informations publiées sur ce site : prestations, tarifs, galerie, déplacements et contact.',chips:['Tarifs','Prestations','Contact','Déplacements','Galerie'],sub:'Disponible pour vous orienter',placeholder:'Posez votre question…',copy:'Assistant automatique basé uniquement sur les informations publiées sur ce site.',answers:{tarifs:'Les tarifs publiés sont : 15 min 50 €, 30 min 100 €, 1 h 150 €, 2 h 250 €, 3 h 400 €, nuit (22h–8h) 500 €.',prestations:'La page présente huit catégories : massages, jeux sensuels, préliminaires & rapports, domination, sexcam, nudes, spécial et confort. Les conditions sont à convenir au préalable.',contact:'Le formulaire et les coordonnées X, Instagram, Signal et TeleGuard sont disponibles dans la section Contact.',deplacements:'Des déplacements sont possibles sur demande, sous réserve de disponibilité et des règles locales.',galerie:'La galerie recherche automatiquement les photos 01 à 40 à la racine du site et accepte JPG, JPEG, PNG, WebP, AVIF ou JFIF.',age:'Le site est réservé aux personnes majeures.'}},
-'it-IT':{hello:'Ciao. Posso aiutarti con le informazioni pubblicate sul sito: servizi, tariffe, galleria, spostamenti e contatti.',chips:['Tariffe','Servizi','Contatti','Spostamenti','Galleria'],sub:'Disponibile per orientarti',placeholder:'Fai una domanda…',copy:'Assistente automatico basato esclusivamente sulle informazioni pubblicate su questo sito.',answers:{tariffe:'Le tariffe pubblicate sono: 15 min 50 €, 30 min 100 €, 1 ora 150 €, 2 ore 250 €, 3 ore 400 €, notte (22:00–08:00) 500 €.',servizi:'Il sito presenta otto categorie: massaggi, giochi sensuali, preliminari e rapporti, dominazione, sexcam, nudes, speciale e comfort. Le condizioni devono essere concordate in anticipo.',contatti:'Il modulo e i contatti X, Instagram, Signal e TeleGuard sono disponibili nella sezione Contatti.',spostamenti:'Gli spostamenti sono possibili su richiesta, in base alla disponibilità e alle regole locali.',galleria:'La galleria cerca automaticamente le foto 01–40 nella radice del sito e accetta JPG, JPEG, PNG, WebP, AVIF o JFIF.',eta:'Il sito è riservato ai maggiorenni.'}},
-'de-DE':{hello:'Hallo. Ich kann Sie über die auf dieser Website veröffentlichten Informationen zu Leistungen, Preisen, Galerie, Reisen und Kontakt informieren.',chips:['Preise','Leistungen','Kontakt','Reisen','Galerie'],sub:'Zur Orientierung verfügbar',placeholder:'Stellen Sie eine Frage…',copy:'Automatischer Assistent, der ausschließlich auf den veröffentlichten Website-Informationen basiert.',answers:{preise:'Die veröffentlichten Preise sind: 15 Min. 50 €, 30 Min. 100 €, 1 Std. 150 €, 2 Std. 250 €, 3 Std. 400 €, Nacht (22:00–08:00) 500 €.',leistungen:'Die Website nennt acht Kategorien: Massagen, sinnliche Spiele, Vorspiel & Geschlechtsverkehr, Dominanz, Sexcam, Nudes, Spezial und Komfort. Bedingungen werden vorab vereinbart.',kontakt:'Formular sowie X-, Instagram-, Signal- und TeleGuard-Kontakte befinden sich im Bereich Kontakt.',reisen:'Reisen sind auf Anfrage möglich, vorbehaltlich Verfügbarkeit und örtlicher Regeln.',galerie:'Die Galerie sucht automatisch die Fotos 01–40 im Stammverzeichnis und unterstützt JPG, JPEG, PNG, WebP, AVIF und JFIF.',alter:'Die Website ist nur für Erwachsene bestimmt.'}}
-};
+/* Assistant moderne : construit automatiquement sa base de connaissances depuis le contenu actuel de la page. */
 const aiFab=document.getElementById('aiFab'),aiPanel=document.getElementById('aiPanel'),aiClose=document.getElementById('aiClose'),aiMessages=document.getElementById('aiMessages'),aiChips=document.getElementById('aiChips'),aiForm=document.getElementById('aiForm'),aiInput=document.getElementById('aiInput');
-function aiSay(text,who='bot'){const d=document.createElement('div');d.className='ai-msg '+who;d.textContent=text;aiMessages.appendChild(d);aiMessages.scrollTop=aiMessages.scrollHeight}
-function aiOpen(){aiPanel.classList.add('open');aiFab.setAttribute('aria-expanded','true');if(!aiMessages.children.length){const d=AI_DATA[locale]||AI_DATA['fr-FR'];aiSay(d.hello);renderChips()}aiInput.focus()}
-function renderChips(){aiChips.innerHTML='';const d=AI_DATA[locale]||AI_DATA['fr-FR'];d.chips.forEach(label=>{const b=document.createElement('button');b.type='button';b.className='ai-chip';b.textContent=label;b.onclick=()=>aiAsk(label);aiChips.appendChild(b)})}
-function normalize(x){return x.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'')}
-function aiAnswer(q){const d=AI_DATA[locale]||AI_DATA['fr-FR'];const n=normalize(q);let key='';if(/tarif|prix|cout|combien|heure|nuit|15 min|30 min/.test(n))key=locale==='it-IT'?'tariffe':locale==='de-DE'?'preise':'tarifs';else if(/prestation|service|massage|sensuel|domination|sexcam|nude|confort/.test(n))key=locale==='it-IT'?'servizi':locale==='de-DE'?'leistungen':'prestations';else if(/contact|email|mail|signal|teleguard|instagram|x\.com|joindre/.test(n))key=locale==='it-IT'?'contatti':locale==='de-DE'?'kontakt':'contact';else if(/deplacement|voyage|ville|france|belgique|italie|allemagne|reizen|spostamenti/.test(n))key=locale==='it-IT'?'spostamenti':locale==='de-DE'?'reisen':'deplacements';else if(/galerie|photo|image|portrait/.test(n))key=locale==='it-IT'?'galleria':locale==='de-DE'?'galerie':'galerie';else if(/18|age|majeur|minor|minder|maggior/.test(n))key=locale==='it-IT'?'eta':locale==='de-DE'?'alter':'age';return key&&d.answers[key]?d.answers[key]:d.hello}
-function aiAsk(q){if(!q)return;aiSay(q,'user');aiSay(aiAnswer(q));renderChips()} function syncAssistantLocale(resetMessages=false){const d=AI_DATA[locale]||AI_DATA['fr-FR'];if(resetMessages){aiMessages.innerHTML='';if(aiPanel.classList.contains('open'))aiSay(d.hello)}renderChips();const sub=document.getElementById('aiSub'),inp=document.getElementById('aiInput'),disc=document.getElementById('aiDisclaimer');if(sub)sub.textContent=d.sub;if(inp)inp.placeholder=d.placeholder;if(disc)disc.textContent=d.copy} syncAssistantLocale();
-aiFab.onclick=aiOpen;aiClose.onclick=()=>{aiPanel.classList.remove('open');aiFab.setAttribute('aria-expanded','false')};aiForm.onsubmit=e=>{e.preventDefault();const q=aiInput.value.trim();aiInput.value='';aiAsk(q)};
+let aiBusy=false;
 
+function normalizeAI(x){
+  return String(x||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+}
+
+/* Aucun réglage technique n'est nécessaire : le contenu est relu directement dans la page. */
+function buildAISiteContext(){
+  const selectors=['main section','#contact','footer'];
+  const parts=[];
+  document.querySelectorAll(selectors.join(',')).forEach(el=>{
+    const text=(el.innerText||el.textContent||'').replace(/\s+/g,' ').trim();
+    if(text) parts.push(text);
+  });
+  return parts.join('\n');
+}
+function buildAIKnowledge(){
+  const rows=[...document.querySelectorAll('#contact .social-row')].map(row=>{
+    const label=row.querySelector('.label')?.textContent?.trim()||'';
+    const value=row.querySelector('.value')?.innerText?.trim()||'';
+    return label&&value?`${label}: ${value}`:'';
+  }).filter(Boolean);
+  const sections=[...document.querySelectorAll('main section')].map(s=>{
+    const title=s.querySelector('.section-title,h2,h3')?.innerText?.trim()||'';
+    const text=(s.innerText||'').replace(/\s+/g,' ').trim();
+    return title?`${title}: ${text}`:text;
+  }).filter(Boolean);
+  return {contact:rows.join(' | '),sections,full:buildAISiteContext()};
+}
+let AI_KNOWLEDGE=buildAIKnowledge();
+
+function aiSay(text,who='bot'){
+  const d=document.createElement('div');
+  d.className='ai-msg '+who;
+  d.textContent=text;
+  aiMessages.appendChild(d);
+  aiMessages.scrollTop=aiMessages.scrollHeight;
+}
+function aiTyping(){
+  const d=document.createElement('div');
+  d.className='ai-typing';
+  d.id='aiTyping';
+  d.innerHTML='<span></span><span></span><span></span>';
+  aiMessages.appendChild(d);
+  aiMessages.scrollTop=aiMessages.scrollHeight;
+}
+function aiOpen(){
+  AI_KNOWLEDGE=buildAIKnowledge();
+  aiPanel.classList.add('open');
+  aiFab.setAttribute('aria-expanded','true');
+  if(!aiMessages.children.length){
+    aiSay('Bonjour 👋 Je suis l’assistant du site. Je peux retrouver rapidement les informations affichées ici, notamment le contact, les informations générales, les tarifs publiés, la galerie, les déplacements et les mentions du site. Que souhaitez-vous savoir ?');
+    renderChips();
+  }
+  aiInput.focus();
+}
+function renderChips(){
+  aiChips.innerHTML='';
+  ['Informations','Contact','Tarifs','Galerie','Déplacements'].forEach(label=>{
+    const b=document.createElement('button');
+    b.type='button'; b.className='ai-chip'; b.textContent=label;
+    b.onclick=()=>aiAsk(label);
+    aiChips.appendChild(b);
+  });
+}
+function extractRelevantText(q){
+  const n=normalizeAI(q);
+  const terms=n.split(/[^a-z0-9@._-]+/).filter(x=>x.length>2);
+  const chunks=AI_KNOWLEDGE.sections.concat([AI_KNOWLEDGE.contact]).map(x=>x.trim()).filter(Boolean);
+  const scored=chunks.map(chunk=>{
+    const c=normalizeAI(chunk);
+    let score=0;
+    terms.forEach(t=>{if(c.includes(t)) score+=t.length>5?3:1;});
+    if(/contact|email|mail|telephone|signal|telegram|instagram|x\b/.test(n) && normalizeAI(AI_KNOWLEDGE.contact).includes(n.match(/contact|email|mail|signal|telegram|instagram|x\b/)?.[0]||'@@')) score+=4;
+    return {chunk,score};
+  }).filter(x=>x.score>0).sort((a,b)=>b.score-a.score);
+  return scored.slice(0,3).map(x=>x.chunk).join('\n');
+}
+function aiAnswer(q){
+  AI_KNOWLEDGE=buildAIKnowledge();
+  const n=normalizeAI(q).trim();
+  if(!n) return 'Écrivez votre question et je chercherai l’information directement dans le contenu actuel du site.';
+  if(/^(bonjour|salut|hello|bonsoir|coucou)\b/.test(n)) return 'Bonjour 👋 Je suis prêt à vous renseigner sur les informations actuellement affichées sur le site.';
+  if(/merci|thanks/.test(n)) return 'Avec plaisir !';
+  if(/qui es tu|qui es-tu|tu es quoi|assistant/.test(n)) return 'Je suis l’assistant du site. Ma base de connaissances est reconstruite automatiquement à partir du contenu actuel de la page, sans configuration manuelle à maintenir.';
+  if(/aide|help|que peux tu|que peux-tu|questions/.test(n)) return 'Vous pouvez me demander une information sur le contact, les tarifs publiés, la galerie, les déplacements, les informations générales ou les mentions affichées sur le site.';
+  const relevant=extractRelevantText(q);
+  if(relevant){
+    return 'Voici ce que je trouve sur le site :\n\n'+relevant.slice(0,1400);
+  }
+  if(/contact|email|mail|joindre|ecrire|e-mail/.test(n) && AI_KNOWLEDGE.contact)
+    return 'Les moyens de contact actuellement affichés sont : '+AI_KNOWLEDGE.contact+'.';
+  return 'Je ne trouve pas cette information dans le contenu actuellement publié sur cette page. Essayez une question plus précise, par exemple « Comment contacter Alicia ? » ou « Quels tarifs sont affichés ? ».';
+}
+function aiAsk(q){
+  if(!q||aiBusy)return;
+  aiSay(q,'user');
+  aiBusy=true;
+  aiChips.innerHTML='';
+  aiTyping();
+  setTimeout(()=>{
+    document.getElementById('aiTyping')?.remove();
+    aiSay(aiAnswer(q));
+    aiBusy=false;
+    renderChips();
+  },420);
+}
+function syncAssistantLocale(){
+  const sub=document.getElementById('aiSub'),inp=document.getElementById('aiInput'),disc=document.getElementById('aiDisclaimer');
+  if(sub)sub.textContent='En ligne · Réponse instantanée';
+  if(inp)inp.placeholder='Écrivez votre message…';
+  if(disc)disc.textContent='Les réponses utilisent automatiquement le contenu actuellement affiché sur cette page.';
+}
+syncAssistantLocale();
+aiFab.onclick=aiOpen;
+aiClose.onclick=()=>{aiPanel.classList.remove('open');aiFab.setAttribute('aria-expanded','false')};
+aiForm.onsubmit=e=>{e.preventDefault();const q=aiInput.value.trim();aiInput.value='';aiAsk(q)};
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeLegal();closeLightbox()}});
 </script>
 
@@ -1455,6 +1558,41 @@ section{padding:88px 0}
   #contact .social-list{padding:6px 18px;}
   .contact{gap:20px !important;}
 }
+</style>
+
+
+<style id="modern-ai-style">
+#aiFab{
+  width:62px;height:62px;border:0;border-radius:20px;
+  background:linear-gradient(145deg,#d9bb63,#a7832d);
+  color:#090909;box-shadow:0 14px 38px rgba(0,0,0,.48);
+  font-size:1.35rem;
+}
+#aiFab:hover{transform:translateY(-3px) scale(1.04)}
+#aiFab .ai-dot{width:12px;height:12px;right:0;top:0;background:#35c979}
+.ai-panel{border-radius:24px;background:#0b0b0b;border-color:rgba(201,168,76,.28)}
+.ai-head{padding:15px 16px}
+.ai-avatar{
+  width:42px;height:42px;border-radius:14px;
+  background:linear-gradient(145deg,#d9bb63,#a7832d);
+  color:#090909;font-size:1.05rem;
+}
+.ai-head small{display:block;color:#777;font-size:.68rem;margin-top:2px}
+.ai-messages{padding:16px}
+.ai-msg{font-size:.84rem;box-shadow:0 3px 12px rgba(0,0,0,.12)}
+.ai-msg.bot{background:#151515;border-color:#262626}
+.ai-msg.user{background:rgba(201,168,76,.13)}
+.ai-typing{
+  width:max-content;padding:8px 12px;border-radius:14px;
+  background:#151515;border:1px solid #272727;color:#888;
+}
+.ai-typing span{
+  display:inline-block;width:5px;height:5px;border-radius:50%;
+  background:#999;margin:0 2px;animation:aiBounce 1s infinite ease-in-out;
+}
+.ai-typing span:nth-child(2){animation-delay:.15s}
+.ai-typing span:nth-child(3){animation-delay:.3s}
+@keyframes aiBounce{0%,60%,100%{transform:translateY(0);opacity:.45}30%{transform:translateY(-3px);opacity:1}}
 </style>
 
 </body>
