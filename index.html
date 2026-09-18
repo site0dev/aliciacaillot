@@ -571,6 +571,15 @@ section:nth-of-type(even){background:#F7F7F7 !important}
 .gallery-placeholder{visibility:hidden}
 </style>
 
+
+<style id="age-final-fix">
+#age-overlay.hidden{
+  opacity:0 !important;
+  visibility:hidden !important;
+  pointer-events:none !important;
+}
+</style>
+
 </head>
 <body><div id="site-discreet-note" style="display:none" aria-hidden="true">Site d’information et de prise de contact réservé aux adultes.</div>
 <div id="age-overlay" role="dialog" aria-modal="true" aria-labelledby="age-title">
@@ -581,6 +590,19 @@ section:nth-of-type(even){background:#F7F7F7 !important}
     <small data-i18n="ageSmall">L'accès au site ne vaut pas consentement à une prestation et les conditions applicables doivent être respectées.</small>
   </div>
 </div>
+
+<script id="age-verification-early">
+(function(){
+  try{
+    var ok=localStorage.getItem('ageVerified')==='true' ||
+      document.cookie.split('; ').some(function(v){return v==='ageVerified=true';});
+    if(ok){
+      var el=document.getElementById('age-overlay');
+      if(el) el.classList.add('hidden');
+    }
+  }catch(e){}
+})();
+</script>
 <header><div class="container nav">
   <a class="logo" href="#hero" aria-label="Alicia Caillot">Alicia <span>Caillot</span></a>
   <ul class="nav-links" id="navLinks">
@@ -852,14 +874,40 @@ const language=document.getElementById('language'); language.value=locale;
 function applyLocale(){const t=translations[locale];document.documentElement.lang=locale.slice(0,2);document.querySelectorAll('[data-i18n]').forEach(el=>{const k=el.dataset.i18n;if(t[k]!==undefined)el.textContent=t[k]});document.querySelectorAll('[data-i18n-placeholder]').forEach(el=>{const k=el.dataset.i18nPlaceholder;if(t[k]!==undefined)el.placeholder=t[k]});document.querySelectorAll('[data-i18n-aria]').forEach(el=>{const k=el.dataset.i18nAria;if(t[k]!==undefined)el.setAttribute('aria-label',t[k])});document.title='Alicia Caillot';const og=document.querySelector('meta[property="og:locale"]');if(og)og.content=locale.replace('-', '_');try{localStorage.setItem('siteLang',locale)}catch(e){}}
 applyLocale(); language.addEventListener('change',()=>{locale=language.value;const u=new URL(location.href);u.searchParams.set('lang',locale);history.replaceState({},'',u);applyLocale();syncAssistantLocale(true);renderGallery();});
 const overlay=document.getElementById('age-overlay');
-let ageVerified=false;
-try{ageVerified=localStorage.getItem('ageVerified')==='true'}catch(e){}
-if(ageVerified) overlay.classList.add('hidden');
-document.getElementById('ageYes').onclick=()=>{
+
+function getAgeVerified(){
+  try{
+    if(localStorage.getItem('ageVerified')==='true') return true;
+  }catch(e){}
+  try{
+    return document.cookie.split('; ').some(v=>v==='ageVerified=true');
+  }catch(e){
+    return false;
+  }
+}
+
+function saveAgeVerified(){
   try{localStorage.setItem('ageVerified','true')}catch(e){}
+  try{
+    document.cookie='ageVerified=true; max-age=31536000; path=/; SameSite=Lax';
+  }catch(e){}
+}
+
+if(getAgeVerified()){
   overlay.classList.add('hidden');
-};
-document.getElementById('ageNo').onclick=()=>{const t=translations[locale]||translations['fr-FR'];document.body.innerHTML=`<main style="min-height:100svh;display:grid;place-items:center;background:#080808;color:#777;font:16px Inter,sans-serif;text-align:center;padding:30px"><div><h1 style="color:#7b2432;font-family:Georgia,serif">${t.exitTitle}</h1><p>${t.exitText}</p></div></main>`};
+}else{
+  overlay.classList.remove('hidden');
+}
+
+document.getElementById('ageYes').addEventListener('click',()=>{
+  saveAgeVerified();
+  overlay.classList.add('hidden');
+});
+
+document.getElementById('ageNo').addEventListener('click',()=>{
+  const t=translations[locale]||translations['fr-FR'];
+  document.body.innerHTML=`<main style="min-height:100svh;display:grid;place-items:center;background:#080808;color:#777;font:16px Inter,sans-serif;text-align:center;padding:30px"><div><h1 style="color:#7b2432;font-family:Georgia,serif">${t.exitTitle}</h1><p>${t.exitText}</p></div></main>`;
+});
 const menu=document.getElementById('menu'),navLinks=document.getElementById('navLinks');function setMenu(open){navLinks.classList.toggle('open',open);menu.setAttribute('aria-expanded',String(open));menu.setAttribute('aria-label',open?(translations[locale]||translations['fr-FR']).menuClose:(translations[locale]||translations['fr-FR']).menuOpen);menu.innerHTML=open?'<i class="fas fa-xmark"></i>':'<i class="fas fa-bars"></i>'}menu.addEventListener('click',()=>setMenu(!navLinks.classList.contains('open')));document.querySelectorAll('.nav-links a').forEach(a=>a.addEventListener('click',()=>setMenu(false)));document.addEventListener('click',e=>{if(window.innerWidth<=760&&navLinks.classList.contains('open')&&!e.target.closest('header'))setMenu(false)});
 const toast=document.getElementById('toast');let toastTimer;function showToast(m){toast.textContent=m;toast.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>toast.classList.remove('show'),2200)}
 async function copyText(text){try{await navigator.clipboard.writeText(text);showToast((translations[locale]||translations['fr-FR']).copied)}catch(e){const i=document.createElement('input');i.value=text;document.body.appendChild(i);i.select();document.execCommand('copy');i.remove();showToast((translations[locale]||translations['fr-FR']).copied)}}document.querySelectorAll('[data-copy]').forEach(b=>b.onclick=()=>copyText(b.dataset.copy));document.getElementById('signalNav').onclick=()=>copyText(SIGNAL);
@@ -981,37 +1029,35 @@ Identifiant de contact : @${identifier}`;
 
   const status=document.getElementById('formStatus');
 
-  // Instagram et Telegram ne permettent pas tous deux un envoi automatique
-  // vers un identifiant personnel depuis une page web. On prépare donc le
-  // message, le copie dans le presse-papiers, puis ouvre l'application choisie.
-  navigator.clipboard?.writeText(textMessage).catch(()=>{});
-
-  if(app==='telegram'){
-      try{ window.location.href='tg://resolve?domain='+encodeURIComponent(identifier.replace(/^@/,'')); }catch(e){}
-      setTimeout(()=>window.open('https://t.me/'+encodeURIComponent(identifier.replace(/^@/,'')),'_blank','noopener,noreferrer'),700);
-    }else if(app==='instagram'){
-      try{ window.location.href='instagram://user?username='+encodeURIComponent(identifier.replace(/^@/,'')); }catch(e){}
-      setTimeout(()=>window.open('https://www.instagram.com/'+encodeURIComponent(identifier.replace(/^@/,''))+'/','_blank','noopener,noreferrer'),700);
-    }else if(app==='x'){
-      try{ window.location.href='twitter://user?screen_name='+encodeURIComponent(identifier.replace(/^@/,'')); }catch(e){}
-      setTimeout(()=>window.open('https://x.com/'+encodeURIComponent(identifier.replace(/^@/,'')),'_blank','noopener,noreferrer'),700);
-    }else if(app==='signal'){
-      try{ window.location.href='sgnl://signal.me/#p/'+encodeURIComponent(identifier); }catch(e){}
-      setTimeout(()=>window.open('https://signal.me/#p/'+encodeURIComponent(identifier),'_blank','noopener,noreferrer'),700);
-    }else if(app==='teleguard'){
-      try{ window.location.href='teleguard://'+encodeURIComponent(identifier); }catch(e){}
+  // Le navigateur ne permet pas à une page web d'envoyer directement
+  // un message privé vers tous les services. Le message est donc copié
+  // puis l'application / le profil choisi est ouvert.
+  try {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(textMessage).catch(()=>{});
     }
+  } catch(e) {}
+
+  const cleanId=identifier.replace(/^@/,'');
+  if(app==='telegram'){
     status.textContent='Votre demande est préparée et copiée. Ouverture de Telegram…';
-    const tgApp=`tg://resolve?domain=${encodeURIComponent(identifier)}`;
-    const tgWeb=`https://t.me/${encodeURIComponent(identifier)}`;
-    window.location.href=tgApp;
-    setTimeout(()=>{ window.open(tgWeb,'_blank','noopener,noreferrer'); },700);
-  }else{
+    try{ window.location.href='tg://resolve?domain='+encodeURIComponent(cleanId); }catch(e){}
+    setTimeout(()=>window.open('https://t.me/'+encodeURIComponent(cleanId),'_blank','noopener,noreferrer'),700);
+  }else if(app==='instagram'){
     status.textContent='Votre demande est préparée et copiée. Ouverture d’Instagram…';
-    const igApp=`instagram://user?username=${encodeURIComponent(identifier)}`;
-    const igWeb=`https://www.instagram.com/${encodeURIComponent(identifier)}/`;
-    window.location.href=igApp;
-    setTimeout(()=>{ window.open(igWeb,'_blank','noopener,noreferrer'); },700);
+    try{ window.location.href='instagram://user?username='+encodeURIComponent(cleanId); }catch(e){}
+    setTimeout(()=>window.open('https://www.instagram.com/'+encodeURIComponent(cleanId)+'/_blank','_blank','noopener,noreferrer'),700);
+  }else if(app==='x'){
+    status.textContent='Votre demande est préparée et copiée. Ouverture de X…';
+    try{ window.location.href='twitter://user?screen_name='+encodeURIComponent(cleanId); }catch(e){}
+    setTimeout(()=>window.open('https://x.com/'+encodeURIComponent(cleanId),'_blank','noopener,noreferrer'),700);
+  }else if(app==='signal'){
+    status.textContent='Votre demande est préparée et copiée. Ouverture de Signal…';
+    try{ window.location.href='sgnl://signal.me/#p/'+encodeURIComponent(identifier); }catch(e){}
+    setTimeout(()=>window.open('https://signal.me/#p/'+encodeURIComponent(identifier),'_blank','noopener,noreferrer'),700);
+  }else if(app==='teleguard'){
+    status.textContent='Votre demande est préparée et copiée. Ouverture de TeleGuard…';
+    try{ window.location.href='teleguard://'+encodeURIComponent(identifier); }catch(e){}
   }
 });
 /* legal modal */
