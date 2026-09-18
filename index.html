@@ -689,6 +689,100 @@ nav .chevron,
 }
 </style>
 
+
+<style id="menu-final-white-three-lines">
+/* Bouton menu : immédiatement après la langue, blanc éclatant + 3 traits noirs */
+@media (max-width:760px){
+  .nav-actions{
+    display:flex !important;
+    align-items:center !important;
+    gap:8px !important;
+    margin-left:auto !important;
+  }
+
+  .nav-actions .lang{
+    flex:0 0 auto !important;
+  }
+
+  .nav-actions .menu,
+  button#menu.menu{
+    display:flex !important;
+    flex-direction:column !important;
+    align-items:center !important;
+    justify-content:center !important;
+    gap:5px !important;
+    flex:0 0 48px !important;
+    width:48px !important;
+    height:48px !important;
+    min-width:48px !important;
+    min-height:48px !important;
+    margin:0 !important;
+    padding:0 !important;
+    background:#FFFFFF !important;
+    color:#000000 !important;
+    border:2px solid #000000 !important;
+    border-radius:10px !important;
+    box-shadow:0 3px 12px rgba(0,0,0,.28) !important;
+    position:relative !important;
+    z-index:3100 !important;
+    -webkit-appearance:none !important;
+    appearance:none !important;
+  }
+
+  /* On masque l'icône Font Awesome et on dessine 3 traits nets. */
+  .nav-actions .menu i,
+  button#menu.menu i{
+    display:none !important;
+  }
+
+  .nav-actions .menu::before,
+  .nav-actions .menu::after,
+  button#menu.menu::before,
+  button#menu.menu::after{
+    content:"" !important;
+    display:block !important;
+    width:24px !important;
+    height:3px !important;
+    background:#000000 !important;
+    border-radius:3px !important;
+    position:absolute !important;
+    left:50% !important;
+    transform:translateX(-50%) !important;
+  }
+
+  .nav-actions .menu::before,
+  button#menu.menu::before{
+    top:13px !important;
+    box-shadow:0 8px 0 #000000 !important;
+  }
+
+  .nav-actions .menu::after,
+  button#menu.menu::after{
+    top:29px !important;
+  }
+
+  .nav-actions .menu:hover,
+  .nav-actions .menu:focus-visible,
+  button#menu.menu:hover,
+  button#menu.menu:focus-visible{
+    background:#FFFFFF !important;
+    color:#000000 !important;
+    border-color:#000000 !important;
+    outline:3px solid rgba(255,255,255,.7) !important;
+    outline-offset:2px !important;
+  }
+
+  .nav-actions .menu:active,
+  button#menu.menu:active{
+    transform:scale(.97);
+  }
+}
+
+@media (min-width:761px){
+  button#menu.menu{display:none !important;}
+}
+</style>
+
 </head>
 <body><div id="site-discreet-note" style="display:none" aria-hidden="true">Site d’information et de prise de contact réservé aux adultes.</div>
 <div id="age-overlay" role="dialog" aria-modal="true" aria-labelledby="age-title">
