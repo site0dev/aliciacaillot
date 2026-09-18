@@ -783,6 +783,19 @@ nav .chevron,
 }
 </style>
 
+
+<style id="hero-background-readability">
+#hero .hero h1,
+#hero .hero h1 em,
+#hero .hero .lead,
+#hero .hero .eyebrow{
+  text-shadow:0 2px 10px rgba(0,0,0,.75) !important;
+}
+#hero .hero h1{color:#fff !important;}
+#hero .hero h1 em{color:#D4AF37 !important;}
+#hero .hero .lead{color:#fff !important;}
+</style>
+
 </head>
 <body><div id="site-discreet-note" style="display:none" aria-hidden="true">Site d’information et de prise de contact réservé aux adultes.</div>
 <div id="age-overlay" role="dialog" aria-modal="true" aria-labelledby="age-title">
@@ -1284,60 +1297,83 @@ aiFab.onclick=aiOpen;aiClose.onclick=()=>{aiPanel.classList.remove('open');aiFab
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeLegal();closeLightbox()}});
 </script>
 
-<script id="hero-root-loader">
-(function(){
-  const extensions = ['webp','jpg','jpeg','png','avif','jfif'];
-  const root = '/';
-  const candidates = extensions.map(ext => root + 'hero.' + ext);
 
-  function showHero(src){
-    let img = document.getElementById('rootHeroImage');
-    if(!img){
-      const host = document.querySelector('header') || document.querySelector('main') || document.body;
-      const wrap = document.createElement('div');
-      wrap.id = 'rootHero';
-      wrap.setAttribute('aria-label','Photo d’accueil');
-      wrap.innerHTML = '<img id="rootHeroImage" alt="Photo d’accueil" loading="eager" decoding="async">';
-      host.insertBefore(wrap, host.firstChild);
-      img = document.getElementById('rootHeroImage');
-    }
-    img.src = src;
-    document.documentElement.classList.add('has-root-hero');
-  }
 
-  function tryNext(i){
-    if(i >= candidates.length) return;
-    const test = new Image();
-    test.onload = function(){ showHero(candidates[i]); };
-    test.onerror = function(){ tryNext(i+1); };
-    test.src = candidates[i] + '?v=' + Date.now();
-  }
-  tryNext(0);
-})();
-</script>
-<style id="root-hero-style">
-#rootHero{
-  width:100%;
-  display:block;
-  overflow:hidden;
-  background:#000;
+
+
+<style id="hero-background-style">
+#hero{
+  position:relative !important;
+  isolation:isolate !important;
+  overflow:hidden !important;
+  background-color:#111 !important;
+  background-position:center center !important;
+  background-size:cover !important;
+  background-repeat:no-repeat !important;
 }
-#rootHeroImage{
-  display:block;
-  width:100%;
-  height:min(62vh,620px);
-  min-height:280px;
-  object-fit:cover;
-  object-position:center;
+#hero::before{
+  content:"" !important;
+  position:absolute !important;
+  inset:0 !important;
+  z-index:-1 !important;
+  background:linear-gradient(
+    180deg,
+    rgba(0,0,0,.18) 0%,
+    rgba(0,0,0,.30) 48%,
+    rgba(0,0,0,.52) 100%
+  ) !important;
+  pointer-events:none !important;
 }
-@media(max-width:700px){
-  #rootHeroImage{
-    height:42vh;
-    min-height:220px;
-  }
+#hero > *{
+  position:relative !important;
+  z-index:1 !important;
+}
+#hero .hero{
+  position:relative !important;
+  z-index:2 !important;
 }
 </style>
 
+<script id="hero-root-background-loader">
+(function(){
+  const extensions=['webp','jpg','jpeg','png','avif','jfif'];
+  const candidates=[];
+
+  /* First priority: a file named hero at the site root. */
+  extensions.forEach(ext=>candidates.push('/hero.'+ext));
+
+  /* Fallback: the 01..040 photos already used by the gallery. */
+  for(let n=1;n<=40;n++){
+    const number=String(n).padStart(2,'0');
+    extensions.forEach(ext=>candidates.push('/'+number+'.'+ext));
+  }
+
+  function setHeroBackground(src){
+    const hero=document.getElementById('hero');
+    if(!hero)return;
+    hero.style.backgroundImage="url('"+src.replace(/'/g,"%27")+"')";
+    hero.classList.add('hero-background-ready');
+  }
+
+  function test(i){
+    if(i>=candidates.length)return;
+    const img=new Image();
+    img.onload=()=>setHeroBackground(candidates[i]);
+    img.onerror=()=>test(i+1);
+    img.src=candidates[i]+'?v='+Date.now();
+  }
+
+  function init(){
+    if(document.getElementById('hero')) test(0);
+  }
+
+  if(document.readyState==='loading'){
+    document.addEventListener('DOMContentLoaded',init);
+  }else{
+    init();
+  }
+})();
+</script>
 
 </body>
 </html>
