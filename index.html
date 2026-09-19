@@ -858,6 +858,124 @@ nav .chevron,
 .contact-request-item p{color:#bbb;margin-top:8px;white-space:pre-wrap;word-break:break-word;font-size:.8rem}
 .contact-request-meta{display:flex;flex-wrap:wrap;gap:8px;margin-top:7px;color:#999;font-size:.72rem}
 </style>
+
+<style id="final-fullscreen-and-menu-fix">
+/* ===== AFFICHAGE PLEIN ÉCRAN ===== */
+html, body {
+  width: 100% !important;
+  min-width: 100% !important;
+  max-width: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow-x: hidden !important;
+}
+
+main {
+  display: block !important;
+  width: 100% !important;
+  min-width: 100% !important;
+  max-width: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+main > section {
+  display: block !important;
+  width: 100% !important;
+  min-width: 100% !important;
+  max-width: none !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+}
+
+main > section > .container {
+  width: min(1120px, calc(100% - 32px)) !important;
+  max-width: 1120px !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+
+#hero,
+#hero > .container {
+  width: 100% !important;
+  max-width: none !important;
+}
+
+#hero > .container {
+  width: min(1120px, calc(100% - 32px)) !important;
+  max-width: 1120px !important;
+}
+
+/* ===== MENU MOBILE ===== */
+@media (max-width: 760px) {
+  header {
+    width: 100% !important;
+    left: 0 !important;
+    right: 0 !important;
+  }
+
+  header > .container.nav {
+    width: 100% !important;
+    max-width: none !important;
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+  }
+
+  #menu.menu {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 48px !important;
+    height: 48px !important;
+    min-width: 48px !important;
+    min-height: 48px !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    cursor: pointer !important;
+    pointer-events: auto !important;
+    position: relative !important;
+    z-index: 99999 !important;
+  }
+
+  #navLinks {
+    position: absolute !important;
+    top: 70px !important;
+    left: 0 !important;
+    right: 0 !important;
+    width: 100% !important;
+    max-width: none !important;
+    display: none !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    padding: 10px 18px 16px !important;
+    margin: 0 !important;
+    z-index: 99998 !important;
+  }
+
+  #navLinks.open {
+    display: flex !important;
+  }
+
+  #navLinks li {
+    width: 100% !important;
+  }
+
+  #navLinks a,
+  #navLinks .nav-auth-action {
+    width: 100% !important;
+    display: flex !important;
+    align-items: center !important;
+    text-align: left !important;
+    padding: 13px 8px !important;
+    cursor: pointer !important;
+  }
+
+  #navLinks .nav-auth-separator {
+    display: none !important;
+  }
+}
+</style>
+
 </head>
 <body><div id="site-discreet-note" style="display:none" aria-hidden="true">Site d’information et de prise de contact réservé aux adultes.</div>
 <div id="age-overlay" role="dialog" aria-modal="true" aria-labelledby="age-title">
@@ -2338,6 +2456,66 @@ section{padding:88px 0}
 @media(max-width:800px){.client-auth-grid,.admin-grid{grid-template-columns:1fr}.admin-chat-layout{grid-template-columns:1fr}.conversation-list{border-right:0;border-bottom:1px solid #292929;max-height:180px}.admin-top{align-items:flex-start;flex-direction:column}.admin-form-grid{grid-template-columns:1fr}.stats-row{grid-template-columns:repeat(3,1fr)}}
 @media(max-width:500px){.client-card,.admin-card{padding:16px}.client-tabs{gap:5px}.client-tab{font-size:.72rem;padding:8px 9px}.stats-row{gap:6px}.stat-box{padding:12px 5px}.stat-box strong{font-size:1.4rem}}
 </style>
+
+
+<script id="final-menu-handler">
+(function () {
+  function initMenu() {
+    const menu = document.getElementById('menu');
+    const navLinks = document.getElementById('navLinks');
+    if (!menu || !navLinks) return;
+
+    const closeMenu = () => {
+      navLinks.classList.remove('open');
+      menu.setAttribute('aria-expanded', 'false');
+      menu.setAttribute('aria-label', 'Ouvrir le menu');
+      menu.innerHTML = '<i class="fas fa-bars" aria-hidden="true"></i>';
+    };
+
+    const openMenu = () => {
+      navLinks.classList.add('open');
+      menu.setAttribute('aria-expanded', 'true');
+      menu.setAttribute('aria-label', 'Fermer le menu');
+      menu.innerHTML = '<i class="fas fa-xmark" aria-hidden="true"></i>';
+    };
+
+    menu.addEventListener('click', function (event) {
+      event.preventDefault();
+      event.stopPropagation();
+      if (navLinks.classList.contains('open')) closeMenu();
+      else openMenu();
+    });
+
+    navLinks.addEventListener('click', function (event) {
+      const target = event.target.closest('a, button');
+      if (target && target !== menu) closeMenu();
+    });
+
+    document.addEventListener('click', function (event) {
+      if (window.innerWidth <= 760 &&
+          navLinks.classList.contains('open') &&
+          !event.target.closest('#navLinks') &&
+          !event.target.closest('#menu')) {
+        closeMenu();
+      }
+    });
+
+    window.addEventListener('resize', function () {
+      if (window.innerWidth > 760) {
+        navLinks.classList.remove('open');
+        menu.setAttribute('aria-expanded', 'false');
+        menu.innerHTML = '<i class="fas fa-bars" aria-hidden="true"></i>';
+      }
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initMenu);
+  } else {
+    initMenu();
+  }
+})();
+</script>
 
 </body>
 </html>
