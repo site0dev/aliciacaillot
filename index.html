@@ -808,6 +808,18 @@ nav .chevron,
 <style>
 .about-details{width:100%;border:1px solid rgba(255,255,255,.12);border-radius:16px;background:rgba(255,255,255,.03);overflow:hidden;transition:.3s ease}.about-details summary{list-style:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:15px;padding:18px 20px;font-weight:600;color:var(--text,#fff);user-select:none}.about-details summary::-webkit-details-marker{display:none}.about-details summary i{transition:transform .3s ease;color:var(--gold,#d4af37)}.about-details[open] summary i{transform:rotate(180deg)}.about-details .about-copy{padding:0 20px 20px;animation:aboutSlide .3s ease}.about-details .about-copy p{margin:0 0 12px}.about-details .about-copy p:last-child{margin-bottom:0}@keyframes aboutSlide{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
 </style>
+
+<style id="about-full-width">
+/* À propos : affichage direct, sans modal/accordéon, pleine largeur */
+#about .about.about-full{display:block;width:100%;grid-template-columns:none;gap:0;}
+#about .about-full .about-copy{display:block;width:100%;max-width:none;padding:0;color:#d0cbc5;font-size:1rem;}
+#about .about-full .about-copy p{max-width:none;margin:0 0 15px;}
+#about .about-full .about-copy p:last-child{margin-bottom:0;}
+@media(max-width:760px){
+  #about .about.about-full{display:block;width:100%;}
+  #about .about-full .about-copy{width:100%;font-size:1rem;line-height:1.7;}
+}
+</style>
 </head>
 <body><div id="site-discreet-note" style="display:none" aria-hidden="true">Site d’information et de prise de contact réservé aux adultes.</div>
 <div id="age-overlay" role="dialog" aria-modal="true" aria-labelledby="age-title">
@@ -864,7 +876,7 @@ nav .chevron,
 <button class="gallery-arrow gallery-next" id="galleryNext" type="button" data-i18n-aria="galleryNext" aria-label="Photos suivantes"><i class="fas fa-chevron-right"></i></button>
 
 </div></div></section>
-<section id="about"><div class="container"><div class="section-head"><h2 class="section-title"><i class="fas fa-user"></i><span data-i18n="aboutTitle">À propos</span></h2></div><div class="about"><details class="about-details"><summary><span>Découvrir le profil</span><i class="fas fa-chevron-down"></i></summary><div class="about-copy"><p><strong style="color:var(--gold);font-family:'Playfair Display',serif">Alicia Caillot</strong></p><p>163 cm • 28 ans • Élégante, féminine & pleine d’assurance ✨</p><p>Une jeune femme au charme naturel, avec une personnalité pétillante et un côté très séduisant. Elle aime prendre soin d’elle, jouer avec son style et partager des moments privés dans une ambiance complice et raffinée.</p><p>💋 28 ans | Contenu réservé aux adultes<br>📸 Photos exclusives & contenus privés<br>💌 Expériences personnalisées sur demande<br>🔒 Discrétion et respect avant tout</p></div></details></div></div></section>
+<section id="about"><div class="container"><div class="section-head"><h2 class="section-title"><i class="fas fa-user"></i><span data-i18n="aboutTitle">À propos</span></h2></div><div class="about about-full"><div class="about-copy"><p><strong style="color:var(--gold);font-family:'Playfair Display',serif">Alicia Caillot</strong></p><p>163 cm • 28 ans • Élégante, féminine & pleine d’assurance ✨</p><p>Une jeune femme au charme naturel, avec une personnalité pétillante et un côté très séduisant. Elle aime prendre soin d’elle, jouer avec son style et partager des moments privés dans une ambiance complice et raffinée.</p><p>💋 28 ans | Contenu réservé aux adultes<br>📸 Photos exclusives & contenus privés<br>💌 Expériences personnalisées sur demande<br>🔒 Discrétion et respect avant tout</p></div></div></div></section>
 <section id="contact"><div class="container"><div class="section-head"><h2 class="section-title"><i class="fas fa-paper-plane"></i><span data-i18n="contactTitle">Prendre contact</span></h2></div><div class="contact"><form class="form" id="contactForm">
 <label for="name">Nom / Prénom</label>
 <input id="name" type="text" autocomplete="name" required placeholder="Votre nom">
