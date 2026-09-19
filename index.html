@@ -837,6 +837,8 @@ nav .chevron,
 #legalModal .legal-divider{border-top:1px solid #ccc!important;margin:26px 0!important}
 @media(max-width:600px){#legalModal{padding:8px!important}#legalModal .modal-card{height:94svh!important;max-height:94svh!important;border-radius:12px!important;padding:20px 16px 26px!important}#legalModal .modal-top{top:-20px!important;margin:-20px -16px 18px!important;padding:13px 14px!important}#legalModal p{font-size:.88rem!important;line-height:1.65!important}#legalModal h3{font-size:1rem!important}#legalModal h4{font-size:.86rem!important}}
 </style>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body><div id="site-discreet-note" style="display:none" aria-hidden="true">Site d’information et de prise de contact réservé aux adultes.</div>
 <div id="age-overlay" role="dialog" aria-modal="true" aria-labelledby="age-title">
@@ -872,7 +874,7 @@ nav .chevron,
   </div>
 </div></header>
 <main>
-<section id="hero" aria-label="Alicia Caillot"><img class="hero-bg" src="/hero.jpg" alt="" aria-hidden="true" fetchpriority="high" decoding="async"><div class="hero-scrim" aria-hidden="true"></div><div class="container hero"><h1>Alicia <em>Caillot</em></h1><a class="btn btn-primary" href="#contact"><i class="fas fa-calendar-check"></i><span data-i18n="cta">Prendre contact</span></a></div></section>
+<section id="hero" aria-label="Alicia Caillot"><img class="hero-bg" src="/hero.jpg" alt="" aria-hidden="true" fetchpriority="high" decoding="async"><div class="hero-scrim" aria-hidden="true"></div><div class="container hero"><h1 id="heroSecretTrigger" title="Alicia Caillot">Alicia <em>Caillot</em></h1><a class="btn btn-primary" href="#contact"><i class="fas fa-calendar-check"></i><span data-i18n="cta">Prendre contact</span></a></div></section>
 <section id="services"><div class="container"><div class="section-head"><h2 class="section-title"><i class="fas fa-feather-alt"></i><span data-i18n="servicesTitle">Prestations</span></h2></div>
 <div class="services-grid">
 <div class="service-cat"><h3 data-i18n="s1t">Massages</h3><ul><li data-i18n="s1a">Relaxant</li><li data-i18n="s1b">Californien</li><li data-i18n="s1c">Prostate</li><li data-i18n="s1d">Tantrique</li></ul></div>
@@ -895,52 +897,76 @@ nav .chevron,
 </div></div></section>
 <section id="about"><div class="container"><div class="section-head"><h2 class="section-title"><i class="fas fa-user"></i><span data-i18n="aboutTitle">À propos</span></h2></div><div class="about about-full"><div class="about-copy"><p><strong style="color:var(--gold);font-family:'Playfair Display',serif">Alicia Caillot</strong></p><p>163 cm • 28 ans • Élégante, féminine & pleine d’assurance ✨</p><p>Une jeune femme au charme naturel, avec une personnalité pétillante et un côté très séduisant. Elle aime prendre soin d’elle, jouer avec son style et partager des moments privés dans une ambiance complice et raffinée.</p><p>💋 28 ans | Contenu réservé aux adultes<br>📸 Photos exclusives & contenus privés<br>💌 Expériences personnalisées sur demande<br>🔒 Discrétion et respect avant tout</p></div></div></div></section>
 <section id="contact">
-<div class="container">
-  <div class="section-head">
-    <h2 class="section-title"><i class="fas fa-envelope"></i> Formulaire de contact</h2>
-    <p class="section-intro">Remplissez vos coordonnées pour être recontacté.</p>
+  <div class="container">
+    <div class="section-head">
+      <h2 class="section-title"><i class="fas fa-envelope"></i> <span>Contact & espace client</span></h2>
+      <p class="section-intro">Créez votre compte ou connectez-vous pour échanger directement avec Alicia Caillot dans une conversation privée.</p>
+    </div>
+
+    <div class="client-auth-grid">
+      <div class="client-card">
+        <div class="client-tabs">
+          <button type="button" class="client-tab active" data-auth-tab="login">Connexion</button>
+          <button type="button" class="client-tab" data-auth-tab="signup">Inscription</button>
+          <button type="button" class="client-tab" data-auth-tab="reset">Mot de passe oublié</button>
+        </div>
+
+        <form id="clientLoginForm" class="form auth-form">
+          <div><label for="loginUsername">Nom d'utilisateur / e-mail</label><input id="loginUsername" type="text" autocomplete="username" required placeholder="Votre nom d'utilisateur ou e-mail"></div>
+          <div><label for="loginPassword">Mot de passe</label><input id="loginPassword" type="password" autocomplete="current-password" required placeholder="Votre mot de passe"></div>
+          <button type="submit" class="btn btn-primary"><i class="fas fa-right-to-bracket"></i> Se connecter</button>
+          <div id="loginStatus" class="status" aria-live="polite"></div>
+        </form>
+
+        <form id="clientSignupForm" class="form auth-form" hidden>
+          <div><label for="signupName">Nom complet</label><input id="signupName" type="text" autocomplete="name" required placeholder="Votre nom"></div>
+          <div><label for="signupEmail">E-mail</label><input id="signupEmail" type="email" autocomplete="email" required placeholder="votre@email.com"></div>
+          <div><label for="signupPhone">Téléphone</label><input id="signupPhone" type="tel" autocomplete="tel" required placeholder="Votre numéro"></div>
+          <div><label for="signupCity">Ville</label><input id="signupCity" type="text" autocomplete="address-level2" required placeholder="Votre ville"></div>
+          <div><label for="signupPostal">Code postal</label><input id="signupPostal" type="text" autocomplete="postal-code" required placeholder="Code postal"></div>
+          <div><label for="signupPassword">Mot de passe</label><input id="signupPassword" type="password" autocomplete="new-password" minlength="8" required placeholder="8 caractères minimum"></div>
+          <div><label for="signupPassword2">Confirmer le mot de passe</label><input id="signupPassword2" type="password" autocomplete="new-password" minlength="8" required placeholder="Répétez le mot de passe"></div>
+          <label class="check"><input id="signupConsent" type="checkbox" required><span>J'accepte que mes données soient utilisées pour mon compte et ma conversation privée.</span></label>
+          <button type="submit" class="btn btn-primary"><i class="fas fa-user-plus"></i> Créer mon compte</button>
+          <div id="signupStatus" class="status" aria-live="polite"></div>
+        </form>
+
+        <form id="resetRequestForm" class="form auth-form" hidden>
+          <div><label for="resetEmail">E-mail du compte</label><input id="resetEmail" type="email" autocomplete="email" required placeholder="votre@email.com"></div>
+          <button type="submit" class="btn btn-primary"><i class="fas fa-key"></i> Recevoir le lien</button>
+          <div id="resetStatus" class="status" aria-live="polite"></div>
+        </form>
+
+        <div id="accountState" class="account-state" hidden>
+          <div class="account-state-head">
+            <div><strong id="accountName">Compte connecté</strong><small id="accountEmail"></small></div>
+            <button id="logoutBtn" type="button" class="btn btn-ghost">Déconnexion</button>
+          </div>
+          <div id="clientChat" class="chat-box">
+            <div class="chat-head"><strong>Conversation privée</strong><span id="chatStatus">Connexion…</span></div>
+            <div id="clientMessages" class="chat-messages"></div>
+            <form id="clientMessageForm" class="chat-compose">
+              <input id="clientMessageInput" maxlength="2000" autocomplete="off" placeholder="Écrivez votre message…" required>
+              <button type="submit" class="chat-send" aria-label="Envoyer"><i class="fas fa-paper-plane"></i></button>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <div class="client-card contact-info-card">
+        <h3>Contact</h3>
+        <p>Une fois connecté, vous pouvez conserver tout l'historique de vos échanges dans votre espace.</p>
+        <div class="secure-points">
+          <div><i class="fas fa-lock"></i><span>Connexion sécurisée par Supabase Auth</span></div>
+          <div><i class="fas fa-database"></i><span>Données et messages stockés dans Supabase</span></div>
+          <div><i class="fas fa-bolt"></i><span>Messages actualisés en temps réel</span></div>
+          <div><i class="fas fa-user-shield"></i><span>Accès séparé client / administration</span></div>
+        </div>
+        <p class="small-note">Un e-mail de confirmation peut être envoyé lors de l'inscription si la confirmation e-mail est activée dans Supabase. L'expéditeur « Alicia Caillot » doit être configuré dans les paramètres SMTP / Auth de ton projet Supabase.</p>
+      </div>
+    </div>
   </div>
-
-  <form id="contactForm" class="form" novalidate>
-    <div>
-      <label for="contactNom">Nom</label>
-      <input type="text" id="contactNom" name="nom" autocomplete="name"
-             placeholder="Votre nom" required>
-    </div>
-
-    <div>
-      <label for="contactTelephone">Numéro de téléphone</label>
-      <input type="tel" id="contactTelephone" name="telephone" autocomplete="tel"
-             placeholder="Votre numéro de téléphone" required>
-    </div>
-
-    <div>
-      <label for="contactVille">Ville</label>
-      <input type="text" id="contactVille" name="ville" autocomplete="address-level2"
-             placeholder="Votre ville" required>
-    </div>
-
-    <div>
-      <label for="contactCodePostal">Code postal</label>
-      <input type="text" id="contactCodePostal" name="code_postal" autocomplete="postal-code"
-             inputmode="numeric" placeholder="Votre code postal" required>
-    </div>
-
-    <div>
-      <label for="contactMail">Mail</label>
-      <input type="email" id="contactMail" name="mail" autocomplete="email"
-             placeholder="votre@email.com" required>
-    </div>
-
-    <button type="submit" class="btn btn-primary">
-      <i class="fas fa-paper-plane"></i> Envoyer
-    </button>
-
-    <div id="contactFormStatus" class="status" aria-live="polite"></div>
-  </form>
-</div>
-<div class="container"><div class="section-head"><h2 class="section-title"><i class="fas fa-paper-plane"></i><span data-i18n="contactTitle">Prendre contact</span></h2></div><div class="contact">
-<div><div class="social-list"><div class="social-row"><i class="fab fa-x-twitter"></i><span class="label">X</span><span class="value"><a href="https://x.com/Ldeplacement" target="_blank" rel="noopener noreferrer">@Ldeplacement</a></span></div><div class="social-row"><i class="fab fa-instagram"></i><span class="label">Instagram</span><span class="value"><a href="https://instagram.com/aliciacaillot1" target="_blank" rel="noopener noreferrer">@aliciacaillot1</a></span></div><div class="social-row"><i class="fab fa-signal-messenger"></i><span class="label">Signal</span><span class="value">Coucou.08 <button class="copy-btn" data-copy="Coucou.08" data-i18n="copy">Copier</button></span></div><div class="social-row"><i class="fas fa-shield-alt"></i><span class="label">TeleGuard</span><span class="value">UKX7E4V24 <button class="copy-btn" data-copy="UKX7E4V24" data-i18n="copy">Copier</button></span></div><div class="social-row"><i class="fab fa-telegram"></i><span class="label">Telegram</span><span class="value"><a href="https://t.me/simplementmoi19" target="_blank" rel="noopener noreferrer">@simplementmoi19</a></span></div><div class="social-row"><i class="fas fa-envelope"></i><span class="label">E-mail</span><span class="value"><a href="mailto:aliciacaillot@boiseo.online">aliciacaillot@boiseo.online</a></span></div></div></div></div></div></section>
+</section>
 </main>
 <!-- ASSISTANT FLOTTANT -->
 <button id="aiFab" type="button" aria-label="Ouvrir la messagerie" aria-expanded="false"><i class="fas fa-comment-dots"></i><span class="ai-dot"></span></button>
@@ -1231,7 +1257,7 @@ galleryNext.addEventListener('click',()=>{
 });
 
 loadRootGallery();
-const lightbox=document.getElementById('lightbox'),lbImg=document.getElementById('lightboxImg');function openLightbox(src,alt){lbImg.src=src;lbImg.alt=alt;lightbox.classList.add('open');lightbox.setAttribute('aria-hidden','false');document.body.classList.add('modal-open')}function closeLightbox(){lightbox.classList.remove('open');lightbox.setAttribute('aria-hidden','true');lbImg.src='';document.body.classList.remove('modal-open')}document.getElementById('lightboxClose').onclick=closeLightbox;lightbox.onclick=e=>{if(e.target===lightbox)closeLightbox()};
+const lightbox=document.getElementById('lightbox'),lbImg=document.getElementById('lightboxImg');window.openLightbox=openLightbox;function openLightbox(src,alt){lbImg.src=src;lbImg.alt=alt;lightbox.classList.add('open');lightbox.setAttribute('aria-hidden','false');document.body.classList.add('modal-open')}function closeLightbox(){lightbox.classList.remove('open');lightbox.setAttribute('aria-hidden','true');lbImg.src='';document.body.classList.remove('modal-open')}document.getElementById('lightboxClose').onclick=closeLightbox;lightbox.onclick=e=>{if(e.target===lightbox)closeLightbox()};
 /* form: email only — client reviews and sends manually */
 /* legal modal */
 const legal=document.getElementById('legalModal');document.getElementById('legalBtn').onclick=()=>{legal.classList.add('open');document.body.classList.add('modal-open')};function closeLegal(){legal.classList.remove('open');document.body.classList.remove('modal-open')}document.getElementById('legalClose').onclick=closeLegal;legal.onclick=e=>{if(e.target===legal)closeLegal()};document.addEventListener('keydown',e=>{if(e.key==='Escape'&&legal.classList.contains('open'))closeLegal()});
@@ -1816,49 +1842,660 @@ section{padding:88px 0}
 </style>
 
 
-<script id="contact-form-script">
-(function(){
-  const form = document.getElementById('contactForm');
-  const status = document.getElementById('contactFormStatus');
-  if (!form || !status) return;
 
-  form.addEventListener('submit', function(e){
-    e.preventDefault();
+<script id="supabase-site-script">
+(() => {
+  'use strict';
 
-    if (!form.checkValidity()) {
-      form.reportValidity();
-      status.textContent = 'Veuillez remplir correctement tous les champs.';
-      return;
+  /* =========================
+     CONFIGURATION SUPABASE
+     =========================
+     Remplace uniquement ces 2 valeurs par celles de ton projet Supabase.
+     Ne mets JAMAIS la service_role key ici.
+  */
+  const SUPABASE_URL = 'YOUR_SUPABASE_URL';
+  const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';
+
+  const ADMIN_USERNAME = 'alicaillot';
+  const ADMIN_AUTH_EMAIL = 'aliciacaillot@boiseo.online';
+
+  const DEFAULT_CONTENT = {
+    hero: {
+      first_name: 'Alicia',
+      last_name: 'Caillot',
+      cta: 'Prendre contact'
+    },
+    about: {
+      title: 'À propos',
+      line1: 'Alicia Caillot',
+      line2: '163 cm • 28 ans • Élégante, féminine & pleine d’assurance ✨',
+      paragraph: 'Une jeune femme au charme naturel, avec une personnalité pétillante et un côté très séduisant. Elle aime prendre soin d’elle, jouer avec son style et partager des moments privés dans une ambiance complice et raffinée.',
+      details: '💋 28 ans | Contenu réservé aux adultes\n📸 Photos exclusives & contenus privés\n💌 Expériences personnalisées sur demande\n🔒 Discrétion et respect avant tout'
+    },
+    services: [
+      {title:'Massages',items:['Relaxant','Californien','Prostate','Tantrique']},
+      {title:'Jeux sensuels',items:['Strip-tease','Caresses','French kiss','Facesitting','Footjob']},
+      {title:'Préliminaires & rapports',items:['Cunnilingus','Branlette espagnole','Fellation nature','Fellation protégée','Gorge profonde','Rapport protégé','Toutes positions Kamasutra']},
+      {title:'Domination',items:['Domination douce (sur demande)','Safe word systématique']},
+      {title:'Sexcam',items:['Show en direct','Cam à cam','Jouets interactifs','Scénarios sur mesure']},
+      {title:'Nudes',items:['Photos intimes','Vidéos personnalisées','Pack sur demande']},
+      {title:'Spécial',items:['Urophilie (donneuse) — uniquement sur demande et consentement éclairé']},
+      {title:'Confort',items:['Douche avant / après','Serviettes propres et peignoir','Boisson offerte']}
+    ],
+    prices: [
+      {label:'15 minutes (express)',price:'50 €'},
+      {label:'30 minutes',price:'100 €'},
+      {label:'1 heure',price:'150 €'},
+      {label:'2 heures',price:'250 €'},
+      {label:'3 heures',price:'400 €'},
+      {label:'Nuit (22h–8h)',price:'500 €'}
+    ],
+    contact: {
+      title:'Contact & espace client',
+      intro:'Créez votre compte ou connectez-vous pour échanger directement avec Alicia Caillot dans une conversation privée.',
+      email:'aliciacaillot@boiseo.online',
+      signal:'Coucou.08',
+      teleguard:'UKX7E4V24',
+      telegram:'@simplementmoi19',
+      instagram:'@aliciacaillot1',
+      x:'@Ldeplacement'
+    },
+    footer: {
+      copyright:'© 2026 Alicia Caillot — Tous droits réservés.'
+    }
+  };
+
+  if (SUPABASE_URL === 'YOUR_SUPABASE_URL' || SUPABASE_ANON_KEY === 'YOUR_SUPABASE_ANON_KEY') {
+    console.warn('Supabase n’est pas configuré : renseigne SUPABASE_URL et SUPABASE_ANON_KEY.');
+    return;
+  }
+
+  const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  window.__siteSupabase = sb;
+
+  let currentUser = null;
+  let currentProfile = null;
+  let currentConversationId = null;
+  let currentAdminConversationId = null;
+  let messageChannel = null;
+  let adminMessageChannel = null;
+  let siteContent = structuredClone(DEFAULT_CONTENT);
+  let clientCache = [];
+  let conversationCache = [];
+
+  const $ = id => document.getElementById(id);
+  const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]));
+
+  function setStatus(id, text, ok=false) {
+    const el=$(id);
+    if(!el) return;
+    el.textContent=text;
+    el.style.color=ok ? '#65c98c' : '';
+  }
+
+  function openModal(id){
+    const el=$(id); if(!el)return;
+    el.classList.add('open'); el.setAttribute('aria-hidden','false');
+  }
+  function closeModal(id){
+    const el=$(id); if(!el)return;
+    el.classList.remove('open'); el.setAttribute('aria-hidden','true');
+  }
+  document.querySelectorAll('[data-close-modal]').forEach(b=>b.addEventListener('click',()=>closeModal(b.dataset.closeModal)));
+
+  function deepMerge(base, incoming){
+    if(!incoming || typeof incoming!=='object') return base;
+    const out=structuredClone(base);
+    Object.keys(incoming).forEach(k=>{
+      if(incoming[k] && typeof incoming[k]==='object' && !Array.isArray(incoming[k]) && out[k] && typeof out[k]==='object' && !Array.isArray(out[k])) out[k]=deepMerge(out[k],incoming[k]);
+      else out[k]=incoming[k];
+    });
+    return out;
+  }
+
+  function renderSiteContent(c){
+    siteContent=deepMerge(DEFAULT_CONTENT,c||{});
+
+    const h=$('heroSecretTrigger');
+    if(h){
+      h.innerHTML=esc(siteContent.hero.first_name)+' <em>'+esc(siteContent.hero.last_name)+'</em>';
+    }
+    const cta=document.querySelector('#hero [data-i18n="cta"]');
+    if(cta) cta.textContent=siteContent.hero.cta;
+
+    const about=document.querySelector('#about .about-copy');
+    if(about){
+      const ps=about.querySelectorAll('p');
+      if(ps[0]) ps[0].innerHTML='<strong style="color:var(--gold);font-family:Playfair Display,serif">'+esc(siteContent.about.line1)+'</strong>';
+      if(ps[1]) ps[1].textContent=siteContent.about.line2;
+      if(ps[2]) ps[2].textContent=siteContent.about.paragraph;
+      if(ps[3]) ps[3].innerHTML=esc(siteContent.about.details).replace(/\n/g,'<br>');
     }
 
-    const nom = document.getElementById('contactNom')?.value.trim() || '';
-    const telephone = document.getElementById('contactTelephone')?.value.trim() || '';
-    const ville = document.getElementById('contactVille')?.value.trim() || '';
-    const codePostal = document.getElementById('contactCodePostal')?.value.trim() || '';
-    const mail = document.getElementById('contactMail')?.value.trim() || '';
+    const sg=document.querySelector('#services .services-grid');
+    if(sg){
+      sg.innerHTML='';
+      siteContent.services.forEach(s=>{
+        const card=document.createElement('div'); card.className='service-cat';
+        const title=document.createElement('h3'); title.textContent=s.title;
+        const ul=document.createElement('ul');
+        (s.items||[]).forEach(item=>{const li=document.createElement('li');li.textContent=item;ul.appendChild(li)});
+        card.append(title,ul); sg.appendChild(card);
+      });
+    }
 
-    const subject = 'Nouvelle demande de contact — Alicia Caillot';
-    const body =
-      'Nom : ' + nom + '
-' +
-      'Téléphone : ' + telephone + '
-' +
-      'Ville : ' + ville + '
-' +
-      'Code postal : ' + codePostal + '
-' +
-      'E-mail : ' + mail + '
-';
+    const pg=document.querySelector('#prices .price-grid');
+    if(pg){
+      pg.innerHTML='';
+      siteContent.prices.forEach(p=>{
+        const card=document.createElement('div');card.className='price-card';
+        const label=document.createElement('span');label.className='duration';label.textContent=p.label;
+        const price=document.createElement('strong');price.textContent=p.price;
+        card.append(label,price);pg.appendChild(card);
+      });
+    }
 
-    status.textContent = 'Ouverture de votre messagerie…';
+    const intro=document.querySelector('#contact .section-intro');
+    if(intro) intro.textContent=siteContent.contact.intro;
+    const footer=document.querySelector('footer');
+    if(footer){
+      const spans=footer.querySelectorAll('.container > div:first-child, .container .legal span');
+      footer.querySelectorAll('.container').forEach(cont=>{
+        const copyright=[...cont.querySelectorAll('span')].find(x=>x.textContent.includes('© 2026 Alicia Caillot'));
+        if(copyright) copyright.textContent=siteContent.footer.copyright;
+      });
+    }
+  }
 
-    window.location.href =
-      'mailto:aliciacaillot@boiseo.online' +
-      '?subject=' + encodeURIComponent(subject) +
-      '&body=' + encodeURIComponent(body);
+  async function loadSiteContent(){
+    const {data,error}=await sb.from('site_content').select('content').eq('id','main').maybeSingle();
+    if(error){console.warn(error); return;}
+    renderSiteContent(data?.content || DEFAULT_CONTENT);
+    const editor=$('siteContentJson');
+    if(editor) editor.value=JSON.stringify(siteContent,null,2);
+  }
+
+  async function saveSiteContent(){
+    let parsed;
+    try{parsed=JSON.parse($('siteContentJson').value);}catch(e){setStatus('siteSaveStatus','JSON invalide.');return;}
+    const {data:userData}=await sb.auth.getUser();
+    if(!userData?.user){setStatus('siteSaveStatus','Session administrateur requise.');return;}
+    const {error}=await sb.from('site_content').upsert({id:'main',content:parsed,updated_by:userData.user.id,updated_at:new Date().toISOString()});
+    if(error){setStatus('siteSaveStatus',error.message);return;}
+    renderSiteContent(parsed);
+    setStatus('siteSaveStatus','Site enregistré dans Supabase.',true);
+  }
+
+  async function getProfile(){
+    const {data:userData}=await sb.auth.getUser();
+    currentUser=userData?.user||null;
+    if(!currentUser){currentProfile=null;return null;}
+    const {data}=await sb.from('profiles').select('*').eq('id',currentUser.id).maybeSingle();
+    currentProfile=data||null;
+    return currentProfile;
+  }
+
+  async function ensureConversation(){
+    if(!currentUser)return null;
+    let {data,error}=await sb.from('conversations').select('*').eq('client_id',currentUser.id).order('created_at',{ascending:true}).limit(1).maybeSingle();
+    if(error) throw error;
+    if(!data){
+      const r=await sb.from('conversations').insert({client_id:currentUser.id}).select().single();
+      if(r.error) throw r.error;
+      data=r.data;
+    }
+    currentConversationId=data.id;
+    return data;
+  }
+
+  function renderMessages(container,messages){
+    container.innerHTML='';
+    (messages||[]).forEach(m=>{
+      const d=document.createElement('div');
+      d.className='chat-message'+(m.sender_id===currentUser?.id?' me':'');
+      const text=document.createElement('div');text.textContent=m.body;
+      const time=document.createElement('small');time.textContent=new Date(m.created_at).toLocaleString('fr-FR');
+      d.append(text,time);container.appendChild(d);
+    });
+    container.scrollTop=container.scrollHeight;
+  }
+
+  async function loadClientChat(){
+    if(!currentConversationId)return;
+    const {data,error}=await sb.from('messages').select('*').eq('conversation_id',currentConversationId).order('created_at',{ascending:true});
+    if(error){$('chatStatus').textContent='Erreur';return;}
+    renderMessages($('clientMessages'),data);
+    $('chatStatus').textContent='En ligne';
+    if(messageChannel) sb.removeChannel(messageChannel);
+    messageChannel=sb.channel('client-chat-'+currentConversationId)
+      .on('postgres_changes',{event:'INSERT',schema:'public',table:'messages',filter:`conversation_id=eq.${currentConversationId}`},payload=>{
+        const msg=payload.new;
+        const el=$('clientMessages');
+        const d=document.createElement('div');d.className='chat-message'+(msg.sender_id===currentUser?.id?' me':'');
+        const t=document.createElement('div');t.textContent=msg.body;
+        const time=document.createElement('small');time.textContent=new Date(msg.created_at).toLocaleString('fr-FR');
+        d.append(t,time);el.appendChild(d);el.scrollTop=el.scrollHeight;
+      }).subscribe();
+  }
+
+  async function showAccount(){
+    $('accountState').hidden=false;
+    document.querySelectorAll('.auth-form').forEach(f=>f.hidden=true);
+    $('accountName').textContent=currentProfile?.full_name || currentUser.email;
+    $('accountEmail').textContent=currentUser.email;
+    try{await ensureConversation();await loadClientChat();}catch(e){$('chatStatus').textContent=e.message;}
+  }
+
+  function showAuth(){
+    $('accountState').hidden=true;
+    const tab=document.querySelector('.client-tab.active')?.dataset.authTab||'login';
+    switchAuthTab(tab);
+  }
+
+  function switchAuthTab(tab){
+    document.querySelectorAll('.client-tab').forEach(b=>b.classList.toggle('active',b.dataset.authTab===tab));
+    $('clientLoginForm').hidden=tab!=='login';
+    $('clientSignupForm').hidden=tab!=='signup';
+    $('resetRequestForm').hidden=tab!=='reset';
+  }
+  document.querySelectorAll('.client-tab').forEach(b=>b.addEventListener('click',()=>switchAuthTab(b.dataset.authTab)));
+
+  $('clientSignupForm').addEventListener('submit',async e=>{
+    e.preventDefault();
+    const name=$('signupName').value.trim(),email=$('signupEmail').value.trim(),phone=$('signupPhone').value.trim(),city=$('signupCity').value.trim(),postal=$('signupPostal').value.trim(),p1=$('signupPassword').value,p2=$('signupPassword2').value;
+    if(p1!==p2){setStatus('signupStatus','Les mots de passe ne correspondent pas.');return;}
+    setStatus('signupStatus','Création du compte…');
+    const {data,error}=await sb.auth.signUp({
+      email,password:p1,
+      options:{emailRedirectTo:location.origin+location.pathname,data:{full_name:name,phone,city,postal_code:postal}}
+    });
+    if(error){setStatus('signupStatus',error.message);return;}
+    if(data.user){
+      setStatus('signupStatus','Compte créé. Vérifie ton e-mail pour confirmer le compte.',true);
+      e.currentTarget.reset();
+    }
   });
+
+  $('clientLoginForm').addEventListener('submit',async e=>{
+    e.preventDefault();
+    const login=$('loginUsername').value.trim(),password=$('loginPassword').value;
+    setStatus('loginStatus','Connexion…');
+    const email=login.includes('@') ? login : (login===ADMIN_USERNAME ? ADMIN_AUTH_EMAIL : login);
+    const {data,error}=await sb.auth.signInWithPassword({email,password});
+    if(error){setStatus('loginStatus','Connexion impossible : '+error.message);return;}
+    await afterAuth();
+  });
+
+  $('resetRequestForm').addEventListener('submit',async e=>{
+    e.preventDefault();
+    const email=$('resetEmail').value.trim();
+    setStatus('resetStatus','Envoi du lien…');
+    const {error}=await sb.auth.resetPasswordForEmail(email,{redirectTo:location.origin+location.pathname+'#reset'});
+    if(error){setStatus('resetStatus',error.message);return;}
+    setStatus('resetStatus','Un lien de réinitialisation a été envoyé à cette adresse.',true);
+  });
+
+  $('resetPasswordForm').addEventListener('submit',async e=>{
+    e.preventDefault();
+    const p1=$('newPassword').value,p2=$('newPassword2').value;
+    if(p1!==p2){setStatus('resetPasswordStatus','Les mots de passe ne correspondent pas.');return;}
+    const {error}=await sb.auth.updateUser({password:p1});
+    if(error){setStatus('resetPasswordStatus',error.message);return;}
+    setStatus('resetPasswordStatus','Mot de passe modifié.',true);
+    setTimeout(()=>closeModal('resetPasswordModal'),900);
+  });
+
+  $('logoutBtn').addEventListener('click',async()=>{await sb.auth.signOut();currentUser=null;currentProfile=null;if(messageChannel)sb.removeChannel(messageChannel);showAuth();});
+  $('clientMessageForm').addEventListener('submit',async e=>{
+    e.preventDefault();
+    const body=$('clientMessageInput').value.trim();
+    if(!body||!currentConversationId)return;
+    const {error}=await sb.from('messages').insert({conversation_id:currentConversationId,sender_id:currentUser.id,body});
+    if(error){$('chatStatus').textContent=error.message;return;}
+    $('clientMessageInput').value='';
+  });
+
+  /* 15 clics sur « Alicia Caillot » en 60 secondes. */
+  const trigger=$('heroSecretTrigger');
+  let clickCount=0,firstClickAt=0,clickResetTimer=null;
+  if(trigger){
+    trigger.addEventListener('click',()=>{
+      const now=Date.now();
+      if(!firstClickAt || now-firstClickAt>60000){firstClickAt=now;clickCount=0;}
+      clickCount++;
+      clearTimeout(clickResetTimer);
+      clickResetTimer=setTimeout(()=>{clickCount=0;firstClickAt=0;},60000);
+      if(clickCount>=15){
+        clickCount=0;firstClickAt=0;openModal('adminAccessModal');
+      }
+    });
+  }
+
+  $('adminLoginForm').addEventListener('submit',async e=>{
+    e.preventDefault();
+    const username=$('adminUsername').value.trim(),password=$('adminPassword').value;
+    if(username!==ADMIN_USERNAME){setStatus('adminLoginStatus','Nom d’utilisateur incorrect.');return;}
+    setStatus('adminLoginStatus','Vérification…');
+    const {error}=await sb.auth.signInWithPassword({email:ADMIN_AUTH_EMAIL,password});
+    if(error){setStatus('adminLoginStatus','Accès refusé : '+error.message);return;}
+    const {data:adminRow}=await sb.from('admin_users').select('user_id,username,active').eq('user_id',(await sb.auth.getUser()).data.user.id).maybeSingle();
+    if(!adminRow?.active){await sb.auth.signOut();setStatus('adminLoginStatus','Ce compte n’a pas les droits administrateur.');return;}
+    closeModal('adminAccessModal');
+    await openAdmin();
+  });
+
+  async function openAdmin(){
+    const profile=await getProfile();
+    const {data:userData}=await sb.auth.getUser();
+    const {data:adminRow}=await sb.from('admin_users').select('*').eq('user_id',userData.user.id).maybeSingle();
+    if(!adminRow?.active){await sb.auth.signOut();return;}
+    $('adminIdentity').textContent='Connectée : '+(profile?.full_name||userData.user.email)+' · '+adminRow.username;
+    $('adminPanel').classList.add('open');$('adminPanel').setAttribute('aria-hidden','false');
+    await Promise.all([loadSiteContent(),loadGalleryAdmin(),loadAdminStats(),loadConversations(),loadClients()]);
+  }
+
+  $('adminLogoutBtn').addEventListener('click',async()=>{await sb.auth.signOut();$('adminPanel').classList.remove('open');$('adminPanel').setAttribute('aria-hidden','true');});
+  $('adminRefreshBtn').addEventListener('click',openAdmin);
+  $('saveSiteContentBtn').addEventListener('click',saveSiteContent);
+
+
+  async function loadGalleryAdmin(){
+    const {data,error}=await sb.from('gallery_items').select('image_url,alt,sort_order,active').order('sort_order',{ascending:true});
+    if(error){console.warn(error);return;}
+    const editor=$('galleryJson');
+    if(editor) editor.value=JSON.stringify((data||[]).map(x=>({image_url:x.image_url,alt:x.alt||'',sort_order:x.sort_order,active:x.active})),null,2);
+  }
+
+  async function saveGallery(){
+    let arr;
+    try{arr=JSON.parse($('galleryJson').value);}catch(e){setStatus('gallerySaveStatus','JSON invalide.');return;}
+    if(!Array.isArray(arr)){setStatus('gallerySaveStatus','La galerie doit être un tableau JSON.');return;}
+    const rows=arr.map((x,i)=>({image_url:String(x.image_url||'').trim(),alt:String(x.alt||'').trim(),sort_order:Number.isFinite(Number(x.sort_order))?Number(x.sort_order):i,active:x.active!==false})).filter(x=>x.image_url);
+    const {error:delError}=await sb.from('gallery_items').delete().gte('sort_order',-2147483648);
+    if(delError){setStatus('gallerySaveStatus',delError.message);return;}
+    if(rows.length){
+      const {error}=await sb.from('gallery_items').insert(rows);
+      if(error){setStatus('gallerySaveStatus',error.message);return;}
+    }
+    setStatus('gallerySaveStatus','Galerie enregistrée.',true);
+    await loadPublicGallery();
+  }
+
+  async function loadPublicGallery(){
+    const {data,error}=await sb.from('gallery_items').select('image_url,alt,sort_order,active').eq('active',true).order('sort_order',{ascending:true});
+    if(error || !data?.length) return;
+    const grid=$('galleryGrid');
+    if(!grid) return;
+    const prev=$('galleryPrev'),next=$('galleryNext'),page=$('galleryPage');
+    grid.innerHTML=''; let batches=[];
+    for(let start=0;start<data.length;start+=4){
+      const batch=document.createElement('div');batch.className='gallery-batch';
+      data.slice(start,start+4).forEach((item,i)=>{
+        const img=document.createElement('img');img.className='gallery-item';img.src=item.image_url;img.loading=start===0?'eager':'lazy';img.decoding='async';img.alt=item.alt||`Alicia Caillot — photo ${start+i+1}`;
+        img.addEventListener('error',()=>{img.style.visibility='hidden'},{once:true});
+        img.addEventListener('click',()=>window.openLightbox?.(img.currentSrc||img.src,img.alt));
+        batch.appendChild(img);
+      });
+      while(batch.children.length<4){const e=document.createElement('div');e.className='gallery-item gallery-placeholder';e.setAttribute('aria-hidden','true');batch.appendChild(e);}
+      grid.appendChild(batch);batches.push(batch);
+    }
+    let idx=0;
+    const update=()=>{batches.forEach((b,i)=>b.classList.toggle('active',i===idx));if(prev)prev.disabled=idx===0;if(next)next.disabled=idx>=batches.length-1;if(page)page.textContent=batches.length?`Groupe ${idx+1} / ${batches.length} · ${data.length} photos`:''};
+    if(prev)prev.onclick=()=>{if(idx>0){idx--;update()}};
+    if(next)next.onclick=()=>{if(idx<batches.length-1){idx++;update()}};
+    update();
+  }
+
+  $('saveGalleryBtn').addEventListener('click',saveGallery);
+
+  async function loadAdminStats(){
+    const [c,m,cv]=await Promise.all([
+      sb.from('profiles').select('id',{count:'exact',head:true}),
+      sb.from('messages').select('id',{count:'exact',head:true}),
+      sb.from('conversations').select('id',{count:'exact',head:true})
+    ]);
+    $('statClients').textContent=c.count||0;
+    $('statMessages').textContent=m.count||0;
+    $('statConversations').textContent=cv.count||0;
+  }
+
+  async function loadConversations(){
+    const {data,error}=await sb.from('conversations').select('*').order('updated_at',{ascending:false});
+    if(error){$('adminChatStatus').textContent=error.message;return;}
+    conversationCache=data||[];
+    const ids=[...new Set(conversationCache.map(x=>x.client_id))];
+    let profiles=[];
+    if(ids.length){const r=await sb.from('profiles').select('id,full_name,email,username').in('id',ids);profiles=r.data||[];}
+    const pm=new Map(profiles.map(p=>[p.id,p]));
+    const list=$('conversationList');list.innerHTML='';
+    conversationCache.forEach(c=>{
+      const p=pm.get(c.client_id)||{};
+      const b=document.createElement('button');b.type='button';b.className='conversation-item'+(c.id===currentAdminConversationId?' active':'');
+      b.innerHTML='<strong>'+esc(p.full_name||p.email||'Client')+'</strong><small>'+esc(p.email||'')+'</small>';
+      b.addEventListener('click',()=>openAdminConversation(c,p));
+      list.appendChild(b);
+    });
+    $('adminChatStatus').textContent=conversationCache.length+' conversation(s)';
+    if(currentAdminConversationId){
+      const c=conversationCache.find(x=>x.id===currentAdminConversationId);
+      if(c) openAdminConversation(c,pm.get(c.client_id)||{});
+    }
+  }
+
+  async function openAdminConversation(c,p){
+    currentAdminConversationId=c.id;
+    $('conversationTitle').textContent=(p.full_name||p.email||'Client')+' · '+(p.email||'');
+    document.querySelectorAll('.conversation-item').forEach(x=>x.classList.remove('active'));
+    [...document.querySelectorAll('.conversation-item')].find(x=>x.querySelector('strong')?.textContent===(p.full_name||p.email||'Client'))?.classList.add('active');
+    const {data,error}=await sb.from('messages').select('*').eq('conversation_id',c.id).order('created_at',{ascending:true});
+    if(error){$('adminMessages').textContent=error.message;return;}
+    const oldUser=currentUser;
+    renderMessages($('adminMessages'),data.map(m=>({...m,sender_id:m.sender_id})));
+    $('adminMessageInput').disabled=false;
+    $('adminMessageForm').querySelector('button').disabled=false;
+    if(adminMessageChannel)sb.removeChannel(adminMessageChannel);
+    adminMessageChannel=sb.channel('admin-chat-'+c.id).on('postgres_changes',{event:'INSERT',schema:'public',table:'messages',filter:`conversation_id=eq.${c.id}`},payload=>{
+      const m=payload.new;
+      const el=$('adminMessages');const d=document.createElement('div');d.className='chat-message'+(m.sender_id===currentUser?.id?' me':'');
+      const t=document.createElement('div');t.textContent=m.body;const tm=document.createElement('small');tm.textContent=new Date(m.created_at).toLocaleString('fr-FR');d.append(t,tm);el.appendChild(d);el.scrollTop=el.scrollHeight;
+    }).subscribe();
+    currentUser=oldUser;
+  }
+
+  $('adminMessageForm').addEventListener('submit',async e=>{
+    e.preventDefault();
+    const body=$('adminMessageInput').value.trim();
+    if(!body||!currentAdminConversationId||!currentUser)return;
+    const {error}=await sb.from('messages').insert({conversation_id:currentAdminConversationId,sender_id:currentUser.id,body});
+    if(error){showToast(error.message);return;}
+    $('adminMessageInput').value='';
+  });
+
+  async function loadClients(){
+    const {data,error}=await sb.from('profiles').select('id,full_name,email,phone,city,postal_code,status,created_at').order('created_at',{ascending:false});
+    if(error){$('clientTableWrap').textContent=error.message;return;}
+    clientCache=data||[];
+    const rows=clientCache.map(p=>`<tr><td>${esc(p.full_name||'')}</td><td>${esc(p.email||'')}</td><td>${esc(p.phone||'')}</td><td>${esc(p.city||'')}</td><td>${esc(p.status||'active')}</td><td><button type="button" data-edit-client="${p.id}">Modifier</button></td></tr>`).join('');
+    $('clientTableWrap').innerHTML='<table class="client-table"><thead><tr><th>Nom</th><th>E-mail</th><th>Téléphone</th><th>Ville</th><th>Statut</th><th></th></tr></thead><tbody>'+rows+'</tbody></table>';
+    $('clientTableWrap').querySelectorAll('[data-edit-client]').forEach(b=>b.addEventListener('click',()=>startClientEdit(b.dataset.editClient)));
+  }
+
+  function startClientEdit(id){
+    const p=clientCache.find(x=>x.id===id);if(!p)return;
+    $('clientEditWrap').hidden=false;
+    $('editClientId').value=p.id;$('editClientName').value=p.full_name||'';$('editClientPhone').value=p.phone||'';$('editClientCity').value=p.city||'';$('editClientPostal').value=p.postal_code||'';$('editClientStatus').value=p.status||'active';
+    $('clientEditWrap').scrollIntoView({behavior:'smooth',block:'center'});
+  }
+  $('cancelClientEdit').addEventListener('click',()=>{$('clientEditWrap').hidden=true;});
+  $('clientEditForm').addEventListener('submit',async e=>{
+    e.preventDefault();
+    const id=$('editClientId').value;
+    const {error}=await sb.from('profiles').update({full_name:$('editClientName').value.trim(),phone:$('editClientPhone').value.trim(),city:$('editClientCity').value.trim(),postal_code:$('editClientPostal').value.trim(),status:$('editClientStatus').value}).eq('id',id);
+    if(error){setStatus('clientEditStatus',error.message);return;}
+    setStatus('clientEditStatus','Client mis à jour.',true);await loadClients();await loadAdminStats();
+  });
+
+  async function afterAuth(){
+    const p=await getProfile();
+    const {data:userData}=await sb.auth.getUser();
+    const {data:admin}=await sb.from('admin_users').select('user_id,active').eq('user_id',userData.user.id).maybeSingle();
+    if(admin?.active){
+      await openAdmin();
+      return;
+    }
+    currentProfile=p;currentUser=userData.user;showAccount();
+    document.querySelector('#contact').scrollIntoView({behavior:'smooth',block:'start'});
+  }
+
+  sb.auth.onAuthStateChange(async (event,session)=>{
+    if(event==='PASSWORD_RECOVERY'){openModal('resetPasswordModal');return;}
+    if(session?.user){
+      currentUser=session.user;
+      if(event==='SIGNED_IN') await afterAuth();
+    } else {
+      currentUser=null;currentProfile=null;
+      if($('accountState'))showAuth();
+    }
+  });
+
+  /* Initial session */
+  sb.auth.getSession().then(async ({data})=>{
+    if(data.session){currentUser=data.session.user;await afterAuth();}
+    else showAuth();
+  });
+
+  loadSiteContent();
+  loadPublicGallery();
+
+  /* Realtime : actualisation des données du site pour les visiteurs connectés */
+  sb.channel('public-site-content')
+    .on('postgres_changes',{event:'UPDATE',schema:'public',table:'site_content',filter:'id=eq.main'},payload=>{
+      renderSiteContent(payload.new.content||DEFAULT_CONTENT);
+    }).subscribe();
+
 })();
 </script>
+
+
+
+<!-- ESPACE ADMINISTRATION -->
+<div class="site-modal" id="adminAccessModal" aria-hidden="true">
+  <div class="site-modal-card">
+    <div class="site-modal-top"><div><h2>Administration</h2><p>Accès réservé à l'administratrice.</p></div><button type="button" class="modal-x" data-close-modal="adminAccessModal">×</button></div>
+    <form id="adminLoginForm" class="form">
+      <div><label for="adminUsername">Nom d'utilisateur</label><input id="adminUsername" type="text" autocomplete="username" required></div>
+      <div><label for="adminPassword">Mot de passe</label><input id="adminPassword" type="password" autocomplete="current-password" required></div>
+      <button type="submit" class="btn btn-primary"><i class="fas fa-shield-halved"></i> Accéder à l'administration</button>
+      <div id="adminLoginStatus" class="status" aria-live="polite"></div>
+    </form>
+    <p class="security-note">Le mot de passe n'est pas stocké dans le HTML : l'authentification réelle est effectuée par Supabase Auth.</p>
+  </div>
+</div>
+
+<div class="site-modal" id="resetPasswordModal" aria-hidden="true">
+  <div class="site-modal-card">
+    <div class="site-modal-top"><div><h2>Nouveau mot de passe</h2><p>Choisissez un nouveau mot de passe.</p></div></div>
+    <form id="resetPasswordForm" class="form">
+      <div><label for="newPassword">Nouveau mot de passe</label><input id="newPassword" type="password" minlength="8" autocomplete="new-password" required></div>
+      <div><label for="newPassword2">Confirmer</label><input id="newPassword2" type="password" minlength="8" autocomplete="new-password" required></div>
+      <button type="submit" class="btn btn-primary">Enregistrer</button>
+      <div id="resetPasswordStatus" class="status" aria-live="polite"></div>
+    </form>
+  </div>
+</div>
+
+<div class="admin-panel" id="adminPanel" aria-hidden="true">
+  <div class="admin-shell">
+    <div class="admin-top">
+      <div><div class="admin-kicker">ESPACE PRIVÉ</div><h2>Administration Alicia Caillot</h2><p id="adminIdentity"></p></div>
+      <div class="admin-top-actions"><button id="adminRefreshBtn" type="button" class="btn btn-ghost">Actualiser</button><button id="adminLogoutBtn" type="button" class="btn btn-ghost">Déconnexion</button></div>
+    </div>
+
+    <div class="admin-grid">
+      <section class="admin-card">
+        <div class="admin-card-head"><h3>Contenu persistant du site</h3><span>Supabase</span></div>
+        <p class="admin-help">Modifie les données ci-dessous puis clique sur « Enregistrer ». Les changements sont stockés dans Supabase et restent après actualisation.</p>
+        <label for="siteContentJson">Données éditables du site (JSON)</label>
+        <textarea id="siteContentJson" class="admin-json" spellcheck="false"></textarea>
+        <div class="admin-row"><button id="saveSiteContentBtn" type="button" class="btn btn-primary">Enregistrer le site</button><span id="siteSaveStatus" class="status"></span></div>
+      </section>
+
+
+      <section class="admin-card">
+        <div class="admin-card-head"><h3>Galerie persistante</h3><span>URLs d'images</span></div>
+        <p class="admin-help">Une URL par photo, ou un tableau JSON de chaînes. Les photos enregistrées ici remplacent la galerie locale du site.</p>
+        <textarea id="galleryJson" class="admin-json" style="min-height:220px" spellcheck="false">[]</textarea>
+        <div class="admin-row"><button id="saveGalleryBtn" type="button" class="btn btn-primary">Enregistrer la galerie</button><span id="gallerySaveStatus" class="status"></span></div>
+      </section>
+
+      <section class="admin-card">
+        <div class="admin-card-head"><h3>Statistiques</h3><span>Temps réel</span></div>
+        <div class="stats-row">
+          <div class="stat-box"><strong id="statClients">0</strong><span>Clients</span></div>
+          <div class="stat-box"><strong id="statConversations">0</strong><span>Conversations</span></div>
+          <div class="stat-box"><strong id="statMessages">0</strong><span>Messages</span></div>
+        </div>
+      </section>
+    </div>
+
+    <section class="admin-card admin-chat-card">
+      <div class="admin-card-head"><h3>Conversations clients</h3><span id="adminChatStatus">Chargement…</span></div>
+      <div class="admin-chat-layout">
+        <aside class="conversation-list" id="conversationList"></aside>
+        <div class="admin-conversation">
+          <div class="conversation-title" id="conversationTitle">Sélectionne une conversation</div>
+          <div class="chat-messages" id="adminMessages"></div>
+          <form id="adminMessageForm" class="chat-compose">
+            <input id="adminMessageInput" maxlength="2000" autocomplete="off" placeholder="Répondre au client…" required disabled>
+            <button type="submit" class="chat-send" aria-label="Envoyer" disabled><i class="fas fa-paper-plane"></i></button>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <section class="admin-card">
+      <div class="admin-card-head"><h3>Données clients</h3><span>Modifiables</span></div>
+      <div id="clientTableWrap" class="client-table-wrap"></div>
+      <div id="clientEditWrap" class="client-edit-wrap" hidden>
+        <h4>Modifier le client</h4>
+        <form id="clientEditForm" class="admin-form-grid">
+          <input type="hidden" id="editClientId">
+          <div><label>Nom complet</label><input id="editClientName"></div>
+          <div><label>Téléphone</label><input id="editClientPhone"></div>
+          <div><label>Ville</label><input id="editClientCity"></div>
+          <div><label>Code postal</label><input id="editClientPostal"></div>
+          <div><label>Statut</label><select id="editClientStatus"><option value="active">Actif</option><option value="blocked">Bloqué</option><option value="pending">En attente</option></select></div>
+          <div class="admin-form-actions"><button type="submit" class="btn btn-primary">Enregistrer</button><button id="cancelClientEdit" type="button" class="btn btn-ghost">Annuler</button><span id="clientEditStatus" class="status"></span></div>
+        </form>
+      </div>
+    </section>
+  </div>
+</div>
+
+<style id="supabase-site-app">
+.client-auth-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:22px;align-items:start}
+.client-card,.admin-card{background:rgba(255,255,255,.025);border:1px solid var(--line);border-radius:18px;padding:22px}
+.client-tabs{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px}
+.client-tab{border:1px solid var(--line);background:transparent;color:#aaa;padding:9px 13px;border-radius:999px}
+.client-tab.active,.client-tab:hover{background:var(--gold);color:#080808;border-color:var(--gold)}
+.account-state-head,.admin-top,.admin-card-head,.admin-row{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.account-state-head{padding-bottom:15px;border-bottom:1px solid var(--line);margin-bottom:15px}
+.account-state-head strong,.account-state-head small{display:block}.account-state-head small{color:var(--muted);font-size:.75rem}
+.chat-box{border:1px solid var(--line);border-radius:14px;overflow:hidden;background:#080808}
+.chat-head{display:flex;justify-content:space-between;padding:12px 14px;border-bottom:1px solid var(--line);font-size:.8rem}.chat-head span{color:#65c98c}
+.chat-messages{height:360px;overflow:auto;padding:14px;display:flex;flex-direction:column;gap:9px}
+.chat-message{max-width:84%;padding:9px 12px;border-radius:13px;border:1px solid #2a2a2a;background:#151515;font-size:.82rem;white-space:pre-wrap;word-break:break-word}
+.chat-message.me{margin-left:auto;background:rgba(201,168,76,.16);border-color:rgba(201,168,76,.3)}
+.chat-message small{display:block;color:#777;font-size:.62rem;margin-top:4px}
+.chat-compose{display:flex;gap:8px;padding:10px;border-top:1px solid var(--line);background:#0d0d0d}
+.chat-compose input{flex:1;min-width:0;background:#151515;color:#fff;border:1px solid #2d2d2d;border-radius:999px;padding:10px 13px;outline:none}
+.chat-compose input:focus{border-color:var(--gold)}.chat-send{width:42px;height:42px;border:0;border-radius:50%;background:var(--gold);color:#000}
+.secure-points{display:grid;gap:12px;margin:18px 0}.secure-points div{display:flex;gap:11px;align-items:flex-start;color:#ccc;font-size:.85rem}.secure-points i{color:var(--gold);width:20px;text-align:center}.small-note,.security-note,.admin-help{color:#777;font-size:.72rem;line-height:1.55}
+.site-modal{position:fixed;inset:0;z-index:8000;display:none;place-items:center;padding:18px;background:rgba(0,0,0,.85);backdrop-filter:blur(10px)}.site-modal.open{display:grid}.site-modal-card{width:min(520px,100%);max-height:90svh;overflow:auto;background:#0b0b0b;border:1px solid var(--gold);border-radius:18px;padding:24px;box-shadow:0 25px 90px rgba(0,0,0,.55)}.site-modal-top{display:flex;justify-content:space-between;gap:16px;align-items:flex-start;margin-bottom:18px}.site-modal h2{font:600 1.7rem 'Playfair Display',serif;color:var(--gold)}.site-modal-top p{color:#777;font-size:.75rem}.modal-x{width:38px;height:38px;border-radius:50%;border:1px solid #333;background:#151515;color:#fff;font-size:1.3rem}
+.admin-panel{position:fixed;inset:0;z-index:7900;display:none;overflow:auto;background:#070707;color:#f5f0ea}.admin-panel.open{display:block}.admin-shell{width:min(1250px,calc(100% - 28px));margin:0 auto;padding:25px 0 50px}.admin-top{padding-bottom:20px;border-bottom:1px solid var(--line);margin-bottom:18px}.admin-kicker{font-size:.68rem;letter-spacing:2px;color:var(--gold)}.admin-top h2{font:600 2rem 'Playfair Display',serif;color:var(--gold)}.admin-top p{color:#777;font-size:.75rem}.admin-top-actions{display:flex;gap:8px;flex-wrap:wrap}.admin-grid{display:grid;grid-template-columns:1.25fr .75fr;gap:18px}.admin-card{margin-bottom:18px}.admin-card-head{margin-bottom:12px}.admin-card-head h3{font:600 1.15rem 'Playfair Display',serif;color:var(--gold)}.admin-card-head span{font-size:.68rem;color:#777}.admin-json{width:100%;min-height:420px;background:#050505;color:#ddd;border:1px solid #2d2d2d;border-radius:12px;padding:14px;font:12px/1.55 ui-monospace,SFMono-Regular,Menlo,monospace;resize:vertical;outline:none}.admin-json:focus{border-color:var(--gold)}.stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.stat-box{padding:18px 10px;border:1px solid var(--line);border-radius:13px;text-align:center}.stat-box strong{display:block;color:var(--gold);font:600 1.8rem 'Playfair Display',serif}.stat-box span{display:block;color:#777;font-size:.7rem}.admin-chat-layout{display:grid;grid-template-columns:280px 1fr;min-height:500px;border:1px solid #292929;border-radius:14px;overflow:hidden}.conversation-list{background:#0a0a0a;border-right:1px solid #292929;overflow:auto}.conversation-item{padding:13px;border:0;border-bottom:1px solid #222;background:transparent;color:#ddd;text-align:left;width:100%;display:block}.conversation-item:hover,.conversation-item.active{background:rgba(201,168,76,.08)}.conversation-item strong{display:block}.conversation-item small{color:#777}.admin-conversation{display:flex;flex-direction:column;min-width:0}.conversation-title{padding:13px 15px;border-bottom:1px solid #292929;color:#ddd;font-size:.82rem}.admin-conversation .chat-messages{flex:1;height:auto;min-height:400px}.client-table-wrap{overflow:auto}.client-table{width:100%;border-collapse:collapse;font-size:.78rem}.client-table th,.client-table td{padding:10px;border-bottom:1px solid #222;text-align:left;white-space:nowrap}.client-table th{color:var(--gold);font-weight:600}.client-table td{color:#ccc}.client-table button{padding:6px 10px;border-radius:999px;border:1px solid var(--line);background:transparent;color:#ddd}.client-table button:hover{background:var(--gold);color:#000}.admin-form-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:12px}.admin-form-grid label{display:block;color:#777;font-size:.7rem;margin-bottom:5px}.admin-form-grid input,.admin-form-grid select{width:100%;padding:10px;background:#050505;border:1px solid #2d2d2d;color:#fff;border-radius:9px}.admin-form-actions{grid-column:1/-1;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+@media(max-width:800px){.client-auth-grid,.admin-grid{grid-template-columns:1fr}.admin-chat-layout{grid-template-columns:1fr}.conversation-list{border-right:0;border-bottom:1px solid #292929;max-height:180px}.admin-top{align-items:flex-start;flex-direction:column}.admin-form-grid{grid-template-columns:1fr}.stats-row{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:500px){.client-card,.admin-card{padding:16px}.client-tabs{gap:5px}.client-tab{font-size:.72rem;padding:8px 9px}.stats-row{gap:6px}.stat-box{padding:12px 5px}.stat-box strong{font-size:1.4rem}}
+</style>
 
 </body>
 </html>
