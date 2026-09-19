@@ -1307,15 +1307,14 @@ Remise en main propre pour le premier rendez-vous. Paiement en espèces accepté
 <div class="site-modal-card auth-screen-card">
 <div class="site-modal-top"><div><h2>Inscription</h2><p>Créez votre compte client.</p></div><button aria-label="Fermer" class="modal-x" data-close-modal="authSignupModal" type="button">×</button></div>
 <form class="form auth-form" id="clientSignupForm">
-<div><label for="signupName">Nom complet</label><input autocomplete="name" id="signupName" placeholder="Votre nom" required="" type="text"/></div>
-<div><label for="signupEmail">E-mail</label><input autocomplete="email" id="signupEmail" placeholder="votre@email.com" required="" type="email"/></div>
+<div><label for="signupName">Nom et prénom</label><input autocomplete="name" id="signupName" placeholder="Votre nom et prénom" required="" type="text"/></div>
+<div><label for="signupEmail">Adresse mail</label><input autocomplete="email" id="signupEmail" placeholder="votre@email.com" required="" type="email"/></div>
 <div><label for="signupPhone">Téléphone</label><input autocomplete="tel" id="signupPhone" placeholder="Votre numéro" required="" type="tel"/></div>
-<div><label for="signupCity">Ville</label><input autocomplete="address-level2" id="signupCity" placeholder="Votre ville" required="" type="text"/></div>
-<div><label for="signupPostal">Code postal</label><input autocomplete="postal-code" id="signupPostal" placeholder="Code postal" required="" type="text"/></div>
 <div><label for="signupPassword">Mot de passe</label><input autocomplete="new-password" id="signupPassword" minlength="8" placeholder="8 caractères minimum" required="" type="password"/></div>
-<div><label for="signupPassword2">Confirmer le mot de passe</label><input autocomplete="new-password" id="signupPassword2" minlength="8" placeholder="Répétez le mot de passe" required="" type="password"/></div>
+<div><label for="signupPassword2">Confirmation mot de passe</label><input autocomplete="new-password" id="signupPassword2" minlength="8" placeholder="Répétez le mot de passe" required="" type="password"/></div>
 <label class="check"><input id="signupConsent" required="" type="checkbox"/><span>J'accepte que mes données soient utilisées pour mon compte et ma conversation privée.</span></label>
 <button class="btn btn-primary" type="submit"><i class="fas fa-user-plus"></i> Créer mon compte</button>
+<button class="google-auth-btn" id="googleSignupBtn" type="button"><i class="fab fa-google"></i> S'inscrire avec Google</button>
 <div aria-live="polite" class="status" id="signupStatus"></div>
 </form>
 <div class="auth-screen-links"><button data-open-auth="login" type="button">J'ai déjà un compte</button><button data-open-auth="reset" type="button">Mot de passe oublié ?</button></div>
@@ -2264,12 +2263,12 @@ section{padding:88px 0}
 
   $('clientSignupForm').addEventListener('submit',async e=>{
     e.preventDefault();
-    const name=$('signupName').value.trim(),email=$('signupEmail').value.trim(),phone=$('signupPhone').value.trim(),city=$('signupCity').value.trim(),postal=$('signupPostal').value.trim(),p1=$('signupPassword').value,p2=$('signupPassword2').value;
+    const name=$('signupName').value.trim(),email=$('signupEmail').value.trim(),phone=$('signupPhone').value.trim(),p1=$('signupPassword').value,p2=$('signupPassword2').value;
     if(p1!==p2){setStatus('signupStatus','Les mots de passe ne correspondent pas.');return;}
     setStatus('signupStatus','Création du compte…');
     const {data,error}=await sb.auth.signUp({
       email,password:p1,
-      options:{emailRedirectTo:location.origin+location.pathname,data:{full_name:name,phone,city,postal_code:postal}}
+      options:{emailRedirectTo:location.origin+location.pathname,data:{full_name:name,phone}}
     });
     if(error){setStatus('signupStatus',error.message);return;}
     if(data.user){
@@ -2291,6 +2290,12 @@ section{padding:88px 0}
     setStatus('loginStatus','Ouverture de Google…');
     const {error}=await sb.auth.signInWithOAuth({provider:'google',options:{redirectTo:location.origin+location.pathname}});
     if(error)setStatus('loginStatus','Connexion Google impossible : '+error.message);
+  });
+
+  $('googleSignupBtn')?.addEventListener('click',async()=>{
+    setStatus('signupStatus','Ouverture de Google…');
+    const {error}=await sb.auth.signInWithOAuth({provider:'google',options:{redirectTo:location.origin+location.pathname}});
+    if(error)setStatus('signupStatus','Inscription Google impossible : '+error.message);
   });
 
 
