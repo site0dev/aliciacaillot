@@ -1228,38 +1228,44 @@ galleryNext.addEventListener('click',()=>{
 loadRootGallery();
 const lightbox=document.getElementById('lightbox'),lbImg=document.getElementById('lightboxImg');function openLightbox(src,alt){lbImg.src=src;lbImg.alt=alt;lightbox.classList.add('open');lightbox.setAttribute('aria-hidden','false');document.body.classList.add('modal-open')}function closeLightbox(){lightbox.classList.remove('open');lightbox.setAttribute('aria-hidden','true');lbImg.src='';document.body.classList.remove('modal-open')}document.getElementById('lightboxClose').onclick=closeLightbox;lightbox.onclick=e=>{if(e.target===lightbox)closeLightbox()};
 /* form: email only — client reviews and sends manually */
-document.getElementById('contactForm').addEventListener('submit',e=>{
+document.getElementById('contactForm').addEventListener('submit', function(e){
   e.preventDefault();
-  const f=e.currentTarget, status=document.getElementById('formStatus');
-  if(!f.reportValidity() || !document.getElementById('ageCheck').checked) return;
 
-  const name=document.getElementById('name').value.trim();
-  const address=document.getElementById('address').value.trim();
-  const city=document.getElementById('city').value.trim();
-  const phone=document.getElementById('phone').value.trim();
-  const date=document.getElementById('date').value;
-  const duration=document.getElementById('duration').value;
-  const message=document.getElementById('message').value.trim();
+  const data = new FormData(this);
+  const get = (name) => String(data.get(name) || '').trim();
 
-  const recipient='aliciacaillot@boiseo.online';
-  const subject=`Demande de contact - ${name || 'Nouveau contact'}`;
-  const body=[
-    'Nouvelle demande de contact','',
-    `Nom / Prénom : ${name}`,
-    `Adresse postale : ${address}`,
-    `Ville : ${city}`,
-    `Téléphone : ${phone || 'Non renseigné'}`,
-    `Date & heure souhaitée : ${date || 'Non renseignée'}`,
-    `Durée : ${duration}`,
-    `Message : ${message || 'Aucun message'}`,
-    '',
-    'Veuillez vérifier les informations puis confirmer vous-même l’envoi.'
-  ].join('\n');
+  const name = get('name');
+  const address = get('address');
+  const city = get('city');
+  const phone = get('phone');
+  const date = get('date');
+  const duration = get('duration');
+  const message = get('message');
 
-  status.textContent='Ouverture de votre messagerie…';
-  window.location.href='mailto:'+recipient+
-    '?subject='+encodeURIComponent(subject)+
-    '&body='+encodeURIComponent(body);
+  const subject = 'Demande de contact - ' + (name || 'Nouveau contact');
+  const body =
+    'Nom : ' + name + '\n' +
+    'Adresse : ' + address + '\n' +
+    'Ville : ' + city + '\n' +
+    'Téléphone : ' + phone + '\n' +
+    'Date / heure : ' + date + '\n' +
+    'Durée : ' + duration + '\n\n' +
+    'Message :\n' + message;
+
+  const mailto = 'mailto:aliciacaillot@boiseo.online' +
+    '?subject=' + encodeURIComponent(subject) +
+    '&body=' + encodeURIComponent(body);
+
+  const status = document.getElementById('formStatus');
+  if (status) status.textContent = 'Ouverture de votre application e-mail…';
+
+  // Navigation directe : plus fiable sur mobile que window.open().
+  window.location.href = mailto;
+
+  setTimeout(function(){
+    if (status) status.textContent =
+      'Si rien ne s’ouvre, aucune application e-mail compatible n’est peut-être configurée sur cet appareil.';
+  }, 1800);
 });
 /* legal modal */
 const legal=document.getElementById('legalModal');document.getElementById('legalBtn').onclick=()=>{legal.classList.add('open');document.body.classList.add('modal-open')};function closeLegal(){legal.classList.remove('open');document.body.classList.remove('modal-open')}document.getElementById('legalClose').onclick=closeLegal;legal.onclick=e=>{if(e.target===legal)closeLegal()};document.addEventListener('keydown',e=>{if(e.key==='Escape'&&legal.classList.contains('open'))closeLegal()});
