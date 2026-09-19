@@ -1079,7 +1079,7 @@ footer {
 <header><div class="container nav">
 <a aria-label="Alicia Caillot" class="logo" href="#hero">Alicia <span>Caillot</span></a>
 <ul class="nav-links" id="navLinks">
-<li><a data-i18n="home" href="#hero">Accueil</a></li><li><a data-i18n="services" href="#services">Prestations</a></li><li><a data-i18n="prices" href="#prices">Tarifs</a></li><li><a data-i18n="gallery" href="#gallery">Galerie</a></li><li><a data-i18n="contact" href="#contact">Contact</a></li><li aria-hidden="true" class="nav-auth-separator"></li><li><button class="nav-auth-action" data-open-auth="login" type="button"><i class="fas fa-right-to-bracket"></i> Connexion</button></li><li><button class="nav-auth-action" data-open-auth="signup" type="button"><i class="fas fa-user-plus"></i> Inscription</button></li><li><button class="nav-auth-action" data-open-auth="reset" type="button"><i class="fas fa-key"></i> Mot de passe oublié</button></li>
+<li><a data-i18n="home" href="#hero">Accueil</a></li><li><a data-i18n="services" href="#services">Prestations</a></li><li><a data-i18n="prices" href="#prices">Tarifs</a></li><li><a data-i18n="gallery" href="#gallery">Galerie</a></li><li><a data-i18n="contact" href="#contact">Contact</a></li><li aria-hidden="true" class="nav-auth-separator"></li><li><button aria-controls="authLoginModal" class="nav-auth-action" data-open-auth="login" type="button"><i class="fas fa-right-to-bracket"></i> Connexion</button></li><li><button aria-controls="authSignupModal" class="nav-auth-action" data-open-auth="signup" type="button"><i class="fas fa-user-plus"></i> Inscription</button></li><li><button aria-controls="authResetModal" class="nav-auth-action" data-open-auth="reset" type="button"><i class="fas fa-key"></i> Mot de passe oublié</button></li>
 </ul>
 <div class="nav-social"><a aria-label="X" href="https://x.com/Ldeplacement" rel="noopener noreferrer" target="_blank"><i class="fab fa-x-twitter"></i></a><a aria-label="Instagram" href="https://instagram.com/aliciacaillot1" rel="noopener noreferrer" target="_blank"><i class="fab fa-instagram"></i></a><button aria-label="Copier l'identifiant Signal" id="signalNav" type="button"><i class="fab fa-signal-messenger"></i></button></div>
 <div class="nav-actions">
@@ -1088,7 +1088,7 @@ footer {
 </div>
 </div></header>
 <main>
-<section aria-label="Alicia Caillot" id="hero"><img alt="" aria-hidden="true" class="hero-bg" decoding="async" fetchpriority="high" src="/hero.jpg"/><div aria-hidden="true" class="hero-scrim"></div><div class="container hero"><h1 id="heroSecretTrigger" title="Alicia Caillot">Alicia <em>Caillot</em></h1><a class="btn btn-primary" href="#contact"><i class="fas fa-calendar-check"></i><span data-i18n="cta">Prendre contact</span></a></div></section>
+<section aria-label="Alicia Caillot" id="hero"><img alt="" aria-hidden="true" class="hero-bg" decoding="async" fetchpriority="high" src="/hero.jpg"/><div aria-hidden="true" class="hero-scrim"></div><div class="container hero"><h1 aria-label="Alicia Caillot" id="heroSecretTrigger" title="Alicia Caillot">Alicia <em>Caillot</em></h1><a class="btn btn-primary" href="#contact"><i class="fas fa-calendar-check"></i><span data-i18n="cta">Prendre contact</span></a></div></section>
 <section id="services"><div class="container"><div class="section-head"><h2 class="section-title"><i class="fas fa-feather-alt"></i><span data-i18n="servicesTitle">Prestations</span></h2></div>
 <div class="services-grid">
 <div class="service-cat"><h3 data-i18n="s1t">Massages</h3><ul><li data-i18n="s1a">Relaxant</li><li data-i18n="s1b">Californien</li><li data-i18n="s1c">Prostate</li><li data-i18n="s1d">Tantrique</li></ul></div>
@@ -2328,18 +2328,28 @@ section{padding:88px 0}
     $('clientMessageInput').value='';
   });
 
-  /* 15 clics sur « Alicia Caillot » en 60 secondes. */
+  /* Accès administration : 15 clics sur « Alicia Caillot » du hero en 60 secondes.
+     Le logo « Alicia Caillot » de l'entête n'est pas un déclencheur. */
   const trigger=$('heroSecretTrigger');
   let clickCount=0,firstClickAt=0,clickResetTimer=null;
   if(trigger){
     trigger.addEventListener('click',()=>{
       const now=Date.now();
-      if(!firstClickAt || now-firstClickAt>60000){firstClickAt=now;clickCount=0;}
+      if(!firstClickAt || now-firstClickAt>60000){
+        firstClickAt=now;
+        clickCount=0;
+      }
       clickCount++;
       clearTimeout(clickResetTimer);
-      clickResetTimer=setTimeout(()=>{clickCount=0;firstClickAt=0;},60000);
+      clickResetTimer=setTimeout(()=>{
+        clickCount=0;
+        firstClickAt=0;
+      },60000);
       if(clickCount>=15){
-        clickCount=0;firstClickAt=0;openModal('adminAccessModal');
+        clickCount=0;
+        firstClickAt=0;
+        clearTimeout(clickResetTimer);
+        openModal('adminAccessModal');
       }
     });
   }
@@ -2681,43 +2691,45 @@ section{padding:88px 0}
 
 <script id="final-auth-navigation-fix">
 (() => {
+  const authTargets = Object.freeze({
+    login: 'authLoginModal',
+    signup: 'authSignupModal',
+    reset: 'authResetModal'
+  });
+
   function openAuthScreen(screen) {
-    const ids = {
-      login: "authLoginModal",
-      signup: "authSignupModal",
-      reset: "authResetModal"
-    };
+    const targetId = authTargets[screen];
+    if (!targetId) return;
 
-    const targetId = ids[screen] || ids.login;
     const target = document.getElementById(targetId);
-    if (!target) return false;
+    if (!target) return;
 
-    ["authLoginModal", "authSignupModal", "authResetModal"].forEach(id => {
-      const el = document.getElementById(id);
-      if (el) {
-        el.classList.remove("open");
-        el.setAttribute("aria-hidden", "true");
-      }
+    Object.values(authTargets).forEach(id => {
+      const modal = document.getElementById(id);
+      if (!modal) return;
+      modal.classList.remove('open');
+      modal.setAttribute('aria-hidden', 'true');
     });
 
-    const nav = document.getElementById("navLinks");
-    if (nav) nav.classList.remove("open");
+    const nav = document.getElementById('navLinks');
+    if (nav) nav.classList.remove('open');
 
-    const menu = document.getElementById("menu");
-    if (menu) menu.setAttribute("aria-expanded", "false");
+    const menu = document.getElementById('menu');
+    if (menu) menu.setAttribute('aria-expanded', 'false');
 
-    target.classList.add("open");
-    target.setAttribute("aria-hidden", "false");
-    document.body.classList.add("modal-open");
-    return true;
+    target.classList.add('open');
+    target.setAttribute('aria-hidden', 'false');
+    document.body.classList.add('modal-open');
   }
 
-  document.addEventListener("click", (event) => {
-    const trigger = event.target.closest("[data-open-auth]");
+  // Un seul gestionnaire : chaque bouton ouvre son écran d'authentification.
+  document.addEventListener('click', event => {
+    const trigger = event.target.closest('[data-open-auth]');
     if (!trigger) return;
 
     event.preventDefault();
     event.stopPropagation();
+    event.stopImmediatePropagation();
 
     openAuthScreen(trigger.dataset.openAuth);
   }, true);
