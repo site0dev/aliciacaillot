@@ -32,7 +32,7 @@
 #age-overlay{position:fixed;inset:0;z-index:9999;display:grid;place-items:center;padding:20px;background:rgba(0,0,0,.93);backdrop-filter:blur(14px);transition:.45s var(--ease)}#age-overlay.hidden{opacity:0;visibility:hidden;pointer-events:none}.age-card{width:min(520px,100%);padding:42px 30px;text-align:center;background:linear-gradient(145deg,#000000,#0d0d0d);border:1px solid var(--gold);border-radius:20px;box-shadow:var(--shadow)}.age-card h2{font:600 2.5rem/1.1 'Playfair Display',serif;color:var(--gold);margin-bottom:14px}.age-card p{color:var(--muted);margin-bottom:26px}.age-actions{display:flex;justify-content:center;gap:12px;flex-wrap:wrap}.btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;min-height:46px;padding:12px 22px;border-radius:999px;border:1px solid var(--gold);transition:.25s var(--ease)}.btn-primary{background:var(--gold);color:#090909;font-weight:700}.btn-primary:hover{background:var(--gold2);transform:translateY(-2px)}.btn-ghost{background:transparent;color:var(--gold)}.btn-ghost:hover{background:rgba(201,168,76,.1)}.age-card small{display:block;margin-top:20px;color:#62605d;font-size:.74rem}
 /* header */
 header{position:fixed;z-index:1000;top:0;left:0;right:0;background:rgba(8,8,8,.82);backdrop-filter:blur(16px);border-bottom:1px solid var(--line)}.nav{min-height:72px;display:flex;align-items:center;gap:20px}.logo{font:600 1.45rem 'Playfair Display',serif;color:var(--gold);letter-spacing:1.5px;white-space:nowrap}.logo span{font:400 .9rem Inter,sans-serif;color:var(--white);letter-spacing:1px}.nav-links{display:flex;align-items:center;gap:24px;list-style:none;margin-left:auto}.nav-links a{font-size:.78rem;text-transform:uppercase;letter-spacing:1.3px;color:#ddd;padding:8px 0;border-bottom:1px solid transparent}.nav-links a:hover,.nav-links a:focus-visible{color:var(--gold);border-color:var(--gold)}.nav-social{display:flex;align-items:center;gap:14px}.nav-social a,.nav-social button{display:grid;place-items:center;width:36px;height:36px;border:0;background:none;color:var(--muted);border-radius:50%}.nav-social a:hover,.nav-social button:hover{color:var(--gold);background:rgba(201,168,76,.08)}.lang{position:relative}.lang select{appearance:none;background:#000000;border:1px solid #2b2b2b;color:#ddd;border-radius:999px;padding:8px 28px 8px 12px;font-size:.76rem}.menu{display:none;background:none;border:0;color:var(--white);font-size:1.35rem;width:42px;height:42px}
-/* hero */
+.nav-auth-action{border:0;background:none;color:#ddd;font-size:.78rem;text-transform:uppercase;letter-spacing:1.05px;padding:8px 0;display:inline-flex;align-items:center;gap:6px;white-space:nowrap}.nav-auth-action:hover,.nav-auth-action:focus-visible{color:var(--gold)}.nav-auth-separator{width:1px;height:22px;background:var(--line);margin:0 2px}.client-auth-modal .site-modal-card{width:min(760px,100%);max-height:92svh}.client-auth-modal .client-card{border:0;padding:0;background:transparent}.client-auth-modal .client-tabs{justify-content:center}.contact-public-card{max-width:760px}.contact-public-card h3{font:600 1.3rem 'Playfair Display',serif;color:var(--gold);margin-bottom:8px}.contact-public-card p{color:var(--muted)}@media(max-width:900px){.nav-auth-separator{display:none}.nav-auth-action{font-size:.75rem}}/* hero */
 #hero{min-height:100svh;display:grid;place-items:center;text-align:center;padding:130px 0 80px;background:radial-gradient(circle at 70% 25%,#1d1510 0,#0b0b0b 45%,#080808 80%);position:relative;overflow:hidden}#hero:after{content:"";position:absolute;bottom:0;left:10%;right:10%;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent)}.eyebrow{color:var(--gold);font-size:.74rem;text-transform:uppercase;letter-spacing:3px;margin-bottom:14px}.hero h1{font:400 clamp(3.2rem,9vw,6.5rem)/.98 'Playfair Display',serif}.hero h1 em{display:block;color:var(--gold);font-style:italic}.hero .lead{max-width:720px;margin:22px auto;color:var(--muted);font-size:1.05rem}.badges{display:flex;justify-content:center;flex-wrap:wrap;gap:10px;margin:24px 0}.badge{padding:8px 13px;border:1px solid var(--line);border-radius:999px;color:#cfc9c3;font-size:.78rem;background:rgba(255,255,255,.02)}.badge i{color:var(--gold);margin-right:6px}
 /* sections */
 section{padding:88px 0;border-bottom:1px solid rgba(255,255,255,.035)}section:nth-of-type(even){background:#0d0d0d}.section-head{margin-bottom:30px}.section-title{display:inline-flex;align-items:center;gap:12px;font:400 clamp(2rem,5vw,2.65rem)/1.15 'Playfair Display',serif;color:var(--gold);border-bottom:1px solid var(--line);padding-bottom:10px}.section-intro{max-width:720px;color:var(--muted);margin-top:13px}
@@ -865,7 +865,7 @@ nav .chevron,
 <header><div class="container nav">
   <a class="logo" href="#hero" aria-label="Alicia Caillot">Alicia <span>Caillot</span></a>
   <ul class="nav-links" id="navLinks">
-    <li><a href="#hero" data-i18n="home">Accueil</a></li><li><a href="#services" data-i18n="services">Prestations</a></li><li><a href="#prices" data-i18n="prices">Tarifs</a></li><li><a href="#gallery" data-i18n="gallery">Galerie</a></li><li><a href="#contact" data-i18n="contact">Contact</a></li>
+    <li><a href="#hero" data-i18n="home">Accueil</a></li><li><a href="#services" data-i18n="services">Prestations</a></li><li><a href="#prices" data-i18n="prices">Tarifs</a></li><li><a href="#gallery" data-i18n="gallery">Galerie</a></li><li><a href="#contact" data-i18n="contact">Contact</a></li><li class="nav-auth-separator" aria-hidden="true"></li><li><button type="button" class="nav-auth-action" data-open-auth="login"><i class="fas fa-right-to-bracket"></i> Connexion</button></li><li><button type="button" class="nav-auth-action" data-open-auth="signup"><i class="fas fa-user-plus"></i> Inscription</button></li><li><button type="button" class="nav-auth-action" data-open-auth="reset"><i class="fas fa-key"></i> Mot de passe oublié</button></li>
   </ul>
   <div class="nav-social"><a href="https://x.com/Ldeplacement" target="_blank" rel="noopener noreferrer" aria-label="X"><i class="fab fa-x-twitter"></i></a><a href="https://instagram.com/aliciacaillot1" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><i class="fab fa-instagram"></i></a><button id="signalNav" type="button" aria-label="Copier l'identifiant Signal"><i class="fab fa-signal-messenger"></i></button></div>
   <div class="nav-actions">
@@ -899,10 +899,27 @@ nav .chevron,
 <section id="contact">
   <div class="container">
     <div class="section-head">
-      <h2 class="section-title"><i class="fas fa-envelope"></i> <span>Contact & espace client</span></h2>
-      <p class="section-intro">Créez votre compte ou connectez-vous pour échanger directement avec Alicia Caillot dans une conversation privée.</p>
+      <h2 class="section-title"><i class="fas fa-envelope"></i> <span>Contact</span></h2>
+      <p class="section-intro">Pour créer un compte, vous connecter ou récupérer votre mot de passe, utilisez uniquement les accès prévus dans le menu.</p>
     </div>
-
+    <div class="contact-public-card client-card">
+      <h3>Échanger avec Alicia Caillot</h3>
+      <p>Les échanges privés et l’espace client sont séparés du contenu public du site.</p>
+      <div class="secure-points">
+        <div><i class="fas fa-lock"></i><span>Connexion sécurisée par Supabase Auth</span></div>
+        <div><i class="fas fa-comments"></i><span>Conversation privée après connexion</span></div>
+        <div><i class="fas fa-bolt"></i><span>Messages actualisés en temps réel</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+</main>
+<div class="site-modal client-auth-modal" id="clientAuthModal" aria-hidden="true">
+  <div class="site-modal-card">
+    <div class="site-modal-top">
+      <div><h2>Espace client</h2><p>Connexion, inscription et récupération du mot de passe</p></div>
+      <button type="button" class="modal-x" data-close-modal="clientAuthModal" aria-label="Fermer">×</button>
+    </div>
     <div class="client-auth-grid">
       <div class="client-card">
         <div class="client-tabs">
@@ -952,22 +969,10 @@ nav .chevron,
           </div>
         </div>
       </div>
-
-      <div class="client-card contact-info-card">
-        <h3>Contact</h3>
-        <p>Une fois connecté, vous pouvez conserver tout l'historique de vos échanges dans votre espace.</p>
-        <div class="secure-points">
-          <div><i class="fas fa-lock"></i><span>Connexion sécurisée par Supabase Auth</span></div>
-          <div><i class="fas fa-database"></i><span>Données et messages stockés dans Supabase</span></div>
-          <div><i class="fas fa-bolt"></i><span>Messages actualisés en temps réel</span></div>
-          <div><i class="fas fa-user-shield"></i><span>Accès séparé client / administration</span></div>
-        </div>
-        <p class="small-note">Un e-mail de confirmation peut être envoyé lors de l'inscription si la confirmation e-mail est activée dans Supabase. L'expéditeur « Alicia Caillot » doit être configuré dans les paramètres SMTP / Auth de ton projet Supabase.</p>
-      </div>
     </div>
   </div>
-</section>
-</main>
+</div>
+
 <!-- ASSISTANT FLOTTANT -->
 <button id="aiFab" type="button" aria-label="Ouvrir la messagerie" aria-expanded="false"><i class="fas fa-comment-dots"></i><span class="ai-dot"></span></button>
 <div class="ai-panel" id="aiPanel" role="dialog" aria-modal="false" aria-labelledby="aiTitle">
@@ -1182,7 +1187,7 @@ document.getElementById('ageNo').addEventListener('click',()=>{
   const t=translations[locale]||translations['fr-FR'];
   document.body.innerHTML=`<main style="min-height:100svh;display:grid;place-items:center;background:#080808;color:#777;font:16px Inter,sans-serif;text-align:center;padding:30px"><div><h1 style="color:#7b2432;font-family:Georgia,serif">${t.exitTitle}</h1><p>${t.exitText}</p></div></main>`;
 });
-const menu=document.getElementById('menu'),navLinks=document.getElementById('navLinks');function setMenu(open){navLinks.classList.toggle('open',open);menu.setAttribute('aria-expanded',String(open));menu.setAttribute('aria-label',open?(translations[locale]||translations['fr-FR']).menuClose:(translations[locale]||translations['fr-FR']).menuOpen);menu.innerHTML=open?'<i class="fas fa-xmark"></i>':'<i class="fas fa-bars"></i>'}menu.addEventListener('click',()=>setMenu(!navLinks.classList.contains('open')));document.querySelectorAll('.nav-links a').forEach(a=>a.addEventListener('click',()=>setMenu(false)));document.addEventListener('click',e=>{if(window.innerWidth<=760&&navLinks.classList.contains('open')&&!e.target.closest('header'))setMenu(false)});
+const menu=document.getElementById('menu'),navLinks=document.getElementById('navLinks');function setMenu(open){navLinks.classList.toggle('open',open);menu.setAttribute('aria-expanded',String(open));menu.setAttribute('aria-label',open?(translations[locale]||translations['fr-FR']).menuClose:(translations[locale]||translations['fr-FR']).menuOpen);menu.innerHTML=open?'<i class="fas fa-xmark"></i>':'<i class="fas fa-bars"></i>'}menu.addEventListener('click',()=>setMenu(!navLinks.classList.contains('open')));document.querySelectorAll('.nav-links a').forEach(a=>a.addEventListener('click',()=>setMenu(false)));document.querySelectorAll('.nav-auth-action').forEach(b=>b.addEventListener('click',()=>setMenu(false)));document.addEventListener('click',e=>{if(window.innerWidth<=760&&navLinks.classList.contains('open')&&!e.target.closest('header'))setMenu(false)});
 const toast=document.getElementById('toast');let toastTimer;function showToast(m){toast.textContent=m;toast.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>toast.classList.remove('show'),2200)}
 async function copyText(text){try{await navigator.clipboard.writeText(text);showToast((translations[locale]||translations['fr-FR']).copied)}catch(e){const i=document.createElement('input');i.value=text;document.body.appendChild(i);i.select();document.execCommand('copy');i.remove();showToast((translations[locale]||translations['fr-FR']).copied)}}document.querySelectorAll('[data-copy]').forEach(b=>b.onclick=()=>copyText(b.dataset.copy));document.getElementById('signalNav').onclick=()=>copyText(SIGNAL);
 /* gallery: root files, optimized loading */
@@ -1942,6 +1947,13 @@ section{padding:88px 0}
     el.classList.remove('open'); el.setAttribute('aria-hidden','true');
   }
   document.querySelectorAll('[data-close-modal]').forEach(b=>b.addEventListener('click',()=>closeModal(b.dataset.closeModal)));
+  document.querySelectorAll('[data-open-auth]').forEach(b=>b.addEventListener('click',()=>{
+    setMenu(false);
+    const tab=b.dataset.openAuth||'login';
+    showAuth();
+    switchAuthTab(tab);
+    openModal('clientAuthModal');
+  }));
 
   function deepMerge(base, incoming){
     if(!incoming || typeof incoming!=='object') return base;
@@ -2344,7 +2356,7 @@ section{padding:88px 0}
       return;
     }
     currentProfile=p;currentUser=userData.user;showAccount();
-    document.querySelector('#contact').scrollIntoView({behavior:'smooth',block:'start'});
+    openModal('clientAuthModal');
   }
 
   sb.auth.onAuthStateChange(async (event,session)=>{
