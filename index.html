@@ -2678,5 +2678,51 @@ section{padding:88px 0}
 @media(max-width:800px){.client-auth-grid,.admin-grid{grid-template-columns:1fr}.admin-chat-layout{grid-template-columns:1fr}.conversation-list{border-right:0;border-bottom:1px solid #292929;max-height:180px}.admin-top{align-items:flex-start;flex-direction:column}.admin-form-grid{grid-template-columns:1fr}.stats-row{grid-template-columns:repeat(3,1fr)}}
 @media(max-width:500px){.client-card,.admin-card{padding:16px}.client-tabs{gap:5px}.client-tab{font-size:.72rem;padding:8px 9px}.stats-row{gap:6px}.stat-box{padding:12px 5px}.stat-box strong{font-size:1.4rem}}
 </style>
+
+<script id="final-auth-navigation-fix">
+(() => {
+  function openAuthScreen(screen) {
+    const ids = {
+      login: "authLoginModal",
+      signup: "authSignupModal",
+      reset: "authResetModal"
+    };
+
+    const targetId = ids[screen] || ids.login;
+    const target = document.getElementById(targetId);
+    if (!target) return false;
+
+    ["authLoginModal", "authSignupModal", "authResetModal"].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) {
+        el.classList.remove("open");
+        el.setAttribute("aria-hidden", "true");
+      }
+    });
+
+    const nav = document.getElementById("navLinks");
+    if (nav) nav.classList.remove("open");
+
+    const menu = document.getElementById("menu");
+    if (menu) menu.setAttribute("aria-expanded", "false");
+
+    target.classList.add("open");
+    target.setAttribute("aria-hidden", "false");
+    document.body.classList.add("modal-open");
+    return true;
+  }
+
+  document.addEventListener("click", (event) => {
+    const trigger = event.target.closest("[data-open-auth]");
+    if (!trigger) return;
+
+    event.preventDefault();
+    event.stopPropagation();
+
+    openAuthScreen(trigger.dataset.openAuth);
+  }, true);
+})();
+</script>
+
 </body>
 </html>
