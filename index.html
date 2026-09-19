@@ -1054,6 +1054,73 @@ footer {
   width:100% !important;
 }
 </style>
+
+<style id="final-burgundy-readability-fix">
+/* Suppression des bandes bordeaux parasites sous les boutons Google et autres formulaires. */
+.status {
+  background: transparent !important;
+  border: 0 !important;
+  min-height: 20px !important;
+  height: auto !important;
+  color: #222222 !important;
+}
+
+/* Les encadrés/boutons bordeaux doivent rester très lisibles. */
+button, .btn, .button, input[type="submit"], input[type="button"],
+.badge, .tag, .pill, .accent,
+.ai-avatar, #aiFab, .ai-send,
+.age-gate button, #ageGate button {
+  color: #FFFFFF !important;
+  font-weight: 700 !important;
+  text-shadow: none !important;
+}
+
+button i, .btn i, .button i, input[type="submit"] + i,
+.badge i, .tag i, .pill i, .accent i,
+.ai-avatar i, #aiFab i, .ai-send i {
+  color: #FFFFFF !important;
+  opacity: 1 !important;
+}
+
+/* Contraste renforcé dans tous les éléments dont le fond est bordeaux. */
+[style*="background"],
+.bg-brand, .bg-burgundy, .bg-bordeaux, .brand-bg {
+  --forced-light-text: #FFFFFF;
+}
+
+/* Boutons d'authentification Google : blanc propre, sans bande colorée dessous. */
+.google-auth-btn {
+  background: #FFFFFF !important;
+  color: #111111 !important;
+  border: 1px solid #777777 !important;
+  box-shadow: none !important;
+}
+.google-auth-btn i {
+  color: #7A1230 !important;
+}
+.google-auth-btn:hover, .google-auth-btn:focus-visible {
+  background: #F3F3F3 !important;
+  color: #000000 !important;
+  border-color: #7A1230 !important;
+}
+
+/* Textes des liens placés dans les encadrés bordeaux. */
+button[style*="background"], .btn[style*="background"],
+.burgundy a, .bordeaux a {
+  color: #FFFFFF !important;
+}
+
+/* Icônes et symboles des boutons bordeaux : blanc net et sans transparence. */
+button[class*="brand"], button[class*="red"], button[class*="burgundy"],
+.btn-primary, .brand-button, .burgundy-button, .bordeaux-button {
+  color: #FFFFFF !important;
+}
+button[class*="brand"] i, button[class*="red"] i, button[class*="burgundy"] i,
+.btn-primary i, .brand-button i, .burgundy-button i, .bordeaux-button i {
+  color: #FFFFFF !important;
+}
+</style>
+
 </head>
 <body><div aria-hidden="true" id="site-discreet-note" style="display:none">Site d’information et de prise de contact réservé aux adultes.</div>
 <div aria-labelledby="age-title" aria-modal="true" id="age-overlay" role="dialog">
