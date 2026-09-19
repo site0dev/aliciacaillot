@@ -1,0 +1,22 @@
+PACK SEO / INDEXATION — aliciacaillot.boiseo.online
+
+Fichiers à publier à la racine du domaine :
+- index.html (version FR-France)
+- fr-be.html (version FR-Belgique)
+- en.html (version anglaise)
+- it.html (version IT-Italie)
+- de.html (version DE-Allemagne)
+- robots.txt
+- sitemap.xml
+
+Dans Google Search Console :
+1. Vérifier la propriété https://aliciacaillot.boiseo.online/
+2. Ouvrir Sitemaps et envoyer : https://aliciacaillot.boiseo.online/sitemap.xml
+3. Avec Inspection de l'URL, tester puis demander l'indexation de :
+   https://aliciacaillot.boiseo.online/
+   https://aliciacaillot.boiseo.online/fr-be.html
+   https://aliciacaillot.boiseo.online/en.html
+   https://aliciacaillot.boiseo.online/it.html
+   https://aliciacaillot.boiseo.online/de.html
+
+Remarque : l'envoi d'une demande ne garantit pas l'indexation.
