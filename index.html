@@ -1105,8 +1105,21 @@ main > section > .container {
     </div>
   </div>
 </div>
-</main>`;
-});
+
+<script id="public-site-interactions">
+(() => {
+  'use strict';
+  const locale = 'fr-FR';
+  const translations = {
+    'fr-FR': {
+      menuOpen: 'Ouvrir le menu',
+      menuClose: 'Fermer le menu',
+      copied: 'Copié',
+      photoAlt: 'photo'
+    }
+  };
+  const SIGNAL = 'Coucou.08';
+
 const menu=document.getElementById('menu'),navLinks=document.getElementById('navLinks');function setMenu(open){navLinks.classList.toggle('open',open);menu.setAttribute('aria-expanded',String(open));menu.setAttribute('aria-label',open?(translations[locale]||translations['fr-FR']).menuClose:(translations[locale]||translations['fr-FR']).menuOpen);menu.innerHTML=open?'<i class="fas fa-xmark"></i>':'<i class="fas fa-bars"></i>'}menu.addEventListener('click',()=>setMenu(!navLinks.classList.contains('open')));document.querySelectorAll('.nav-links a').forEach(a=>a.addEventListener('click',()=>setMenu(false)));document.querySelectorAll('.nav-auth-action').forEach(b=>b.addEventListener('click',()=>setMenu(false)));document.addEventListener('click',e=>{if(window.innerWidth<=760&&navLinks.classList.contains('open')&&!e.target.closest('header'))setMenu(false)});
 const toast=document.getElementById('toast');let toastTimer;function showToast(m){toast.textContent=m;toast.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>toast.classList.remove('show'),2200)}
 async function copyText(text){try{await navigator.clipboard.writeText(text);showToast((translations[locale]||translations['fr-FR']).copied)}catch(e){const i=document.createElement('input');i.value=text;document.body.appendChild(i);i.select();document.execCommand('copy');i.remove();showToast((translations[locale]||translations['fr-FR']).copied)}}document.querySelectorAll('[data-copy]').forEach(b=>b.onclick=()=>copyText(b.dataset.copy));document.getElementById('signalNav').onclick=()=>copyText(SIGNAL);
@@ -1306,6 +1319,8 @@ aiFab.onclick=aiOpen;
 aiClose.onclick=()=>{aiPanel.classList.remove('open');aiFab.setAttribute('aria-expanded','false')};
 aiForm.onsubmit=e=>{e.preventDefault();const q=aiInput.value.trim();aiInput.value='';aiAsk(q)};
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeLegal();closeLightbox()}});
+
+</script>
 
 
 
@@ -2458,64 +2473,7 @@ section{padding:88px 0}
 </style>
 
 
-<script id="final-menu-handler">
-(function () {
-  function initMenu() {
-    const menu = document.getElementById('menu');
-    const navLinks = document.getElementById('navLinks');
-    if (!menu || !navLinks) return;
 
-    const closeMenu = () => {
-      navLinks.classList.remove('open');
-      menu.setAttribute('aria-expanded', 'false');
-      menu.setAttribute('aria-label', 'Ouvrir le menu');
-      menu.innerHTML = '<i class="fas fa-bars" aria-hidden="true"></i>';
-    };
-
-    const openMenu = () => {
-      navLinks.classList.add('open');
-      menu.setAttribute('aria-expanded', 'true');
-      menu.setAttribute('aria-label', 'Fermer le menu');
-      menu.innerHTML = '<i class="fas fa-xmark" aria-hidden="true"></i>';
-    };
-
-    menu.addEventListener('click', function (event) {
-      event.preventDefault();
-      event.stopPropagation();
-      if (navLinks.classList.contains('open')) closeMenu();
-      else openMenu();
-    });
-
-    navLinks.addEventListener('click', function (event) {
-      const target = event.target.closest('a, button');
-      if (target && target !== menu) closeMenu();
-    });
-
-    document.addEventListener('click', function (event) {
-      if (window.innerWidth <= 760 &&
-          navLinks.classList.contains('open') &&
-          !event.target.closest('#navLinks') &&
-          !event.target.closest('#menu')) {
-        closeMenu();
-      }
-    });
-
-    window.addEventListener('resize', function () {
-      if (window.innerWidth > 760) {
-        navLinks.classList.remove('open');
-        menu.setAttribute('aria-expanded', 'false');
-        menu.innerHTML = '<i class="fas fa-bars" aria-hidden="true"></i>';
-      }
-    });
-  }
-
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initMenu);
-  } else {
-    initMenu();
-  }
-})();
-</script>
 
 </body>
 </html>
