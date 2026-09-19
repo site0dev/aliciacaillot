@@ -1252,20 +1252,22 @@ document.getElementById('contactForm').addEventListener('submit', function(e){
     'Durée : ' + duration + '\n\n' +
     'Message :\n' + message;
 
-  const mailto = 'mailto:aliciacaillot@boiseo.online' +
+  const mailtoUrl =
+    'mailto:aliciacaillot@boiseo.online' +
     '?subject=' + encodeURIComponent(subject) +
     '&body=' + encodeURIComponent(body);
 
   const status = document.getElementById('formStatus');
-  if (status) status.textContent = 'Ouverture de votre application e-mail…';
+  if (status) status.textContent = 'Ouverture du client de messagerie…';
 
-  // Navigation directe : plus fiable sur mobile que window.open().
-  window.location.href = mailto;
+  // Ouvre le client de messagerie associé aux liens mailto,
+  // avec destinataire, objet et contenu déjà remplis.
+  window.location.assign(mailtoUrl);
 
   setTimeout(function(){
     if (status) status.textContent =
-      'Si rien ne s’ouvre, aucune application e-mail compatible n’est peut-être configurée sur cet appareil.';
-  }, 1800);
+      'Si le client mail ne s’ouvre pas, vérifiez qu’une application de messagerie est configurée sur cet appareil.';
+  }, 2000);
 });
 /* legal modal */
 const legal=document.getElementById('legalModal');document.getElementById('legalBtn').onclick=()=>{legal.classList.add('open');document.body.classList.add('modal-open')};function closeLegal(){legal.classList.remove('open');document.body.classList.remove('modal-open')}document.getElementById('legalClose').onclick=closeLegal;legal.onclick=e=>{if(e.target===legal)closeLegal()};document.addEventListener('keydown',e=>{if(e.key==='Escape'&&legal.classList.contains('open'))closeLegal()});
