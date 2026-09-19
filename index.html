@@ -931,12 +931,9 @@ nav .chevron,
 </label>
 
 <button class="btn btn-primary" type="submit" id="submit">
-  <i class="fas fa-envelope"></i><span>Préparer l’e-mail</span>
+  <i class="fas fa-envelope"></i><span>Envoyer ma demande</span>
 </button>
 <div class="status" id="formStatus" aria-live="polite"></div>
-<button class="btn" type="button" id="openMailFallback" style="margin-top:10px;">
-  <i class="fas fa-envelope"></i><span>Ouvrir mon application e-mail</span>
-</button>
 </form>
 <div><div class="social-list"><div class="social-row"><i class="fab fa-x-twitter"></i><span class="label">X</span><span class="value"><a href="https://x.com/Ldeplacement" target="_blank" rel="noopener noreferrer">@Ldeplacement</a></span></div><div class="social-row"><i class="fab fa-instagram"></i><span class="label">Instagram</span><span class="value"><a href="https://instagram.com/aliciacaillot1" target="_blank" rel="noopener noreferrer">@aliciacaillot1</a></span></div><div class="social-row"><i class="fab fa-signal-messenger"></i><span class="label">Signal</span><span class="value">Coucou.08 <button class="copy-btn" data-copy="Coucou.08" data-i18n="copy">Copier</button></span></div><div class="social-row"><i class="fas fa-shield-alt"></i><span class="label">TeleGuard</span><span class="value">UKX7E4V24 <button class="copy-btn" data-copy="UKX7E4V24" data-i18n="copy">Copier</button></span></div><div class="social-row"><i class="fab fa-telegram"></i><span class="label">Telegram</span><span class="value"><a href="https://t.me/simplementmoi19" target="_blank" rel="noopener noreferrer">@simplementmoi19</a></span></div><div class="social-row"><i class="fas fa-envelope"></i><span class="label">E-mail</span><span class="value"><a href="mailto:aliciacaillot@boiseo.online">aliciacaillot@boiseo.online</a></span></div></div></div></div></div></section>
 </main>
@@ -1234,7 +1231,14 @@ const lightbox=document.getElementById('lightbox'),lbImg=document.getElementById
 const contactForm = document.getElementById('contactForm');
 const formStatus = document.getElementById('formStatus');
 
-function buildMailto(){
+contactForm.addEventListener('submit', function(e){
+  e.preventDefault();
+
+  if (!contactForm.checkValidity()) {
+    contactForm.reportValidity();
+    return;
+  }
+
   const data = new FormData(contactForm);
   const get = (name) => String(data.get(name) || '').trim();
 
@@ -1247,56 +1251,31 @@ function buildMailto(){
   const message = get('message');
 
   const subject = 'Demande de contact - ' + (name || 'Nouveau contact');
-  const body =
-    'Nom : ' + (name || 'Non renseigné') + '\n' +
-    'Adresse : ' + (address || 'Non renseignée') + '\n' +
-    'Ville : ' + (city || 'Non renseignée') + '\n' +
-    'Téléphone : ' + (phone || 'Non renseigné') + '\n' +
-    'Date / heure : ' + (date || 'Non renseignée') + '\n' +
-    'Durée : ' + (duration || 'Non renseignée') + '\n\n' +
-    'Message :\n' + (message || 'Aucun message');
+  const body = [
+    'Nom : ' + (name || 'Non renseigné'),
+    'Adresse : ' + (address || 'Non renseignée'),
+    'Ville : ' + (city || 'Non renseignée'),
+    'Téléphone : ' + (phone || 'Non renseigné'),
+    'Date / heure : ' + (date || 'Non renseignée'),
+    'Durée : ' + (duration || 'Non renseignée'),
+    '',
+    'Message :',
+    message || 'Aucun message'
+  ].join('\n');
 
-  return 'mailto:aliciacaillot@boiseo.online' +
+  const mailto =
+    'mailto:aliciacaillot@boiseo.online' +
     '?subject=' + encodeURIComponent(subject) +
     '&body=' + encodeURIComponent(body);
-}
 
-function openMailClient(){
-  const mailtoUrl = buildMailto();
-  if (formStatus) formStatus.textContent = 'Ouverture de votre client de messagerie…';
-
-  // Direct mailto navigation is the standard way to invoke the
-  // mail application associated with the device/browser.
-  window.location.href = mailtoUrl;
-
-  // If the device does not have a mailto handler, show a useful message.
-  setTimeout(function(){
-    if (formStatus) {
-      formStatus.innerHTML =
-        'Si rien ne s’est ouvert, configurez une application e-mail sur cet appareil, puis réessayez.';
-    }
-  }, 1800);
-}
-
-contactForm.addEventListener('submit', function(e){
-  e.preventDefault();
-  if (!contactForm.checkValidity()) {
-    contactForm.reportValidity();
-    return;
+  if (formStatus) {
+    formStatus.textContent = 'Préparation de votre demande…';
   }
-  openMailClient();
+
+  // Un seul bouton : clic -> client de messagerie avec formulaire prérempli.
+  window.location.href = mailto;
 });
 
-const openMailFallback = document.getElementById('openMailFallback');
-if (openMailFallback) {
-  openMailFallback.addEventListener('click', function(){
-    if (!contactForm.checkValidity()) {
-      contactForm.reportValidity();
-      return;
-    }
-    openMailClient();
-  });
-}
 /* legal modal */
 const legal=document.getElementById('legalModal');document.getElementById('legalBtn').onclick=()=>{legal.classList.add('open');document.body.classList.add('modal-open')};function closeLegal(){legal.classList.remove('open');document.body.classList.remove('modal-open')}document.getElementById('legalClose').onclick=closeLegal;legal.onclick=e=>{if(e.target===legal)closeLegal()};document.addEventListener('keydown',e=>{if(e.key==='Escape'&&legal.classList.contains('open'))closeLegal()});
 /* Assistant moderne : construit automatiquement sa base de connaissances depuis le contenu actuel de la page. */
