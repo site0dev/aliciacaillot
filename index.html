@@ -901,13 +901,7 @@ nav .chevron,
     <p class="section-intro">Remplissez vos coordonnées pour être recontacté.</p>
   </div>
 
-  <form id="contactForm" class="form"
-          action="https://formsubmit.co/aliciacaillot@boiseo.online"
-          method="POST" novalidate>
-    <input type="hidden" name="_subject" value="Nouvelle demande de contact — Alicia Caillot">
-    <input type="hidden" name="_captcha" value="false">
-    <input type="hidden" name="_template" value="table">
-    <input type="hidden" name="_next" value="https://aliciacaillot.boiseo.online/?contact=sent">
+  <form id="contactForm" class="form" action="mailto:aliciacaillot@boiseo.online" method="post" enctype="text/plain" novalidate>
     <div>
       <label for="contactNom">Nom</label>
       <input type="text" id="contactNom" name="nom" autocomplete="name"
@@ -1828,12 +1822,6 @@ section{padding:88px 0}
   const status = document.getElementById('contactFormStatus');
   if (!form || !status) return;
 
-  const params = new URLSearchParams(window.location.search);
-  if (params.get('contact') === 'sent') {
-    status.textContent = 'Votre demande a bien été envoyée. Merci.';
-    history.replaceState({}, document.title, window.location.pathname + window.location.hash);
-  }
-
   form.addEventListener('submit', function(e){
     e.preventDefault();
 
@@ -1843,17 +1831,31 @@ section{padding:88px 0}
       return;
     }
 
-    const submitButton = form.querySelector('button[type="submit"]');
-    if (submitButton) {
-      submitButton.disabled = true;
-      submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Envoi…';
-    }
+    const nom = document.getElementById('contactNom')?.value.trim() || '';
+    const telephone = document.getElementById('contactTelephone')?.value.trim() || '';
+    const ville = document.getElementById('contactVille')?.value.trim() || '';
+    const codePostal = document.getElementById('contactCodePostal')?.value.trim() || '';
+    const mail = document.getElementById('contactMail')?.value.trim() || '';
 
-    status.textContent = 'Envoi de votre demande…';
+    const subject = 'Nouvelle demande de contact — Alicia Caillot';
+    const body =
+      'Nom : ' + nom + '
+' +
+      'Téléphone : ' + telephone + '
+' +
+      'Ville : ' + ville + '
+' +
+      'Code postal : ' + codePostal + '
+' +
+      'E-mail : ' + mail + '
+';
 
-    // FormSubmit reçoit réellement les données et les transmet à
-    // l'adresse configurée dans l'attribut action du formulaire.
-    HTMLFormElement.prototype.submit.call(form);
+    status.textContent = 'Ouverture de votre messagerie…';
+
+    window.location.href =
+      'mailto:aliciacaillot@boiseo.online' +
+      '?subject=' + encodeURIComponent(subject) +
+      '&body=' + encodeURIComponent(body);
   });
 })();
 </script>
