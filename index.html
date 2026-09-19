@@ -1077,7 +1077,7 @@ footer {
 })();
 </script>
 <header><div class="container nav">
-<a aria-label="Alicia Caillot" class="logo" href="#hero">Alicia <span>Caillot</span></a>
+<a aria-label="Alicia Caillot" class="logo" href="#hero" id="headerAliciaTrigger">Alicia <span>Caillot</span></a>
 <ul class="nav-links" id="navLinks">
 <li><a data-i18n="home" href="#hero">Accueil</a></li><li><a data-i18n="services" href="#services">Prestations</a></li><li><a data-i18n="prices" href="#prices">Tarifs</a></li><li><a data-i18n="gallery" href="#gallery">Galerie</a></li><li><a data-i18n="contact" href="#contact">Contact</a></li><li aria-hidden="true" class="nav-auth-separator"></li><li><button aria-controls="authLoginModal" class="nav-auth-action" data-open-auth="login" type="button"><i class="fas fa-right-to-bracket"></i> Connexion</button></li><li><button aria-controls="authSignupModal" class="nav-auth-action" data-open-auth="signup" type="button"><i class="fas fa-user-plus"></i> Inscription</button></li><li><button aria-controls="authResetModal" class="nav-auth-action" data-open-auth="reset" type="button"><i class="fas fa-key"></i> Mot de passe oublié</button></li>
 </ul>
@@ -1088,7 +1088,7 @@ footer {
 </div>
 </div></header>
 <main>
-<section aria-label="Alicia Caillot" id="hero"><img alt="" aria-hidden="true" class="hero-bg" decoding="async" fetchpriority="high" src="/hero.jpg"/><div aria-hidden="true" class="hero-scrim"></div><div class="container hero"><h1 aria-label="Alicia Caillot" id="heroSecretTrigger" title="Alicia Caillot">Alicia <em>Caillot</em></h1><a class="btn btn-primary" href="#contact"><i class="fas fa-calendar-check"></i><span data-i18n="cta">Prendre contact</span></a></div></section>
+<section aria-label="Alicia Caillot" id="hero"><img alt="" aria-hidden="true" class="hero-bg" decoding="async" fetchpriority="high" src="/hero.jpg"/><div aria-hidden="true" class="hero-scrim"></div><div class="container hero"><h1 aria-label="Alicia Caillot" id="heroTitle" title="Alicia Caillot">Alicia <em>Caillot</em></h1><a class="btn btn-primary" href="#contact"><i class="fas fa-calendar-check"></i><span data-i18n="cta">Prendre contact</span></a></div></section>
 <section id="services"><div class="container"><div class="section-head"><h2 class="section-title"><i class="fas fa-feather-alt"></i><span data-i18n="servicesTitle">Prestations</span></h2></div>
 <div class="services-grid">
 <div class="service-cat"><h3 data-i18n="s1t">Massages</h3><ul><li data-i18n="s1a">Relaxant</li><li data-i18n="s1b">Californien</li><li data-i18n="s1c">Prostate</li><li data-i18n="s1d">Tantrique</li></ul></div>
@@ -2116,7 +2116,7 @@ section{padding:88px 0}
   function renderSiteContent(c){
     siteContent=deepMerge(DEFAULT_CONTENT,c||{});
 
-    const h=$('heroSecretTrigger');
+    const h=$('heroTitle');
     if(h){
       h.innerHTML=esc(siteContent.hero.first_name)+' <em>'+esc(siteContent.hero.last_name)+'</em>';
     }
@@ -2328,27 +2328,28 @@ section{padding:88px 0}
     $('clientMessageInput').value='';
   });
 
-  /* Accès administration : 15 clics sur « Alicia Caillot » du hero en 60 secondes.
-     Le logo « Alicia Caillot » de l'entête n'est pas un déclencheur. */
-  const trigger=$('heroSecretTrigger');
-  let clickCount=0,firstClickAt=0,clickResetTimer=null;
-  if(trigger){
-    trigger.addEventListener('click',()=>{
+  /* Accès administration : 7 clics sur « Alicia » de l'entête en 10 secondes. */
+  const adminTrigger=$('headerAliciaTrigger');
+  let adminClickCount=0,adminFirstClickAt=0,adminClickResetTimer=null;
+  if(adminTrigger){
+    adminTrigger.addEventListener('click',event=>{
+      event.preventDefault();
+      event.stopPropagation();
       const now=Date.now();
-      if(!firstClickAt || now-firstClickAt>60000){
-        firstClickAt=now;
-        clickCount=0;
+      if(!adminFirstClickAt || now-adminFirstClickAt>10000){
+        adminFirstClickAt=now;
+        adminClickCount=0;
       }
-      clickCount++;
-      clearTimeout(clickResetTimer);
-      clickResetTimer=setTimeout(()=>{
-        clickCount=0;
-        firstClickAt=0;
-      },60000);
-      if(clickCount>=15){
-        clickCount=0;
-        firstClickAt=0;
-        clearTimeout(clickResetTimer);
+      adminClickCount++;
+      clearTimeout(adminClickResetTimer);
+      adminClickResetTimer=setTimeout(()=>{
+        adminClickCount=0;
+        adminFirstClickAt=0;
+      },10000);
+      if(adminClickCount>=7){
+        adminClickCount=0;
+        adminFirstClickAt=0;
+        clearTimeout(adminClickResetTimer);
         openModal('adminAccessModal');
       }
     });
@@ -2590,7 +2591,7 @@ section{padding:88px 0}
 </div>
 <div aria-hidden="true" class="site-modal" id="resetPasswordModal">
 <div class="site-modal-card">
-<div class="site-modal-top"><div><h2>Nouveau mot de passe</h2><p>Choisissez un nouveau mot de passe.</p></div></div>
+<div class="site-modal-top"><div><h2>Nouveau mot de passe</h2><p>Choisissez un nouveau mot de passe.</p></div><button aria-label="Fermer" class="modal-x" data-close-modal="resetPasswordModal" type="button">×</button></div>
 <form class="form" id="resetPasswordForm">
 <div><label for="newPassword">Nouveau mot de passe</label><input autocomplete="new-password" id="newPassword" minlength="8" required="" type="password"/></div>
 <div><label for="newPassword2">Confirmer</label><input autocomplete="new-password" id="newPassword2" minlength="8" required="" type="password"/></div>
@@ -2689,6 +2690,53 @@ section{padding:88px 0}
 @media(max-width:500px){.client-card,.admin-card{padding:16px}.client-tabs{gap:5px}.client-tab{font-size:.72rem;padding:8px 9px}.stats-row{gap:6px}.stat-box{padding:12px 5px}.stat-box strong{font-size:1.4rem}}
 </style>
 
+<script id="global-modal-close-fix">
+(() => {
+  function closeEverywhere(targetId) {
+    if (targetId) {
+      const target = document.getElementById(targetId);
+      if (target) {
+        target.classList.remove('open');
+        target.setAttribute('aria-hidden', 'true');
+      }
+    }
+    document.querySelectorAll('.site-modal.open').forEach(modal => {
+      if (!targetId || modal.id === targetId) {
+        modal.classList.remove('open');
+        modal.setAttribute('aria-hidden', 'true');
+      }
+    });
+    document.body.classList.remove('modal-open');
+  }
+
+  // Gestionnaire unique et délégué : fonctionne pour toutes les croix,
+  // y compris les fenêtres ajoutées après le chargement de la page.
+  document.addEventListener('click', event => {
+    const closeButton = event.target.closest('[data-close-modal]');
+    if (!closeButton) return;
+    event.preventDefault();
+    event.stopPropagation();
+    event.stopImmediatePropagation();
+    closeEverywhere(closeButton.dataset.closeModal);
+  }, true);
+
+  // Une fenêtre modale se ferme aussi en cliquant sur son arrière-plan.
+  document.addEventListener('click', event => {
+    const modal = event.target.closest('.site-modal.open');
+    if (!modal || event.target !== modal) return;
+    closeEverywhere(modal.id);
+  }, true);
+
+  // Échap ferme la fenêtre modale actuellement ouverte.
+  document.addEventListener('keydown', event => {
+    if (event.key !== 'Escape') return;
+    const openModal = document.querySelector('.site-modal.open');
+    if (!openModal) return;
+    event.preventDefault();
+    closeEverywhere(openModal.id);
+  }, true);
+})();
+</script>
 <script id="final-auth-navigation-fix">
 (() => {
   const authTargets = Object.freeze({
