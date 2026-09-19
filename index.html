@@ -823,6 +823,20 @@ nav .chevron,
   #about .about-full .about-copy{width:100%;font-size:1rem;line-height:1.7;}
 }
 </style>
+<style id="legal-modal-final-readability">
+#legalModal{display:none!important;position:fixed!important;inset:0!important;z-index:99990!important;padding:12px!important;background:rgba(0,0,0,.78)!important;align-items:center!important;justify-content:center!important;overflow:hidden!important}
+#legalModal.open{display:flex!important}
+#legalModal .modal-card{width:min(900px,100%)!important;height:min(88svh,820px)!important;max-height:88svh!important;overflow-y:auto!important;overflow-x:hidden!important;-webkit-overflow-scrolling:touch!important;background:#fff!important;color:#111!important;border:1px solid #ccc!important;border-radius:16px!important;padding:24px 22px 30px!important;box-shadow:0 20px 70px rgba(0,0,0,.45)!important}
+#legalModal .modal-top{position:sticky!important;top:-24px!important;z-index:5!important;margin:-24px -22px 20px!important;padding:16px 18px!important;background:#fff!important;border-bottom:1px solid #ddd!important}
+#legalModal .modal-top h2{color:#111!important;font-size:clamp(1.25rem,3vw,1.8rem)!important;line-height:1.25!important;margin:0!important}
+#legalModal .close{width:40px!important;height:40px!important;background:#111!important;color:#fff!important;border:1px solid #111!important;font-size:1.35rem!important}
+#legalModal h3{color:#111!important;font-size:1.05rem!important;line-height:1.35!important;margin:20px 0 8px!important}
+#legalModal h4{color:#222!important;font-size:.92rem!important;line-height:1.6!important;font-weight:600!important;margin:14px 0 7px!important}
+#legalModal p{color:#222!important;font-size:.92rem!important;line-height:1.7!important;margin:0 0 12px!important}
+#legalModal .legal-list{color:#222!important;margin-left:10px!important}
+#legalModal .legal-divider{border-top:1px solid #ccc!important;margin:26px 0!important}
+@media(max-width:600px){#legalModal{padding:8px!important}#legalModal .modal-card{height:94svh!important;max-height:94svh!important;border-radius:12px!important;padding:20px 16px 26px!important}#legalModal .modal-top{top:-20px!important;margin:-20px -16px 18px!important;padding:13px 14px!important}#legalModal p{font-size:.88rem!important;line-height:1.65!important}#legalModal h3{font-size:1rem!important}#legalModal h4{font-size:.86rem!important}}
+</style>
 </head>
 <body><div id="site-discreet-note" style="display:none" aria-hidden="true">Site d’information et de prise de contact réservé aux adultes.</div>
 <div id="age-overlay" role="dialog" aria-modal="true" aria-labelledby="age-title">
@@ -893,17 +907,6 @@ nav .chevron,
 <label for="phone">Téléphone</label>
 <input id="phone" type="tel" autocomplete="tel" placeholder="+33…">
 
-<label for="contactApp">Application de contact</label>
-<select id="contactApp" required>
-  <option value="" selected disabled>Choisissez une application</option>
-  <option value="telegram">Telegram</option>
-  <option value="instagram">Instagram</option>
-
-<option value="x">X</option>
-<option value="signal">Signal</option>
-<option value="teleguard">TeleGuard</option>
-</select>
-
 <label for="date">Date & heure souhaitée</label>
 <input id="date" type="datetime-local">
 
@@ -928,7 +931,7 @@ nav .chevron,
 </label>
 
 <button class="btn btn-primary" type="submit" id="submit">
-  <i class="fas fa-paper-plane"></i><span>Envoyer via l’application choisie</span>
+  <i class="fas fa-envelope"></i><span>Préparer l’e-mail</span>
 </button>
 <div class="status" id="formStatus" aria-live="polite"></div>
 </form>
@@ -1224,72 +1227,42 @@ galleryNext.addEventListener('click',()=>{
 
 loadRootGallery();
 const lightbox=document.getElementById('lightbox'),lbImg=document.getElementById('lightboxImg');function openLightbox(src,alt){lbImg.src=src;lbImg.alt=alt;lightbox.classList.add('open');lightbox.setAttribute('aria-hidden','false');document.body.classList.add('modal-open')}function closeLightbox(){lightbox.classList.remove('open');lightbox.setAttribute('aria-hidden','true');lbImg.src='';document.body.classList.remove('modal-open')}document.getElementById('lightboxClose').onclick=closeLightbox;lightbox.onclick=e=>{if(e.target===lightbox)closeLightbox()};
-/* form: no false success */
+/* form: email only — client reviews and sends manually */
 document.getElementById('contactForm').addEventListener('submit',e=>{
   e.preventDefault();
-  const f=e.currentTarget;
+  const f=e.currentTarget, status=document.getElementById('formStatus');
   if(!f.reportValidity() || !document.getElementById('ageCheck').checked) return;
 
   const name=document.getElementById('name').value.trim();
   const address=document.getElementById('address').value.trim();
   const city=document.getElementById('city').value.trim();
   const phone=document.getElementById('phone').value.trim();
-  const app=document.getElementById('contactApp').value;
   const date=document.getElementById('date').value;
   const duration=document.getElementById('duration').value;
   const message=document.getElementById('message').value.trim();
 
-  if(!app || !address || !city){
-    document.getElementById('formStatus').textContent='Veuillez remplir tous les champs obligatoires.';
-    return;
-  }
+  const recipient='aliciacaillot@boiseo.online';
+  const subject=`Demande de contact - ${name || 'Nouveau contact'}`;
+  const body=[
+    'Nouvelle demande de contact','',
+    `Nom / Prénom : ${name}`,
+    `Adresse postale : ${address}`,
+    `Ville : ${city}`,
+    `Téléphone : ${phone || 'Non renseigné'}`,
+    `Date & heure souhaitée : ${date || 'Non renseignée'}`,
+    `Durée : ${duration}`,
+    `Message : ${message || 'Aucun message'}`,
+    '',
+    'Veuillez vérifier les informations puis confirmer vous-même l’envoi.'
+  ].join('\n');
 
-  const textMessage=
-`Nouvelle demande
-Nom / Prénom : ${name}
-Adresse postale : ${address}
-Ville : ${city}
-Téléphone : ${phone || 'Non renseigné'}
-Date & heure souhaitée : ${date || 'Non renseignée'}
-Durée : ${duration}
-Message : ${message || 'Aucun message'}
-`;
-
-  const status=document.getElementById('formStatus');
-
-  // Le navigateur ne permet pas à une page web d'envoyer directement
-  // un message privé vers tous les services. Le message est donc copié
-  // puis l'application / le profil choisi est ouvert.
-  try {
-    if (navigator.clipboard && navigator.clipboard.writeText) {
-      navigator.clipboard.writeText(textMessage).catch(()=>{});
-    }
-  } catch(e) {}
-
-  const cleanId='';
-  if(app==='telegram'){
-    status.textContent='Votre demande est préparée et copiée. Ouverture de Telegram…';
-    try{ window.location.href='tg://resolve?domain='+encodeURIComponent(cleanId); }catch(e){}
-    setTimeout(()=>window.open('https://t.me/'+encodeURIComponent(cleanId),'_blank','noopener,noreferrer'),700);
-  }else if(app==='instagram'){
-    status.textContent='Votre demande est préparée et copiée. Ouverture d’Instagram…';
-    try{ window.location.href='instagram://user?username='+encodeURIComponent(cleanId); }catch(e){}
-    setTimeout(()=>window.open('https://www.instagram.com/'+encodeURIComponent(cleanId)+'/_blank','_blank','noopener,noreferrer'),700);
-  }else if(app==='x'){
-    status.textContent='Votre demande est préparée et copiée. Ouverture de X…';
-    try{ window.location.href='twitter://user?screen_name='+encodeURIComponent(cleanId); }catch(e){}
-    setTimeout(()=>window.open('https://x.com/'+encodeURIComponent(cleanId),'_blank','noopener,noreferrer'),700);
-  }else if(app==='signal'){
-    status.textContent='Votre demande est préparée et copiée. Ouverture de Signal…';
-    try{ window.location.href='sgnl://signal.me/#p/'+encodeURIComponent(identifier); }catch(e){}
-    setTimeout(()=>window.open('https://signal.me/#p/'+encodeURIComponent(identifier),'_blank','noopener,noreferrer'),700);
-  }else if(app==='teleguard'){
-    status.textContent='Votre demande est préparée et copiée. Ouverture de TeleGuard…';
-    try{ window.location.href='teleguard://'+encodeURIComponent(identifier); }catch(e){}
-  }
+  status.textContent='Ouverture de votre messagerie…';
+  window.location.href='mailto:'+recipient+
+    '?subject='+encodeURIComponent(subject)+
+    '&body='+encodeURIComponent(body);
 });
 /* legal modal */
-const legal=document.getElementById('legalModal');document.getElementById('legalBtn').onclick=()=>{legal.classList.add('open');document.body.classList.add('modal-open')};function closeLegal(){legal.classList.remove('open');document.body.classList.remove('modal-open')}document.getElementById('legalClose').onclick=closeLegal;legal.onclick=e=>{if(e.target===legal)closeLegal()};
+const legal=document.getElementById('legalModal');document.getElementById('legalBtn').onclick=()=>{legal.classList.add('open');document.body.classList.add('modal-open')};function closeLegal(){legal.classList.remove('open');document.body.classList.remove('modal-open')}document.getElementById('legalClose').onclick=closeLegal;legal.onclick=e=>{if(e.target===legal)closeLegal()};document.addEventListener('keydown',e=>{if(e.key==='Escape'&&legal.classList.contains('open'))closeLegal()});
 /* Assistant moderne : construit automatiquement sa base de connaissances depuis le contenu actuel de la page. */
 const aiFab=document.getElementById('aiFab'),aiPanel=document.getElementById('aiPanel'),aiClose=document.getElementById('aiClose'),aiMessages=document.getElementById('aiMessages'),aiChips=document.getElementById('aiChips'),aiForm=document.getElementById('aiForm'),aiInput=document.getElementById('aiInput');
 let aiBusy=false;
