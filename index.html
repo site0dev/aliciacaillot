@@ -1231,14 +1231,7 @@ const lightbox=document.getElementById('lightbox'),lbImg=document.getElementById
 const contactForm = document.getElementById('contactForm');
 const formStatus = document.getElementById('formStatus');
 
-contactForm.addEventListener('submit', function(e){
-  e.preventDefault();
-
-  if (!contactForm.checkValidity()) {
-    contactForm.reportValidity();
-    return;
-  }
-
+function prepareMail(){
   const data = new FormData(contactForm);
   const get = (name) => String(data.get(name) || '').trim();
 
@@ -1263,17 +1256,47 @@ contactForm.addEventListener('submit', function(e){
     message || 'Aucun message'
   ].join('\n');
 
-  const mailto =
-    'mailto:aliciacaillot@boiseo.online' +
-    '?subject=' + encodeURIComponent(subject) +
-    '&body=' + encodeURIComponent(body);
+  return {
+    subject: subject,
+    body: body,
+    gmail: 'https://mail.google.com/mail/?view=cm&fs=1&to=' +
+      encodeURIComponent('aliciacaillot@boiseo.online') +
+      '&su=' + encodeURIComponent(subject) +
+      '&body=' + encodeURIComponent(body),
+    mailto: 'mailto:aliciacaillot@boiseo.online' +
+      '?subject=' + encodeURIComponent(subject) +
+      '&body=' + encodeURIComponent(body)
+  };
+}
 
-  if (formStatus) {
-    formStatus.textContent = 'Préparation de votre demande…';
+contactForm.addEventListener('submit', function(e){
+  e.preventDefault();
+
+  if (!contactForm.checkValidity()) {
+    contactForm.reportValidity();
+    return;
   }
 
-  // Un seul bouton : clic -> client de messagerie avec formulaire prérempli.
-  window.location.href = mailto;
+  const mail = prepareMail();
+
+  if (formStatus) {
+    formStatus.textContent = 'Ouverture de votre messagerie…';
+  }
+
+  // Ouvre directement la fenêtre de rédaction Gmail avec les champs préremplis.
+  // Si Gmail n'est pas disponible, le lien mailto est utilisé comme secours.
+  const gmailWindow = window.open(mail.gmail, '_blank');
+
+  if (!gmailWindow) {
+    window.location.href = mail.mailto;
+  }
+
+  setTimeout(function(){
+    if (formStatus) {
+      formStatus.textContent =
+        'La demande est prête dans votre messagerie. Vérifiez le destinataire puis envoyez-la.';
+    }
+  }, 1200);
 });
 
 /* legal modal */
