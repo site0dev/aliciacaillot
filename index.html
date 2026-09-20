@@ -1411,20 +1411,19 @@ textarea:focus-visible {
 </style>
 
 <meta name="site-version" content="v15-auth-persistence">
-
-<style id="chat-paperclip-v19">
-.chat-compose-tools{display:flex!important;align-items:center!important;flex:0 0 auto!important}
-.chat-attach{width:48px!important;height:48px!important;min-width:48px!important;padding:0!important;border-radius:12px!important;border:2px solid #B01245!important;background:#7A1230!important;color:#fff!important;display:grid!important;place-items:center!important;cursor:pointer!important;box-shadow:0 4px 12px rgba(0,0,0,.28)!important}
-.chat-attach i{font-size:1.35rem!important;line-height:1!important;color:#fff!important}
-.chat-attach span{display:none!important}
-.chat-attach:hover,.chat-attach:focus-visible{background:#B01245!important;border-color:#E5A9BC!important;color:#fff!important;transform:translateY(-1px)}
-@media(max-width:620px){.chat-attach{width:46px!important;height:46px!important;min-width:46px!important}.chat-attach i{font-size:1.28rem!important}}
-.gallery-admin-item{display:grid;grid-template-columns:130px 1fr;gap:14px;align-items:start}
-.gallery-admin-item>img{width:130px;height:170px;object-fit:cover;border-radius:12px;border:1px solid #333;background:#111}
-.gallery-admin-body{display:grid;gap:9px;min-width:0}
-.gallery-admin-body .editor-actions{display:flex;flex-wrap:wrap;gap:7px}
-.gallery-alt-input{width:100%;box-sizing:border-box;background:#fff;color:#161616;border:1px solid #bbb;border-radius:9px;padding:9px 10px}
-@media(max-width:620px){.gallery-admin-item{grid-template-columns:1fr}.gallery-admin-item>img{width:100%;height:220px}}
+<style id="auth-session-fix-v20">
+#dashboardNavItem[hidden], .auth-guest-item[hidden], .nav-auth-separator[hidden]{display:none !important;}
+#dashboardNavBtn{color:#fff !important;}
+#dashboardNavBtn i{color:inherit !important;}
+</style>
+<style id="v21-fixes">
+.chat-attach{min-width:92px!important;min-height:42px!important;display:inline-flex!important;align-items:center!important;justify-content:center!important;gap:7px!important;border:1px solid rgba(255,255,255,.28)!important;border-radius:10px!important;cursor:pointer!important;opacity:1!important;visibility:visible!important}
+.chat-attach .fa-paperclip{font-size:1.08rem!important}.chat-attach-label{font-size:.72rem!important;font-weight:700!important}
+.gallery-upload-bar{display:flex!important;align-items:center!important;gap:10px!important;flex-wrap:wrap!important}
+.gallery-admin-item{display:grid!important;grid-template-columns:minmax(110px,180px) 1fr!important;gap:14px!important;padding:14px!important;margin-top:12px!important;border:1px solid var(--line)!important;border-radius:14px!important;background:rgba(255,255,255,.02)!important}
+.gallery-admin-item img{width:100%!important;aspect-ratio:4/3!important;object-fit:cover!important;border-radius:10px!important;background:#111!important}
+.gallery-admin-body{display:flex!important;flex-direction:column!important;gap:9px!important;min-width:0!important}.gallery-admin-body .editor-actions{display:flex!important;flex-wrap:wrap!important;gap:7px!important}.gallery-admin-body .btn{min-height:38px!important}
+@media(max-width:620px){.gallery-admin-item{grid-template-columns:1fr!important}.chat-attach{min-width:82px!important}}
 </style>
 </head>
 <body><div aria-hidden="true" id="site-discreet-note" style="display:none">Site d’information et de prise de contact réservé aux adultes.</div>
@@ -1451,7 +1450,7 @@ textarea:focus-visible {
 <header><div class="container nav">
 <a aria-label="Alicia Caillot" class="logo" href="#hero" id="headerAliciaTrigger">Alicia <span>Caillot</span></a>
 <ul class="nav-links" id="navLinks">
-<li><a data-i18n="home" href="#hero">Accueil</a></li><li><a data-i18n="services" href="#services">Prestations</a></li><li><a data-i18n="prices" href="#prices">Tarifs</a></li><li><a data-i18n="gallery" href="#gallery">Galerie</a></li><li><a data-i18n="contact" href="#contact">Contact</a></li><li aria-hidden="true" class="nav-auth-separator"></li><li id="clientDashboardNavItem" hidden><button aria-controls="clientAccountModal" class="nav-auth-action nav-dashboard-action" id="clientDashboardNav" type="button"><i class="fas fa-gauge-high"></i> Tableau de bord</button></li><li class="client-auth-item"><button aria-controls="authLoginModal" class="nav-auth-action" data-open-auth="login" type="button"><i class="fas fa-right-to-bracket"></i> Connexion</button></li><li class="client-auth-item"><button aria-controls="authSignupModal" class="nav-auth-action" data-open-auth="signup" type="button"><i class="fas fa-user-plus"></i> Inscription</button></li><li class="client-auth-item"><button aria-controls="authResetModal" class="nav-auth-action" data-open-auth="reset" type="button"><i class="fas fa-key"></i> Mot de passe oublié</button></li>
+<li><a data-i18n="home" href="#hero">Accueil</a></li><li><a data-i18n="services" href="#services">Prestations</a></li><li><a data-i18n="prices" href="#prices">Tarifs</a></li><li><a data-i18n="gallery" href="#gallery">Galerie</a></li><li><a data-i18n="contact" href="#contact">Contact</a></li><li aria-hidden="true" class="nav-auth-separator"></li><li id="dashboardNavItem" hidden><button aria-controls="clientAccountModal" class="nav-auth-action" id="dashboardNavBtn" type="button"><i class="fas fa-gauge-high"></i> Tableau de bord</button></li><li class="auth-guest-item"><button aria-controls="authLoginModal" class="nav-auth-action" data-open-auth="login" type="button"><i class="fas fa-right-to-bracket"></i> Connexion</button></li><li class="auth-guest-item"><button aria-controls="authSignupModal" class="nav-auth-action" data-open-auth="signup" type="button"><i class="fas fa-user-plus"></i> Inscription</button></li><li class="auth-guest-item"><button aria-controls="authResetModal" class="nav-auth-action" data-open-auth="reset" type="button"><i class="fas fa-key"></i> Mot de passe oublié</button></li>
 </ul>
 <div class="nav-social"><a aria-label="X" href="https://x.com/Ldeplacement" rel="noopener noreferrer" target="_blank"><i class="fab fa-x-twitter"></i></a><a aria-label="Instagram" href="https://instagram.com/aliciacaillot1" rel="noopener noreferrer" target="_blank"><i class="fab fa-instagram"></i></a><button aria-label="Copier l'identifiant Signal" id="signalNav" type="button"><i class="fab fa-signal-messenger"></i></button></div>
 <div class="nav-actions">
@@ -1721,7 +1720,7 @@ Remise en main propre pour le premier rendez-vous. Paiement en espèces accepté
  <button class="client-tab" type="button" data-client-tab="settings">Paramètres</button>
 </div>
 <section class="client-tab-panel active" data-client-panel="messages">
-<div class="chat-box" id="clientChat"><div class="chat-head"><strong>Conversation privée</strong><span class="chat-head-actions"><span id="chatStatus">Connexion…</span><button class="chat-notify-btn" data-notify-button type="button">Activer les notifications</button></span></div><div class="chat-messages" id="clientMessages"></div><form class="chat-compose" id="clientMessageForm"><div class="chat-compose-tools"><button class="chat-attach" id="clientAttachBtn" type="button" aria-label="Joindre un fichier" title="Joindre un fichier"><i class="fas fa-paperclip"></i></button><input id="clientAttachmentInput" type="file" accept="*/*" hidden multiple></div><input autocomplete="off" id="clientMessageInput" maxlength="2000" placeholder="Écrivez votre message…"/><button aria-label="Envoyer" class="chat-send" type="submit"><i class="fas fa-paper-plane"></i></button></form><div class="chat-attachment-list" id="clientAttachmentList"></div></div>
+<div class="chat-box" id="clientChat"><div class="chat-head"><strong>Conversation privée</strong><span class="chat-head-actions"><span id="chatStatus">Connexion…</span><button class="chat-notify-btn" data-notify-button type="button">Activer les notifications</button></span></div><div class="chat-messages" id="clientMessages"></div><form class="chat-compose" id="clientMessageForm"><div class="chat-compose-tools"><button class="chat-attach" id="clientAttachBtn" type="button" aria-label="Joindre un fichier"><i class="fas fa-paperclip" aria-hidden="true"></i><span class="chat-attach-label">Joindre</span></button><input id="clientAttachmentInput" type="file" accept="*/*" hidden multiple></div><input autocomplete="off" id="clientMessageInput" maxlength="2000" placeholder="Écrivez votre message…"/><button aria-label="Envoyer" class="chat-send" type="submit"><i class="fas fa-paper-plane"></i></button></form><div class="chat-attachment-list" id="clientAttachmentList"></div></div>
 </section>
 <section class="client-tab-panel" data-client-panel="profile" hidden>
 <form class="client-profile-form" id="clientProfileForm">
@@ -1831,7 +1830,7 @@ galleryNext.addEventListener('click',()=>{
   if(galleryIndex<galleryBatches.length-1){galleryIndex++;updateGallery();}
 });
 
-document.getElementById('galleryGrid').innerHTML='<div class="gallery-empty"><i class="fas fa-spinner fa-spin"></i></div>';
+loadRootGallery();
 const lightbox=document.getElementById('lightbox'),lbImg=document.getElementById('lightboxImg');window.openLightbox=openLightbox;function openLightbox(src,alt){lbImg.src=src;lbImg.alt=alt;lightbox.classList.add('open');lightbox.setAttribute('aria-hidden','false');document.body.classList.add('modal-open')}function closeLightbox(){lightbox.classList.remove('open');lightbox.setAttribute('aria-hidden','true');lbImg.src='';document.body.classList.remove('modal-open')}document.getElementById('lightboxClose').onclick=closeLightbox;lightbox.onclick=e=>{if(e.target===lightbox)closeLightbox()};
 /* form: email only — client reviews and sends manually */
 /* legal modal */
@@ -2478,33 +2477,10 @@ section{padding:88px 0}
     return;
   }
 
-  /*
-   * Auth persistante : on conserve UNE clé stable pour toute l'application.
-   * Si une ancienne version de Supabase a utilisé sa clé standard, on la
-   * migre une seule fois vers la clé Alicia avant d'initialiser le client.
-   */
-  const SUPABASE_PROJECT_REF = SUPABASE_URL.replace(/^https?:\/\//,'').split('.')[0];
-  const AUTH_STORAGE_KEY = `sb-${SUPABASE_PROJECT_REF}-auth-token`;
-  (function migrateAuthStorage(){
-    try{
-      const target=window.localStorage.getItem(AUTH_STORAGE_KEY);
-      if(target) return;
-      const candidates=[
-        'alicia-caillot-auth',
-        `sb_${SUPABASE_PROJECT_REF}_auth-token`,
-        'supabase.auth.token'
-      ];
-      for(const key of candidates){
-        const value=window.localStorage.getItem(key);
-        if(value){ window.localStorage.setItem(AUTH_STORAGE_KEY,value); break; }
-      }
-    }catch(e){ console.warn('Migration session locale:',e); }
-  })();
-
   const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
     auth: {
       storage: window.localStorage,
-      storageKey: AUTH_STORAGE_KEY,
+      storageKey: 'alicia-caillot-auth',
       persistSession: true,
       autoRefreshToken: true,
       detectSessionInUrl: true
@@ -3025,84 +3001,49 @@ section{padding:88px 0}
     try{await initClientSpace();}catch(e){console.error('Espace client:',e);$('chatStatus').textContent='Messagerie indisponible';}
   }
 
-  let authUIState='unknown';
-
-  function updateAuthNavigation(authenticated=false, isAdmin=false){
-    const dashboardItem=$('clientDashboardNavItem');
-    const authItems=document.querySelectorAll('.client-auth-item');
-    const separator=document.querySelector('.nav-auth-separator');
-    const loggedIn=!!authenticated;
-
-    authUIState=loggedIn ? (isAdmin ? 'admin' : 'client') : 'guest';
-
-    authItems.forEach(item=>{ item.hidden=loggedIn; });
-    if(separator) separator.hidden=loggedIn;
-
-    /* Le bouton Tableau de bord reste visible pour toute session authentifiée.
-       Le clic ouvre ensuite l'espace correspondant au rôle (client ou admin). */
-    if(dashboardItem){
-      dashboardItem.hidden=!loggedIn;
-      dashboardItem.setAttribute('aria-hidden',String(!loggedIn));
-      dashboardItem.dataset.role=isAdmin?'admin':'client';
+  function updateAuthNavigation(isAuthenticated, isAdmin=false){
+    const dash=$('dashboardNavItem');
+    const guest=document.querySelectorAll('.auth-guest-item');
+    const sep=document.querySelector('.nav-auth-separator');
+    guest.forEach(x=>x.hidden=!!isAuthenticated);
+    if(sep) sep.hidden=!!isAuthenticated;
+    if(dash) dash.hidden=!isAuthenticated;
+    if(dash) dash.dataset.admin=isAdmin ? '1' : '0';
+    if(dash) dash.querySelector('button')?.setAttribute('aria-controls',isAdmin ? 'adminPanel' : 'clientAccountModal');
+    if(dash) {
+      const label=dash.querySelector('button');
+      if(label) label.innerHTML=isAdmin
+        ? '<i class="fas fa-shield-halved"></i> Administration'
+        : '<i class="fas fa-gauge-high"></i> Tableau de bord';
     }
   }
 
-  async function getPersistedUser(){
-    try{
-      const {data,error}=await sb.auth.getSession();
-      if(error) throw error;
-      const session=data?.session;
-      if(!session?.user?.id) return null;
-      /* getUser force une validation de la session côté Supabase. */
-      const {data:userData,error:userError}=await sb.auth.getUser();
-      if(userError) throw userError;
-      return userData?.user || session.user;
-    }catch(error){
-      console.warn('Lecture session persistante:',error);
-      return null;
-    }
-  }
-
-  const dashboardNav=$('clientDashboardNav');
-  if(dashboardNav && !dashboardNav.dataset.bound){
-    dashboardNav.addEventListener('click',async()=>{
-      setMenu(false);
-      const role=dashboardNav.dataset.role || (authUIState==='admin'?'admin':'client');
-      let session=null;
-      try{
-        const result=await sb.auth.getSession();
-        if(result.error) throw result.error;
-        session=result.data?.session||null;
-      }catch(e){
-        console.warn('Lecture session tableau de bord:',e);
-      }
-      if(!session?.user?.id && !currentUser?.id){
-        /* Ne bascule vers visiteur que si aucune session n'est réellement connue. */
-        if(authUIState==='guest' || !authUIState){
-          updateAuthNavigation(false,false);
-          showAuth();
-          document.querySelector('[data-open-auth="login"]')?.click();
-        }
+  const dashboardNavBtn=$('dashboardNavBtn');
+  if(dashboardNavBtn && !dashboardNavBtn.dataset.bound){
+    dashboardNavBtn.addEventListener('click',async()=>{
+      if(authLogoutInProgress) return;
+      const {data}=await sb.auth.getSession();
+      if(!data?.session?.user){
+        updateAuthNavigation(false,false);
+        openModal('authLoginModal');
         return;
       }
-      currentUser=session?.user||currentUser;
-      handledAuthUserId=currentUser.id;
-      if(role==='admin' || authUIState==='admin'){
-        updateAuthNavigation(true,true);
+      currentUser=data.session.user;
+      const {data:adminRow}=await sb.from('admin_users').select('user_id,active,username').eq('user_id',currentUser.id).maybeSingle();
+      if(adminRow?.active){
+        window.__explicitAdminOpen=true;
         await openAdmin();
       }else{
-        updateAuthNavigation(true,false);
         openModal('clientAccountModal');
         await showAccount();
       }
     });
-    dashboardNav.dataset.bound='1';
+    dashboardNavBtn.dataset.bound='1';
   }
 
-  /* Au démarrage, on attend la restauration avant de choisir l'interface. */
   function showAuth(){
     closeModal('clientAccountModal');
-    if(authBootComplete) updateAuthNavigation(false,false);
+    updateAuthNavigation(false,false);
   }
 
   $('contactForm')?.addEventListener('submit',async e=>{
@@ -3161,9 +3102,6 @@ section{padding:88px 0}
         return;
       }
 
-      /* Masque immédiatement les trois actions d'authentification après connexion. */
-      updateAuthNavigation(true, email.toLowerCase()===ADMIN_AUTH_EMAIL.toLowerCase());
-
       /* L'espace correspondant s'ouvre immédiatement. Les vérifications
          profil/conversation/admin se font ensuite sans bloquer le bouton. */
       setStatus('loginStatus','Connexion réussie.',true);
@@ -3205,12 +3143,15 @@ section{padding:88px 0}
   });
 
   async function logoutClient(){
+    if(authLogoutInProgress)return;
+    authLogoutInProgress=true;
     try{
       setStatus('chatStatus','Déconnexion…');
       if(messageChannel){await sb.removeChannel(messageChannel);messageChannel=null;}
       if(clientNotificationChannel){await sb.removeChannel(clientNotificationChannel);clientNotificationChannel=null;}
       await stopAdminMessageNotifications();
-      await sb.auth.signOut();
+      const {error}=await sb.auth.signOut({scope:'local'});
+      if(error) throw error;
     }catch(e){
       console.error('Déconnexion client:',e);
     }finally{
@@ -3218,9 +3159,12 @@ section{padding:88px 0}
       currentProfile=null;
       currentConversationId=null;
       handledAuthUserId=null;
-      updateAuthNavigation(false, false);
       closeModal('clientAccountModal');
-      showAuth();
+      document.body.classList.remove('admin-mode');
+      $('adminPanel')?.classList.remove('open');
+      $('adminPanel')?.setAttribute('aria-hidden','true');
+      updateAuthNavigation(false,false);
+      authLogoutInProgress=false;
     }
   }
   $('logoutBtn').addEventListener('click',logoutClient);
@@ -3258,7 +3202,7 @@ section{padding:88px 0}
         throw new Error('Ce compte n’a pas les droits administrateur.');
       }
       setStatus('adminLoginStatus','Accès administrateur validé.',true);
-      updateAuthNavigation(true, true);
+      window.__explicitAdminOpen=true;
       const opened=await openAdmin();
       if(!opened) throw new Error('Impossible d’ouvrir l’espace administrateur.');
     }catch(err){
@@ -3290,72 +3234,37 @@ section{padding:88px 0}
   }
 
   async function openAdmin(){
-    /*
-      Une erreur secondaire (profil, statistiques, galerie, réseau, etc.) ne
-      doit JAMAIS fermer l'espace administrateur alors que la session Auth est
-      encore valide. On valide d'abord uniquement la session + le rôle, puis
-      on ouvre l'espace et on charge le contenu indépendamment.
-    */
+    if(authLogoutInProgress)return false;
     try{
       const {data:userData,error:userError}=await sb.auth.getUser();
       if(userError||!userData?.user) throw userError||new Error('Session administrateur introuvable.');
-
-      const {data:adminRow,error:adminError}=await sb.from('admin_users')
-        .select('user_id,username,active')
-        .eq('user_id',userData.user.id)
-        .maybeSingle();
+      const {data:adminRow,error:adminError}=await sb.from('admin_users').select('*').eq('user_id',userData.user.id).maybeSingle();
       if(adminError) throw adminError;
-      if(!adminRow?.active){
-        await sb.auth.signOut();
-        throw new Error('Ce compte n’a pas les droits administrateur.');
-      }
+      if(!adminRow?.active) throw new Error('Ce compte n’a pas les droits administrateur.');
+
+      let profile=null;
+      try{ profile=await getProfile(); }catch(e){ console.warn('Profil admin:',e); }
 
       currentUser=userData.user;
-      currentProfile=null;
-      updateAuthNavigation(true,true);
-
-      /* Ouverture stable : elle intervient avant les requêtes secondaires. */
+      currentProfile=profile||null;
+      $('adminIdentity').textContent='Connectée : '+(profile?.full_name||userData.user.email)+' · '+(adminRow.username||'Administratrice');
       document.body.classList.add('admin-mode');
       document.body.classList.remove('modal-open');
       document.querySelectorAll('.site-modal.open').forEach(m=>{m.classList.remove('open');m.setAttribute('aria-hidden','true');});
-      const panel=$('adminPanel');
-      if(panel){panel.classList.add('open');panel.setAttribute('aria-hidden','false');}
+      $('adminPanel').classList.add('open');
+      $('adminPanel').setAttribute('aria-hidden','false');
+      updateAuthNavigation(true,true);
 
-      /* Le profil est facultatif pour afficher l'espace. */
-      try{ currentProfile=await getProfile(); }catch(e){ console.warn('Profil admin:',e); }
-      $('adminIdentity').textContent='Connectée : '+(currentProfile?.full_name||userData.user.email)+' · '+adminRow.username;
-
-      /* Aucun Promise.all qui pourrait fermer tout le panneau en cas d'échec. */
-      const tasks=[
-        ['site',()=>loadSiteContent()],
-        ['galerie',()=>loadGalleryAdmin()],
-        ['statistiques',()=>loadAdminStats()],
-        ['conversations',()=>loadConversations()],
-        ['clients',()=>loadClients()],
-        ['demandes',()=>loadContactRequests()],
-        ['notifications',()=>startAdminMessageNotifications()]
-      ];
-      const results=await Promise.allSettled(tasks.map(([,fn])=>fn()));
-      results.forEach((r,i)=>{if(r.status==='rejected')console.warn('Chargement admin '+tasks[i][0]+':',r.reason);});
+      // Les modules secondaires ne doivent jamais fermer l'administration.
+      await Promise.allSettled([
+        loadSiteContent(),loadGalleryAdmin(),loadAdminStats(),
+        loadConversations(),loadClients(),loadContactRequests()
+      ]);
+      if(!authLogoutInProgress) await startAdminMessageNotifications();
       updateNotificationButtons();
       return true;
     }catch(err){
       console.error('Ouverture administration:',err);
-      /* Ne ferme pas l'espace si une session valide existe encore. */
-      try{
-        const {data}=await sb.auth.getSession();
-        if(data?.session?.user?.id){
-          currentUser=data.session.user;
-          updateAuthNavigation(true,true);
-          document.body.classList.add('admin-mode');
-          $('adminPanel')?.classList.add('open');
-          $('adminPanel')?.setAttribute('aria-hidden','false');
-          return true;
-        }
-      }catch(e){ console.warn('Vérification session admin après erreur:',e); }
-      document.body.classList.remove('admin-mode');
-      $('adminPanel')?.classList.remove('open');
-      $('adminPanel')?.setAttribute('aria-hidden','true');
       return false;
     }
   }
@@ -3365,193 +3274,185 @@ section{padding:88px 0}
 
 
   const GALLERY_BUCKET='site-gallery';
-
   function storagePathFromUrl(url){
     const marker=`/storage/v1/object/public/${GALLERY_BUCKET}/`;
     const i=String(url||'').indexOf(marker);
     return i>=0 ? decodeURIComponent(String(url).slice(i+marker.length).split('?')[0]) : null;
   }
-  function rootGalleryUrl(file){ return new URL('/'+file,location.origin).href; }
-  function safeFileExt(name,type='image/jpeg'){
-    const fromName=(String(name||'').split('.').pop()||'').toLowerCase().replace(/[^a-z0-9]/g,'');
-    if(fromName) return fromName;
-    const m=String(type).match(/image\/([a-z0-9.+-]+)/i);
-    return (m?.[1]||'jpg').replace('jpeg','jpg');
-  }
-  function rootGalleryLabel(file,index){
-    return `Alicia Caillot — photo ${String(index+1).padStart(2,'0')}`;
-  }
-
   function renderGalleryAdmin(items){
-    const wrap=$('galleryManager');if(!wrap)return;
-    wrap.innerHTML='';
-    if(!items.length){
-      wrap.innerHTML='<div class="admin-help">Aucune photo. Utilise « Ajouter des photos » pour importer une image dans Supabase.</div>';
-      return;
-    }
+    const wrap=$('galleryManager');if(!wrap)return;wrap.innerHTML='';
+    if(!items.length){wrap.innerHTML='<div class="admin-help">Aucune photo dans la galerie. Utilise « Ajouter des photos » pour en importer.</div>';return;}
     items.forEach((item,index)=>{
       const card=document.createElement('div');card.className='gallery-admin-item';
-      const img=document.createElement('img');img.src=item.image_url;img.alt=item.alt||`Photo ${index+1}`;img.loading='lazy';
+      const img=document.createElement('img');img.src=item.image_url;img.alt=item.alt||`Photo ${index+1}`;
       const body=document.createElement('div');body.className='gallery-admin-body';
       const title=document.createElement('strong');title.textContent=`Photo ${index+1}`;
-      const source=document.createElement('small');source.textContent=item.source_path?`Racine → Supabase : ${item.source_path}`:'Photo ajoutée directement dans Supabase';source.style.color='#aaa';
       const alt=document.createElement('input');alt.className='gallery-alt-input';alt.value=item.alt||'';alt.placeholder='Description de la photo';
       const actions=document.createElement('div');actions.className='editor-actions';
-      const replace=document.createElement('button');replace.type='button';replace.className='btn btn-ghost';replace.innerHTML='<i class="fas fa-pen"></i> Modifier';
-      const del=document.createElement('button');del.type='button';del.className='btn btn-danger';del.innerHTML='<i class="fas fa-trash"></i> Supprimer';
-      const up=document.createElement('button');up.type='button';up.className='btn btn-ghost';up.innerHTML='<i class="fas fa-arrow-up"></i>';up.disabled=index===0;
-      const down=document.createElement('button');down.type='button';down.className='btn btn-ghost';down.innerHTML='<i class="fas fa-arrow-down"></i>';down.disabled=index===items.length-1;
-      actions.append(replace,del,up,down);
-      body.append(title,source,alt,actions);card.append(img,body);wrap.appendChild(card);
-      replace.onclick=()=>{const input=document.createElement('input');input.type='file';input.accept='image/*';input.onchange=()=>input.files?.[0]&&replaceGalleryFile(item,input.files[0]);input.click();};
+      const replace=document.createElement('button');replace.type='button';replace.className='btn btn-ghost';replace.textContent='Remplacer';
+      const del=document.createElement('button');del.type='button';del.className='btn btn-danger';del.textContent='Supprimer';
+      const up=document.createElement('button');up.type='button';up.className='btn btn-ghost';up.textContent='↑';up.disabled=index===0;
+      const down=document.createElement('button');down.type='button';down.className='btn btn-ghost';down.textContent='↓';down.disabled=index===items.length-1;
+      actions.append(replace,del,up,down);body.append(title,alt,actions);card.append(img,body);wrap.appendChild(card);
+      replace.onclick=()=>{const input=document.createElement('input');input.type='file';input.accept='image/*';input.onchange=()=>input.files?.[0]&&replaceGalleryFile(item,input.files[0]);input.click()};
       del.onclick=()=>deleteGalleryItem(item);
-      up.onclick=()=>moveGalleryItem(index,-1);
-      down.onclick=()=>moveGalleryItem(index,1);
+      up.onclick=()=>moveGalleryItem(index,-1);down.onclick=()=>moveGalleryItem(index,1);
       alt.onchange=()=>updateGalleryAlt(item,alt.value);
     });
   }
-
   let galleryAdminItems=[];
+  function galleryRootCandidates(index){
+    const n=index+1;
+    const stems=[String(n).padStart(2,'0'),String(n).padStart(3,'0'),String(n)];
+    const exts=['jpg','jpeg','png','webp'];
+    return [...new Set(stems.flatMap(stem=>exts.map(ext=>`${stem}.${ext}`)))];
+  }
 
-  async function uploadRootFileToSupabase(fileName,index){
-    const rootUrl=rootGalleryUrl(fileName);
-    try{
-      const response=await fetch(rootUrl,{cache:'no-store'});
-      if(!response.ok)return null;
-      const blob=await response.blob();
-      if(!blob.type.startsWith('image/'))return null;
-      if(blob.size>12*1024*1024){console.warn('Photo racine trop lourde:',fileName);return null;}
-      const ext=safeFileExt(fileName,blob.type);
-      const path=`gallery/root-${String(index+1).padStart(2,'0')}-${Date.now()}-${Math.random().toString(36).slice(2,7)}.${ext}`;
-      const {error:uploadError}=await sb.storage.from(GALLERY_BUCKET).upload(path,blob,{cacheControl:'31536000',upsert:false,contentType:blob.type});
-      if(uploadError){console.warn('Upload racine:',fileName,uploadError.message);return null;}
-      const {data:urlData}=sb.storage.from(GALLERY_BUCKET).getPublicUrl(path);
-      return {image_url:urlData.publicUrl,path,alt:rootGalleryLabel(fileName,index),source_path:fileName};
-    }catch(err){
-      console.warn('Lecture photo racine:',fileName,err);
-      return null;
-    }
+  async function fetchRootGalleryFile(index){
+    const candidates=galleryRootCandidates(index);
+    const results=await Promise.all(candidates.map(async file=>{
+      try{
+        const controller=new AbortController();
+        const timer=setTimeout(()=>controller.abort(),1800);
+        const response=await fetch('/'+file,{cache:'no-store',signal:controller.signal});
+        clearTimeout(timer);
+        if(!response.ok)return null;
+        const blob=await response.blob();
+        return blob.type.startsWith('image/') ? {file,blob} : null;
+      }catch(e){return null;}
+    }));
+    return results.find(Boolean)||null;
   }
 
   async function ensureRootGalleryItems(){
-    const {data,error}=await sb.from('gallery_items')
-      .select('id,image_url,alt,sort_order,active,source_path')
-      .order('sort_order',{ascending:true});
-    if(error){
-      console.warn('Galerie Supabase:',error.message);
-      setStatus('gallerySaveStatus','Galerie Supabase non configurée : '+error.message);
-      return;
-    }
+    const status=$('gallerySaveStatus');
+    try{
+      const {data:existingRows,error:selectError}=await sb.from('gallery_items')
+        .select('id,image_url,alt,sort_order,active,source_path')
+        .order('sort_order',{ascending:true});
+      if(selectError) throw selectError;
 
-    const rows=data||[];
-    const bySource=new Map(rows.filter(x=>x.source_path).map(x=>[String(x.source_path),x]));
-    const byLegacyRootUrl=new Map(rows.map(x=>[String(x.image_url),x]));
-    let nextOrder=rows.reduce((m,x)=>Math.max(m,Number(x.sort_order)||0),-1)+1;
-    let imported=0;
+      const rows=existingRows||[];
+      const bySource=new Map(rows.filter(r=>r.source_path).map(r=>[String(r.source_path),r]));
+      const byUrl=new Map(rows.map(r=>[String(r.image_url),r]));
+      let nextOrder=rows.reduce((m,r)=>Math.max(m,Number(r.sort_order)||-1),-1)+1;
+      let imported=0;
 
-    for(let index=0;index<galleryFiles.length;index++){
-      const file=galleryFiles[index];
-      if(bySource.has(file))continue;
+      for(let index=0;index<40;index++){
+        const found=await fetchRootGalleryFile(index);
+        if(!found) continue;
+        const {file,blob}=found;
+        const rootUrl=new URL('/'+file,location.origin).href;
+        const existing=bySource.get(file)||byUrl.get(rootUrl);
+        if(existing?.source_path===file && storagePathFromUrl(existing.image_url)) continue;
 
-      /* Une ancienne version pouvait avoir enregistré l'URL racine dans la DB. */
-      const legacy=byLegacyRootUrl.get(rootGalleryUrl(file));
-      if(legacy){
-        const {error:updateError}=await sb.from('gallery_items').update({source_path:file}).eq('id',legacy.id);
-        if(!updateError){bySource.set(file,{...legacy,source_path:file});}
-        continue;
+        const ext=(file.split('.').pop()||'jpg').toLowerCase();
+        const path=`gallery/root-${String(index+1).padStart(2,'0')}-${Date.now()}-${Math.random().toString(36).slice(2,8)}.${ext}`;
+        if(status) status.textContent=`Import des photos de la racine… ${index+1}/40`;
+
+        const {error:uploadError}=await sb.storage.from(GALLERY_BUCKET).upload(
+          path,blob,{cacheControl:'31536000',upsert:false,contentType:blob.type}
+        );
+        if(uploadError){console.warn('Import Storage galerie:',file,uploadError.message);continue;}
+
+        const {data:urlData}=sb.storage.from(GALLERY_BUCKET).getPublicUrl(path);
+        const rowData={
+          image_url:urlData.publicUrl,
+          alt:existing?.alt||`Alicia Caillot — photo ${String(index+1).padStart(2,'0')}`,
+          sort_order:existing ? Number(existing.sort_order) : nextOrder++,
+          active:existing?.active!==false,
+          source_path:file
+        };
+
+        if(existing){
+          const {error:updateError}=await sb.from('gallery_items').update(rowData).eq('id',existing.id);
+          if(updateError){
+            await sb.storage.from(GALLERY_BUCKET).remove([path]);
+            console.warn('Mise à jour galerie:',file,updateError.message);
+            continue;
+          }
+          const oldPath=storagePathFromUrl(existing.image_url);
+          if(oldPath && oldPath!==path) await sb.storage.from(GALLERY_BUCKET).remove([oldPath]);
+        }else{
+          const {error:insertError}=await sb.from('gallery_items').insert(rowData);
+          if(insertError){
+            await sb.storage.from(GALLERY_BUCKET).remove([path]);
+            console.warn('Insertion galerie:',file,insertError.message);
+            continue;
+          }
+        }
+        imported++;
       }
 
-      const uploaded=await uploadRootFileToSupabase(file,index);
-      if(!uploaded)continue;
-      const {data:inserted,error:insertError}=await sb.from('gallery_items').insert({
-        image_url:uploaded.image_url,
-        alt:uploaded.alt,
-        sort_order:nextOrder++,
-        active:true,
-        source_path:uploaded.source_path
-      }).select('id,image_url,alt,sort_order,active,source_path').single();
-      if(insertError){
-        await sb.storage.from(GALLERY_BUCKET).remove([uploaded.path]);
-        console.warn('Import galerie:',insertError.message);
-      }else{
-        rows.push(inserted);bySource.set(file,inserted);imported++;
-      }
-    }
-
-    if(imported){
-      setStatus('gallerySaveStatus',`${imported} photo(s) de la racine copiée(s) dans Supabase.`,true);
+      if(status) status.textContent=imported
+        ? `${imported} photo(s) de la racine importée(s) dans Supabase.`
+        : 'Galerie Supabase synchronisée.';
+      return true;
+    }catch(error){
+      console.error('Synchronisation galerie racine:',error);
+      if(status) status.textContent='Erreur galerie : '+(error.message||error);
+      return false;
     }
   }
 
   async function loadGalleryAdmin(){
-    await ensureRootGalleryItems();
+    const ok=await ensureRootGalleryItems();
     const {data,error}=await sb.from('gallery_items')
       .select('id,image_url,alt,sort_order,active,source_path')
       .order('sort_order',{ascending:true});
-    if(error){setStatus('gallerySaveStatus',error.message);return;}
+    if(error){
+      setStatus('gallerySaveStatus','Galerie : '+error.message);
+      const wrap=$('galleryManager');
+      if(wrap) wrap.innerHTML='<div class="admin-help">Impossible de charger la galerie Supabase. Vérifie les politiques RLS.</div>';
+      return;
+    }
     galleryAdminItems=data||[];
     renderGalleryAdmin(galleryAdminItems);
-    await loadPublicGallery();
+    if(!ok && !galleryAdminItems.length){
+      setStatus('gallerySaveStatus','Aucune photo importée. Vérifie les fichiers à la racine et le bucket site-gallery.');
+    }
   }
 
   async function uploadGalleryFile(file){
     if(!file||!file.type.startsWith('image/')){setStatus('gallerySaveStatus','Sélectionne une image.');return;}
     if(file.size>12*1024*1024){setStatus('gallerySaveStatus','Image trop lourde (12 Mo maximum).');return;}
-    const ext=safeFileExt(file.name,file.type);
-    const path=`gallery/upload-${Date.now()}-${Math.random().toString(36).slice(2,8)}.${ext}`;
-    setStatus('gallerySaveStatus','Import de la photo dans Supabase…');
+    const ext=(file.name.split('.').pop()||'jpg').toLowerCase().replace(/[^a-z0-9]/g,'');
+    const path=`gallery/${Date.now()}-${Math.random().toString(36).slice(2,8)}.${ext}`;
+    setStatus('gallerySaveStatus','Import de la photo…');
     const {error}=await sb.storage.from(GALLERY_BUCKET).upload(path,file,{cacheControl:'31536000',upsert:false,contentType:file.type});
     if(error){setStatus('gallerySaveStatus',error.message);return;}
     const {data:urlData}=sb.storage.from(GALLERY_BUCKET).getPublicUrl(path);
     const nextOrder=galleryAdminItems.reduce((m,x)=>Math.max(m,Number(x.sort_order)||0),-1)+1;
-    const {error:dbError}=await sb.from('gallery_items').insert({
-      image_url:urlData.publicUrl,
-      alt:file.name.replace(/\.[^.]+$/,''),
-      sort_order:nextOrder,
-      active:true,
-      source_path:null
-    });
+    const {error:dbError}=await sb.from('gallery_items').insert({image_url:urlData.publicUrl,alt:file.name.replace(/\.[^.]+$/,''),sort_order:nextOrder,active:true,source_path:null});
     if(dbError){await sb.storage.from(GALLERY_BUCKET).remove([path]);setStatus('gallerySaveStatus',dbError.message);return;}
-    setStatus('gallerySaveStatus','Photo ajoutée dans Supabase et affichée.',true);
-    await loadGalleryAdmin();
+    setStatus('gallerySaveStatus','Photo ajoutée.',true);await loadGalleryAdmin();await loadPublicGallery();
   }
-
   async function replaceGalleryFile(item,file){
     if(!file||!file.type.startsWith('image/'))return;
     if(file.size>12*1024*1024){setStatus('gallerySaveStatus','Image trop lourde (12 Mo maximum).');return;}
     const oldPath=storagePathFromUrl(item.image_url);
-    const ext=safeFileExt(file.name,file.type);
-    const path=`gallery/replace-${Date.now()}-${Math.random().toString(36).slice(2,8)}.${ext}`;
-    setStatus('gallerySaveStatus','Remplacement dans Supabase…');
+    const ext=(file.name.split('.').pop()||'jpg').toLowerCase().replace(/[^a-z0-9]/g,'');
+    const path=`gallery/${Date.now()}-${Math.random().toString(36).slice(2,8)}.${ext}`;
+    setStatus('gallerySaveStatus','Remplacement de la photo…');
     const {error:upError}=await sb.storage.from(GALLERY_BUCKET).upload(path,file,{cacheControl:'31536000',upsert:false,contentType:file.type});
     if(upError){setStatus('gallerySaveStatus',upError.message);return;}
     const {data:urlData}=sb.storage.from(GALLERY_BUCKET).getPublicUrl(path);
-    const {error:dbError}=await sb.from('gallery_items').update({
-      image_url:urlData.publicUrl,
-      alt:file.name.replace(/\.[^.]+$/,''),
-      source_path:null
-    }).eq('id',item.id);
+    const {error:dbError}=await sb.from('gallery_items').update({image_url:urlData.publicUrl,alt:file.name.replace(/\.[^.]+$/,'')}).eq('id',item.id);
     if(dbError){await sb.storage.from(GALLERY_BUCKET).remove([path]);setStatus('gallerySaveStatus',dbError.message);return;}
-    if(oldPath)await sb.storage.from(GALLERY_BUCKET).remove([oldPath]);
-    setStatus('gallerySaveStatus','Photo modifiée et affichée.',true);
-    await loadGalleryAdmin();
+    if(oldPath) await sb.storage.from(GALLERY_BUCKET).remove([oldPath]);
+    setStatus('gallerySaveStatus','Photo remplacée.',true);await loadGalleryAdmin();await loadPublicGallery();
   }
-
   async function deleteGalleryItem(item){
-    if(!confirm('Supprimer cette photo de la galerie et de Supabase ?'))return;
-    const path=storagePathFromUrl(item.image_url);
+    if(!confirm('Supprimer cette photo de la galerie ?'))return;
     const {error}=await sb.from('gallery_items').delete().eq('id',item.id);
     if(error){setStatus('gallerySaveStatus',error.message);return;}
-    if(path)await sb.storage.from(GALLERY_BUCKET).remove([path]);
-    setStatus('gallerySaveStatus','Photo supprimée de la galerie et de Supabase.',true);
-    await loadGalleryAdmin();
+    const path=storagePathFromUrl(item.image_url);if(path)await sb.storage.from(GALLERY_BUCKET).remove([path]);
+    setStatus('gallerySaveStatus','Photo supprimée.',true);await loadGalleryAdmin();await loadPublicGallery();
   }
-
   async function updateGalleryAlt(item,value){
     const {error}=await sb.from('gallery_items').update({alt:value.trim()}).eq('id',item.id);
     if(error)setStatus('gallerySaveStatus',error.message);else setStatus('gallerySaveStatus','Description enregistrée.',true);
   }
-
   async function moveGalleryItem(index,delta){
     const target=index+delta;if(target<0||target>=galleryAdminItems.length)return;
     const a=galleryAdminItems[index],b=galleryAdminItems[target];
@@ -3559,31 +3460,35 @@ section{padding:88px 0}
     if(error){setStatus('gallerySaveStatus',error.message);return;}
     const {error:error2}=await sb.from('gallery_items').update({sort_order:a.sort_order}).eq('id',b.id);
     if(error2){setStatus('gallerySaveStatus',error2.message);return;}
-    await loadGalleryAdmin();
+    await loadGalleryAdmin();await loadPublicGallery();
   }
 
   async function loadPublicGallery(){
     const grid=$('galleryGrid');
-    if(!grid)return;
+    if(!grid) return;
+    const prev=$('galleryPrev'),next=$('galleryNext'),page=$('galleryPage');
     const {data,error}=await sb.from('gallery_items')
       .select('image_url,alt,sort_order,active')
       .eq('active',true)
       .order('sort_order',{ascending:true});
+
     if(error){
-      grid.innerHTML='<div class="gallery-empty">Galerie temporairement indisponible.</div>';
-      console.warn('Galerie publique:',error.message);
+      console.warn('Galerie publique Supabase:',error.message);
+      grid.innerHTML='<div class="gallery-empty">Galerie momentanément indisponible.</div>';
+      if(prev)prev.disabled=true;if(next)next.disabled=true;if(page)page.textContent='';
       return;
     }
     if(!data?.length){
       grid.innerHTML='<div class="gallery-empty">Aucune photo dans la galerie.</div>';
-      const prev=$('galleryPrev'),next=$('galleryNext'),page=$('galleryPage');
       if(prev)prev.disabled=true;if(next)next.disabled=true;if(page)page.textContent='';
       return;
     }
 
-    grid.innerHTML='';let batches=[];
+    grid.innerHTML='';
+    const batches=[];
     for(let start=0;start<data.length;start+=4){
-      const batch=document.createElement('div');batch.className='gallery-batch';
+      const batch=document.createElement('div');
+      batch.className='gallery-batch';
       data.slice(start,start+4).forEach((item,i)=>{
         const img=document.createElement('img');
         img.className='gallery-item';
@@ -3595,19 +3500,25 @@ section{padding:88px 0}
         img.addEventListener('click',()=>window.openLightbox?.(img.currentSrc||img.src,img.alt));
         batch.appendChild(img);
       });
-      while(batch.children.length<4){const e=document.createElement('div');e.className='gallery-item gallery-placeholder';e.setAttribute('aria-hidden','true');batch.appendChild(e);}
-      grid.appendChild(batch);batches.push(batch);
+      while(batch.children.length<4){
+        const e=document.createElement('div');
+        e.className='gallery-item gallery-placeholder';
+        e.setAttribute('aria-hidden','true');
+        batch.appendChild(e);
+      }
+      grid.appendChild(batch);
+      batches.push(batch);
     }
+
     let idx=0;
-    const prev=$('galleryPrev'),next=$('galleryNext'),page=$('galleryPage');
     const update=()=>{
       batches.forEach((b,i)=>b.classList.toggle('active',i===idx));
       if(prev)prev.disabled=idx===0;
       if(next)next.disabled=idx>=batches.length-1;
-      if(page)page.textContent=batches.length?`Groupe ${idx+1} / ${batches.length} · ${data.length} photos`:'';
+      if(page)page.textContent=`Groupe ${idx+1} / ${batches.length} · ${data.length} photos`;
     };
-    if(prev)prev.onclick=()=>{if(idx>0){idx--;update();}};
-    if(next)next.onclick=()=>{if(idx<batches.length-1){idx++;update();}};
+    if(prev)prev.onclick=()=>{if(idx>0){idx--;update()}};
+    if(next)next.onclick=()=>{if(idx<batches.length-1){idx++;update()}};
     update();
   }
 
@@ -3696,20 +3607,31 @@ section{padding:88px 0}
     const adminLoginForm=$('adminLoginForm');
     if(adminLoginForm && !adminLoginForm.dataset.bound){adminLoginForm.addEventListener('submit',handleAdminLogin);adminLoginForm.dataset.bound='1';}
     const adminLogoutBtn=$('adminLogoutBtn');
-    if(adminLogoutBtn && !adminLogoutBtn.dataset.bound){adminLogoutBtn.addEventListener('click',async()=>{
-      try{
-        if(adminMessageChannel){await sb.removeChannel(adminMessageChannel);adminMessageChannel=null;}
-        await stopAdminMessageNotifications();
-        await sb.auth.signOut();
-      }catch(e){console.error('Déconnexion admin:',e);}
-      finally{
-        currentUser=null;currentProfile=null;currentAdminConversationId=null;handledAuthUserId=null;
-        updateAuthNavigation(false,false);
-        document.body.classList.remove('admin-mode');
-        $('adminPanel')?.classList.remove('open');$('adminPanel')?.setAttribute('aria-hidden','true');
-        showAuth();
-      }
-    });adminLogoutBtn.dataset.bound='1';}
+    if(adminLogoutBtn && !adminLogoutBtn.dataset.bound){
+      adminLogoutBtn.onclick=async()=>{
+        if(authLogoutInProgress)return;
+        authLogoutInProgress=true;
+        adminLogoutBtn.disabled=true;
+        try{
+          if(adminMessageChannel){try{await sb.removeChannel(adminMessageChannel);}catch(e){} adminMessageChannel=null;}
+          try{await stopAdminMessageNotifications();}catch(e){}
+          const {error}=await sb.auth.signOut({scope:'local'});
+          if(error) console.warn('Déconnexion Supabase:',error.message);
+        }catch(e){
+          console.error('Déconnexion admin:',e);
+        }finally{
+          currentUser=null;currentProfile=null;currentAdminConversationId=null;handledAuthUserId=null;
+          document.body.classList.remove('admin-mode');
+          $('adminPanel')?.classList.remove('open');
+          $('adminPanel')?.setAttribute('aria-hidden','true');
+          updateAuthNavigation(false,false);
+          try{history.replaceState({},document.title,SITE_URL);}catch(e){}
+          authLogoutInProgress=false;
+          adminLogoutBtn.disabled=false;
+        }
+      };
+      adminLogoutBtn.dataset.bound='1';
+    }
     const adminRefreshBtn=$('adminRefreshBtn');
     if(adminRefreshBtn && !adminRefreshBtn.dataset.bound){adminRefreshBtn.addEventListener('click',()=>openAdmin());adminRefreshBtn.dataset.bound='1';}
     const saveSiteContentBtn=$('saveSiteContentBtn');
@@ -3742,32 +3664,10 @@ section{padding:88px 0}
   let handledAuthUserId = null;
   let authBootComplete = false;
   let authRestorePromise = null;
-
-  function clearPrivateUI(){
-    document.body.classList.remove('admin-mode');
-    $('adminPanel')?.classList.remove('open');
-    $('adminPanel')?.setAttribute('aria-hidden','true');
-    closeModal('clientAccountModal');
-    closeModal('authLoginModal');
-    closeModal('authSignupModal');
-    closeModal('authResetModal');
-  }
-
-  async function determineRole(user){
-    if(!user?.id) return 'guest';
-    /* L'email admin est une première barrière déterministe. */
-    if(String(user.email||'').toLowerCase()===ADMIN_AUTH_EMAIL.toLowerCase()) return 'admin';
-    try{
-      const {data,error}=await sb.from('admin_users')
-        .select('user_id,active,username')
-        .eq('user_id',user.id)
-        .maybeSingle();
-      if(!error && data?.active) return 'admin';
-    }catch(e){ console.warn('Vérification rôle:',e); }
-    return 'client';
-  }
+  let authLogoutInProgress = false;
 
   async function restorePersistedSession(session=null){
+    if(authLogoutInProgress) return;
     if(authRestorePromise) return authRestorePromise;
     authRestorePromise=(async()=>{
       try{
@@ -3777,35 +3677,25 @@ section{padding:88px 0}
           if(result.error) throw result.error;
           activeSession=result.data?.session||null;
         }
-
-        if(!activeSession?.user?.id){
-          /* Seulement l'absence réelle de session à l'initialisation déconnecte l'UI. */
-          if(!currentUser?.id){
-            currentProfile=null;
-            handledAuthUserId=null;
-            updateAuthNavigation(false,false);
-            clearPrivateUI();
-          }
-          authBootComplete=true;
-          return;
-        }
-
-        currentUser=activeSession.user;
-        await afterAuth(currentUser);
         authBootComplete=true;
+        if(authLogoutInProgress) return;
+        if(activeSession?.user){
+          currentUser=activeSession.user;
+          await afterAuth(activeSession.user);
+        }else{
+          currentUser=null;
+          currentProfile=null;
+          showAuth();
+        }
       }catch(err){
         console.error('Restauration de session:',err);
-        /* Une erreur réseau ne doit JAMAIS être interprétée comme une déconnexion. */
         authBootComplete=true;
-        if(currentUser?.id){
-          updateAuthNavigation(true,authUIState==='admin');
-          if(authUIState==='admin'){
-            document.body.classList.add('admin-mode');
-            $('adminPanel')?.classList.add('open');
-            $('adminPanel')?.setAttribute('aria-hidden','false');
-          }else{
-            openModal('clientAccountModal');
-          }
+        // Une erreur réseau temporaire ne doit PAS déconnecter visuellement
+        // l'utilisateur ni rouvrir l'administration.
+        if(!authLogoutInProgress && currentUser?.id){
+          updateAuthNavigation(true,false);
+        }else if(!authLogoutInProgress){
+          showAuth();
         }
       }finally{
         authRestorePromise=null;
@@ -3815,116 +3705,80 @@ section{padding:88px 0}
   }
 
   async function afterAuth(userFromSession=null){
+    if(authLogoutInProgress) return;
     const user=userFromSession||currentUser;
     if(!user?.id) return;
     currentUser=user;
 
-    if(handledAuthUserId===user.id && !authHandling){
-      if(authUIState==='admin'){
-        updateAuthNavigation(true,true);
-        if(!$('adminPanel')?.classList.contains('open')) await openAdmin();
-      }else{
-        updateAuthNavigation(true,false);
-        if(!$('clientAccountModal')?.classList.contains('open')) openModal('clientAccountModal');
-      }
-      return;
-    }
-    if(authHandling) return;
-    authHandling=true;
+    // Une session restaurée conserve la connexion, mais n'ouvre JAMAIS
+    // automatiquement l'administration après un simple rafraîchissement.
+    // L'utilisateur ouvre son tableau de bord par le bouton prévu à cet effet.
     try{
-      ['authLoginModal','authSignupModal','authResetModal'].forEach(closeModal);
-      const role=await determineRole(user);
-      if(role==='admin'){
-        updateAuthNavigation(true,true);
-        /* Ouvre l'admin même si un chargement secondaire échoue. */
-        const opened=await openAdmin();
-        if(!opened){
-          /* Si la session existe mais le rôle ne peut pas être relu à cause du réseau,
-             on garde l'état connecté au lieu de fermer l'accès. */
-          updateAuthNavigation(true,true);
-          document.body.classList.add('admin-mode');
-          $('adminPanel')?.classList.add('open');
-          $('adminPanel')?.setAttribute('aria-hidden','false');
-        }
-      }else{
-        currentProfile=null;
-        updateAuthNavigation(true,false);
-        openModal('clientAccountModal');
-        try{ currentProfile=await getProfile(); }catch(e){ console.warn('Profil client:',e); }
-        try{ await showAccount(); }catch(e){ console.warn('Espace client:',e); }
+      const {data:admin,error}=await sb.from('admin_users')
+        .select('user_id,active,username')
+        .eq('user_id',user.id)
+        .maybeSingle();
+
+      if(authLogoutInProgress) return;
+
+      const isAdmin=!error && !!admin?.active;
+      updateAuthNavigation(true,isAdmin);
+
+      // Si la session vient d'une connexion explicite, l'interface sera ouverte
+      // par le gestionnaire de connexion. Ici on ne force aucune ouverture.
+      if(location.search || (location.hash && location.hash!=='#reset')){
+        try{history.replaceState({},document.title,SITE_URL);}catch(e){}
       }
-      handledAuthUserId=user.id;
-    }catch(e){
-      console.error('Initialisation authentification:',e);
-      /* L'UI privée reste ouverte dès que la session est connue. */
-      updateAuthNavigation(true,authUIState==='admin');
-      if(authUIState==='admin'){
-        document.body.classList.add('admin-mode');
-        $('adminPanel')?.classList.add('open');
-        $('adminPanel')?.setAttribute('aria-hidden','false');
-      }else{
-        openModal('clientAccountModal');
-      }
-    }finally{
-      authHandling=false;
+    }catch(err){
+      console.warn('Vérification du rôle après restauration:',err);
+      if(!authLogoutInProgress) updateAuthNavigation(true,false);
     }
   }
 
   sb.auth.onAuthStateChange((event,session)=>{
     if(event==='PASSWORD_RECOVERY'){
-      openModal('resetPasswordModal');
+      if(!authLogoutInProgress) openModal('resetPasswordModal');
       return;
     }
+
     if(event==='SIGNED_OUT'){
+      authLogoutInProgress=false;
       currentUser=null;
       currentProfile=null;
       handledAuthUserId=null;
-      authUIState='guest';
-      updateAuthNavigation(false,false);
       if(messageChannel){sb.removeChannel(messageChannel);messageChannel=null;}
       if(clientNotificationChannel){sb.removeChannel(clientNotificationChannel);clientNotificationChannel=null;}
       if(adminMessageChannel){sb.removeChannel(adminMessageChannel);adminMessageChannel=null;}
       if(adminNotificationChannel){sb.removeChannel(adminNotificationChannel);adminNotificationChannel=null;}
-      clearPrivateUI();
+      document.body.classList.remove('admin-mode');
+      $('adminPanel')?.classList.remove('open');
+      $('adminPanel')?.setAttribute('aria-hidden','true');
+      showAuth();
       return;
     }
-    /* INITIAL_SESSION, SIGNED_IN et TOKEN_REFRESHED ne ferment jamais l'UI. */
-    if(session?.user?.id){
+
+    if(session?.user && !authLogoutInProgress){
       currentUser=session.user;
-      queueMicrotask(()=>restorePersistedSession(session));
+      if(event==='SIGNED_IN' || event==='INITIAL_SESSION' || event==='TOKEN_REFRESHED'){
+        queueMicrotask(()=>restorePersistedSession(session));
+      }
     }
   });
 
-  /* Restauration unique au démarrage. */
+
+  /* Restauration explicite de la session stockée dans localStorage. */
   restorePersistedSession();
 
-  /* Retour dans l'onglet : on restaure uniquement si Supabase fournit une session.
-     Une erreur réseau ne provoque aucune déconnexion visuelle. */
-  document.addEventListener('visibilitychange',()=>{
-    if(document.visibilityState!=='visible' || !authBootComplete) return;
-    sb.auth.getSession().then(({data,error})=>{
-      if(error){ console.warn('Vérification session:',error); return; }
-      if(data?.session?.user?.id){
-        currentUser=data.session.user;
-        if(handledAuthUserId!==currentUser.id || authUIState==='guest' || authUIState==='unknown'){
-          restorePersistedSession(data.session);
-        }else{
-          updateAuthNavigation(true,authUIState==='admin');
-        }
+  window.addEventListener('load',()=>{
+    if(!window.__explicitAdminOpen){
+      document.body.classList.remove('admin-mode');
+      const panel=$('adminPanel');
+      if(panel){
+        panel.classList.remove('open');
+        panel.setAttribute('aria-hidden','true');
       }
-      /* Si aucune session n'est renvoyée ici, on ne ferme PAS l'interface :
-         seule l'événement SIGNED_OUT explicite déclenche la déconnexion. */
-    }).catch(err=>console.warn('Restauration session après retour:',err));
+    }
   });
-  loadSiteContent();
-  loadPublicGallery();
-
-  /* Realtime : actualisation des données du site pour les visiteurs connectés */
-  sb.channel('public-site-content')
-    .on('postgres_changes',{event:'UPDATE',schema:'public',table:'site_content',filter:'id=eq.main'},payload=>{
-      renderSiteContent(payload.new.content||DEFAULT_CONTENT);
-    }).subscribe();
-
 })();
 </script>
 <!-- ESPACE ADMINISTRATION -->
@@ -3982,7 +3836,7 @@ section{padding:88px 0}
 <section class="admin-card">
 <div class="admin-card-head"><h3>Galerie photos</h3><span>Ajout · remplacement · suppression</span></div>
 <p class="admin-help">Choisis les photos directement dans la galerie de ton téléphone ou de ton ordinateur. Tu peux ensuite remplacer, supprimer, réordonner et modifier leur description.</p>
-<div class="gallery-upload-bar"><input accept="image/*" id="galleryFileInput" multiple type="file" hidden><button class="btn btn-primary" id="galleryAddBtn" type="button"><i class="fas fa-plus"></i> Ajouter des photos</button><span class="status" id="gallerySaveStatus"></span></div>
+<div class="gallery-upload-bar"><input accept="image/*" id="galleryFileInput" multiple type="file" hidden><button class="btn btn-primary" id="galleryAddBtn" type="button">+ Ajouter des photos</button><span class="status" id="gallerySaveStatus"></span></div>
 <div class="gallery-manager" id="galleryManager"><div class="admin-help">Chargement…</div></div>
 </section>
 <section class="admin-card">
@@ -4006,7 +3860,7 @@ section{padding:88px 0}
 <div class="conversation-title" id="conversationTitle">Sélectionne une conversation</div>
 <div class="chat-messages" id="adminMessages"></div>
 <form class="chat-compose" id="adminMessageForm">
-<div class="chat-compose-tools"><button class="chat-attach" id="adminAttachBtn" type="button" aria-label="Joindre un fichier" title="Joindre un fichier"><i class="fas fa-paperclip"></i></button><input id="adminAttachmentInput" type="file" accept="*/*" hidden multiple></div>
+<div class="chat-compose-tools"><button class="chat-attach" id="adminAttachBtn" type="button" aria-label="Joindre un fichier"><i class="fas fa-paperclip" aria-hidden="true"></i><span class="chat-attach-label">Joindre</span></button><input id="adminAttachmentInput" type="file" accept="*/*" hidden multiple></div>
 <input autocomplete="off" id="adminMessageInput" disabled="" maxlength="2000" placeholder="Répondre au client…"/>
 <button aria-label="Envoyer" class="chat-send" disabled="" type="submit"><i class="fas fa-paper-plane"></i></button>
 </form>
@@ -4477,46 +4331,6 @@ body.admin-mode { overflow:hidden !important; background:#070707 !important; }
 .client-profile-head{display:grid;grid-template-columns:auto 1fr auto;gap:14px;align-items:center;padding:4px 0 18px;border-bottom:1px solid rgba(255,255,255,.16)}
 .client-avatar-wrap{position:relative;width:72px;height:72px;flex:0 0 auto}.client-avatar{width:72px;height:72px;border-radius:50%;object-fit:cover;border:2px solid var(--gold,#d4af37);background:#161616}.client-avatar-btn{position:absolute;right:-3px;bottom:-3px;width:28px;height:28px;border-radius:50%;border:1px solid #fff;background:#7a1230;color:#fff;display:grid;place-items:center;cursor:pointer}.client-profile-summary{min-width:0;display:flex;flex-direction:column;gap:3px}.client-profile-summary strong{color:#fff!important;font-size:1.05rem}.client-profile-summary small{color:#d7d0c8!important;overflow:hidden;text-overflow:ellipsis}.client-profile-summary span{font-size:.72rem;color:#72d39a}.client-tabs{display:flex;gap:8px;flex-wrap:wrap;margin:16px 0}.client-tab{border:1px solid rgba(255,255,255,.18);background:#101010;color:#d8d0c8;padding:9px 14px;border-radius:999px;cursor:pointer}.client-tab.active{background:#7a1230;color:#fff;border-color:#9b2b50}.client-tab-panel[hidden]{display:none!important}.client-profile-form{background:#101010;border:1px solid #3d3d3d;border-radius:14px;padding:16px}.client-profile-form h3{color:#fff;margin:0 0 6px}.client-help{color:#bfb7af;font-size:.82rem;margin:0 0 14px}.client-profile-form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.client-profile-form-grid .full{grid-column:1/-1}.client-profile-form label{display:block;color:#f5f0ea;font-size:.78rem;margin-bottom:5px}.client-profile-form input{width:100%;box-sizing:border-box;background:#fff;color:#161616;border:1px solid #bbb;border-radius:10px;padding:11px 12px;font:inherit}.client-form-actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:14px}.client-notify-settings{margin-top:14px;padding:14px;border:1px solid #3d3d3d;border-radius:14px;background:#0d0d0d}.client-notify-settings strong{color:#fff}.client-notify-settings p{color:#c8c0b8;font-size:.8rem}.chat-compose{display:flex!important;align-items:center;gap:7px}.chat-compose-tools{display:flex;align-items:center}.chat-attach{width:40px;height:40px;border-radius:50%;border:1px solid #777;background:#171717;color:#fff;cursor:pointer;display:grid;place-items:center}.chat-attach:hover{border-color:var(--gold);color:var(--gold)}.chat-attachment-list{display:flex;flex-wrap:wrap;gap:6px;padding:6px 10px;background:#111}.pending-file{display:inline-flex;align-items:center;gap:4px;max-width:100%;padding:5px 8px;border:1px solid #555;border-radius:999px;background:#1a1a1a;color:#eee;font-size:.7rem}.pending-file button{border:0;background:none;color:#ffb4c5;cursor:pointer;font-size:1rem}.chat-attachment{display:grid;gap:7px;margin-top:7px}.chat-attachment img{max-width:min(260px,100%);max-height:300px;border-radius:10px;object-fit:contain;background:#111}.chat-attachment video{max-width:min(320px,100%);max-height:300px;border-radius:10px;background:#000}.chat-attachment audio{max-width:100%}.chat-attachment a{color:#fff!important;text-decoration:underline;word-break:break-word}.chat-message{word-break:break-word}.chat-message small{display:block;margin-top:6px}.chat-notify-btn{white-space:nowrap}
 @media(max-width:620px){.client-profile-head{grid-template-columns:auto 1fr}.client-profile-head>#logoutBtn{grid-column:1/-1;width:100%}.client-profile-form-grid{grid-template-columns:1fr}.client-profile-form-grid .full{grid-column:auto}.chat-compose{gap:5px}.chat-attach{width:38px;height:38px}.chat-send{width:44px!important;height:44px!important}.chat-compose input{min-width:0}}
-</style>
-<style id="auth-navigation-v16">
-/* Navigation d'authentification : l'état reste synchronisé avec la session Supabase. */
-#clientDashboardNavItem[hidden],
-.client-auth-item[hidden],
-.nav-auth-separator[hidden]{
-  display:none !important;
-}
-#clientDashboardNavItem .nav-auth-action{
-  color:#fff !important;
-}
-#clientDashboardNavItem .nav-auth-action i{
-  color:inherit !important;
-}
-.chat-attach{
-  width:auto !important;
-  min-width:88px !important;
-  height:40px !important;
-  padding:0 13px !important;
-  border-radius:10px !important;
-  display:inline-flex !important;
-  align-items:center !important;
-  justify-content:center !important;
-  gap:7px !important;
-  white-space:nowrap !important;
-}
-.chat-attach span{
-  display:inline !important;
-  font-size:.72rem !important;
-  font-weight:600 !important;
-}
-@media(max-width:620px){
-  .chat-attach{
-    min-width:78px !important;
-    padding:0 9px !important;
-  }
-  .chat-attach span{
-    font-size:.68rem !important;
-  }
-}
 </style>
 <style id="notifications-v14">
 .chat-head-actions,.admin-chat-head-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:flex-end}
