@@ -3620,5 +3620,204 @@ body.admin-mode { overflow:hidden !important; background:#070707 !important; }
 .editor-section{margin:20px 0;padding-top:18px;border-top:1px solid #242424}.editor-section:first-child{padding-top:0;border-top:0}.editor-section h4{margin:0 0 12px;color:var(--gold);font:600 1rem 'Playfair Display',serif}.editor-section-head{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:12px}.admin-form-grid .full{grid-column:1/-1}.admin-form-grid textarea{width:100%;padding:10px;background:#050505;border:1px solid #2d2d2d;color:#fff;border-radius:9px;resize:vertical}.editor-repeater{border:1px solid #292929;border-radius:12px;padding:12px;margin-bottom:10px;background:#080808}.editor-repeater-head{display:grid;grid-template-columns:1fr auto;gap:8px;margin-bottom:9px}.service-items-editor{display:grid;gap:7px;margin-bottom:8px}.editor-inline{display:grid;grid-template-columns:1fr auto;gap:7px;margin-bottom:7px}.price-editor-row{grid-template-columns:1fr .45fr auto}.editor-inline input,.editor-repeater input{width:100%;padding:9px;background:#050505;border:1px solid #2d2d2d;color:#fff;border-radius:8px}.btn-small{padding:7px 10px!important;font-size:.7rem!important}.btn-danger{border:1px solid #713047!important;background:transparent!important;color:#ffb0c8!important}.btn-danger:hover{background:#7a1230!important;color:#fff!important}.hero-admin-media{display:flex;align-items:center;gap:12px;flex-wrap:wrap}.hero-admin-media img{width:90px;height:70px;object-fit:cover;border-radius:9px;border:1px solid #333;background:#111}.gallery-upload-bar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:12px 0 16px}.gallery-manager{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.gallery-admin-item{display:grid;grid-template-columns:120px 1fr;gap:10px;border:1px solid #292929;border-radius:12px;padding:10px;background:#080808}.gallery-admin-item>img{width:120px;height:150px;object-fit:cover;border-radius:8px;background:#111}.gallery-admin-body{display:flex;flex-direction:column;gap:9px;min-width:0}.gallery-admin-body strong{color:#ddd}.gallery-alt-input{width:100%;padding:9px;background:#050505;border:1px solid #2d2d2d;color:#fff;border-radius:8px}.editor-actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:auto}.editor-actions .btn{padding:8px 10px}.gallery-admin-item .editor-actions .btn:nth-last-child(-n+2){padding-inline:11px}@media(max-width:700px){.gallery-manager{grid-template-columns:1fr}.gallery-admin-item{grid-template-columns:90px 1fr}.gallery-admin-item>img{width:90px;height:120px}.price-editor-row{grid-template-columns:1fr 1fr auto}}
 </style>
 
+
+<style id="chat-readability-v13">
+/* ============================================================
+   V13 — LISIBILITÉ MESSAGERIE CLIENT + ADMIN
+   Aucun changement de structure ou de design général.
+   ============================================================ */
+
+/* ----- ESPACE CLIENT ----- */
+#clientAccountModal .account-state-head strong,
+#clientAccountModal .account-state-head small,
+#clientAccountModal .chat-head strong,
+#clientAccountModal .chat-head span,
+#clientAccountModal #chatStatus {
+  color: #f5f0ea !important;
+}
+
+#clientAccountModal .account-state-head small {
+  color: #d7d0c8 !important;
+}
+
+#clientAccountModal .chat-head {
+  color: #f5f0ea !important;
+  background: #101010 !important;
+}
+
+#clientAccountModal .chat-head strong {
+  color: #ffffff !important;
+}
+
+#clientAccountModal .chat-head span,
+#clientAccountModal #chatStatus {
+  color: #72d39a !important;
+  font-weight: 600 !important;
+}
+
+#clientAccountModal .chat-box {
+  background: #0b0b0b !important;
+}
+
+#clientAccountModal .chat-messages {
+  background: #0b0b0b !important;
+  color: #ffffff !important;
+}
+
+#clientAccountModal .chat-message {
+  background: #202020 !important;
+  border-color: #3d3d3d !important;
+  color: #ffffff !important;
+  box-shadow: 0 2px 8px rgba(0,0,0,.18);
+}
+
+#clientAccountModal .chat-message.me {
+  background: #7a1230 !important;
+  border-color: #9b2b50 !important;
+  color: #ffffff !important;
+}
+
+#clientAccountModal .chat-message small {
+  color: #cfc7c0 !important;
+}
+
+#clientAccountModal .chat-compose {
+  background: #111111 !important;
+  border-top-color: #444444 !important;
+}
+
+#clientAccountModal .chat-compose input {
+  background: #ffffff !important;
+  color: #161616 !important;
+  border-color: #bdbdbd !important;
+}
+
+#clientAccountModal .chat-compose input::placeholder {
+  color: #555555 !important;
+  opacity: 1 !important;
+}
+
+#clientAccountModal .chat-compose input:focus {
+  border-color: #7a1230 !important;
+  box-shadow: 0 0 0 2px rgba(122,18,48,.15) !important;
+}
+
+#clientAccountModal .chat-send {
+  background: #7a1230 !important;
+  color: #ffffff !important;
+}
+
+#clientAccountModal .chat-send i {
+  color: #ffffff !important;
+}
+
+/* ----- ESPACE ADMINISTRATEUR ----- */
+#adminPanel,
+#adminPanel .admin-shell {
+  color: #f5f0ea !important;
+}
+
+#adminPanel .admin-chat-layout {
+  background: #090909 !important;
+  border-color: #3b3b3b !important;
+}
+
+#adminPanel .conversation-list {
+  background: #0d0d0d !important;
+  border-color: #3b3b3b !important;
+}
+
+#adminPanel .conversation-item {
+  color: #f2ede7 !important;
+  background: #0d0d0d !important;
+  border-bottom-color: #303030 !important;
+}
+
+#adminPanel .conversation-item strong {
+  color: #ffffff !important;
+}
+
+#adminPanel .conversation-item small {
+  color: #c2bbb4 !important;
+}
+
+#adminPanel .conversation-item:hover,
+#adminPanel .conversation-item.active {
+  background: rgba(201,168,76,.14) !important;
+  color: #ffffff !important;
+}
+
+#adminPanel .admin-conversation {
+  background: #0b0b0b !important;
+}
+
+#adminPanel .conversation-title {
+  background: #111111 !important;
+  color: #ffffff !important;
+  border-bottom-color: #3b3b3b !important;
+}
+
+#adminPanel .admin-conversation .chat-messages {
+  background: #0b0b0b !important;
+  color: #ffffff !important;
+}
+
+#adminPanel .chat-message {
+  background: #202020 !important;
+  border-color: #404040 !important;
+  color: #ffffff !important;
+}
+
+#adminPanel .chat-message.me {
+  background: #7a1230 !important;
+  border-color: #9b2b50 !important;
+  color: #ffffff !important;
+}
+
+#adminPanel .chat-message small {
+  color: #d0c8c1 !important;
+}
+
+#adminPanel .chat-compose {
+  background: #111111 !important;
+  border-top-color: #444444 !important;
+}
+
+#adminPanel .chat-compose input {
+  background: #ffffff !important;
+  color: #161616 !important;
+  border-color: #bdbdbd !important;
+}
+
+#adminPanel .chat-compose input::placeholder {
+  color: #555555 !important;
+  opacity: 1 !important;
+}
+
+#adminPanel .chat-compose input:focus {
+  border-color: #7a1230 !important;
+  box-shadow: 0 0 0 2px rgba(122,18,48,.15) !important;
+}
+
+#adminPanel .chat-send {
+  background: #7a1230 !important;
+  color: #ffffff !important;
+}
+
+#adminPanel .chat-send i {
+  color: #ffffff !important;
+}
+
+/* Messages / états d'erreur ou d'attente */
+#clientAccountModal #chatStatus,
+#adminPanel #adminChatStatus {
+  font-weight: 600 !important;
+}
+
+#adminPanel #adminChatStatus {
+  color: #d7d0c8 !important;
+}
+</style>
+
 </body>
 </html>
