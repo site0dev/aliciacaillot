@@ -3140,5 +3140,66 @@ section{padding:88px 0}
 })();
 </script>
 
+
+<script id="final-admin-trigger-fix">
+(() => {
+  'use strict';
+  const triggerId = 'headerAliciaTrigger';
+  const modalId = 'adminAccessModal';
+  const REQUIRED_CLICKS = 7;
+  const WINDOW_MS = 10000;
+  let clicks = 0;
+  let startedAt = 0;
+  let timer = null;
+
+  function openAdminAccess() {
+    const modal = document.getElementById(modalId);
+    if (!modal) return;
+    document.querySelectorAll('.site-modal.open').forEach(m => {
+      m.classList.remove('open');
+      m.setAttribute('aria-hidden', 'true');
+    });
+    modal.classList.add('open');
+    modal.setAttribute('aria-hidden', 'false');
+    document.body.classList.add('modal-open');
+    const input = document.getElementById('adminUsername');
+    if (input) setTimeout(() => input.focus(), 50);
+  }
+
+  function resetCounter() {
+    clicks = 0;
+    startedAt = 0;
+    clearTimeout(timer);
+    timer = null;
+  }
+
+  // Gestionnaire final en capture : il reste actif même si un autre
+  // gestionnaire de navigation est attaché au logo.
+  document.addEventListener('click', event => {
+    const trigger = event.target.closest('#' + triggerId);
+    if (!trigger) return;
+
+    event.preventDefault();
+    event.stopPropagation();
+    event.stopImmediatePropagation();
+
+    const now = Date.now();
+    if (!startedAt || now - startedAt > WINDOW_MS) {
+      clicks = 0;
+      startedAt = now;
+    }
+    clicks += 1;
+
+    clearTimeout(timer);
+    timer = setTimeout(resetCounter, WINDOW_MS);
+
+    if (clicks >= REQUIRED_CLICKS) {
+      resetCounter();
+      openAdminAccess();
+    }
+  }, true);
+})();
+</script>
+
 </body>
 </html>
