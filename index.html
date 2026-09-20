@@ -2714,7 +2714,8 @@ section{padding:88px 0}
   $('adminLoginForm').addEventListener('submit',async e=>{
     e.preventDefault();
     const username=$('adminUsername').value.trim(),password=$('adminPassword').value;
-    if(username!==ADMIN_USERNAME){setStatus('adminLoginStatus','Nom d’utilisateur incorrect.');return;}
+    const adminLoginAccepted = username.toLowerCase()===ADMIN_USERNAME.toLowerCase() || username.toLowerCase()===ADMIN_AUTH_EMAIL.toLowerCase();
+    if(!adminLoginAccepted){setStatus('adminLoginStatus','Identifiant administrateur incorrect.');return;}
     setStatus('adminLoginStatus','Vérification…');
     const {error}=await sb.auth.signInWithPassword({email:ADMIN_AUTH_EMAIL,password});
     if(error){setStatus('adminLoginStatus','Accès refusé : '+error.message);return;}
@@ -2748,11 +2749,14 @@ section{padding:88px 0}
     const {data:adminRow}=await sb.from('admin_users').select('*').eq('user_id',userData.user.id).maybeSingle();
     if(!adminRow?.active){await sb.auth.signOut();return;}
     $('adminIdentity').textContent='Connectée : '+(profile?.full_name||userData.user.email)+' · '+adminRow.username;
+    document.body.classList.add('admin-mode');
+    document.body.classList.remove('modal-open');
+    document.querySelectorAll('.site-modal.open').forEach(m=>{m.classList.remove('open');m.setAttribute('aria-hidden','true');});
     $('adminPanel').classList.add('open');$('adminPanel').setAttribute('aria-hidden','false');
     await Promise.all([loadSiteContent(),loadGalleryAdmin(),loadAdminStats(),loadConversations(),loadClients(),loadContactRequests()]);
   }
 
-  $('adminLogoutBtn').addEventListener('click',async()=>{await sb.auth.signOut();$('adminPanel').classList.remove('open');$('adminPanel').setAttribute('aria-hidden','true');});
+  $('adminLogoutBtn').addEventListener('click',async()=>{await sb.auth.signOut();document.body.classList.remove('admin-mode');$('adminPanel').classList.remove('open');$('adminPanel').setAttribute('aria-hidden','true');});
   $('adminRefreshBtn').addEventListener('click',openAdmin);
   $('saveSiteContentBtn').addEventListener('click',saveSiteContent);
 
@@ -2937,12 +2941,12 @@ section{padding:88px 0}
 <div class="site-modal-card">
 <div class="site-modal-top"><div><h2>Administration</h2><p>Accès réservé à l'administratrice.</p></div><button class="modal-x" data-close-modal="adminAccessModal" type="button">×</button></div>
 <form class="form" id="adminLoginForm">
-<div><label for="adminUsername">Nom d'utilisateur</label><input autocomplete="username" id="adminUsername" required="" type="text"/></div>
+<div><label for="adminUsername">Identifiant administrateur</label><input autocomplete="username" id="adminUsername" value="aliciacaillot@boiseo.online" required="" type="text"/></div>
 <div><label for="adminPassword">Mot de passe</label><input autocomplete="current-password" id="adminPassword" required="" type="password"/></div>
-<button class="btn btn-primary" type="submit"><i class="fas fa-shield-halved"></i> Accéder à l'administration</button>
+<button class="btn btn-primary" id="adminLoginSubmit" type="submit"><i class="fas fa-shield-halved"></i> Accéder à l'administration</button>
 <div aria-live="polite" class="status" id="adminLoginStatus"></div>
 </form>
-<p class="security-note">Le mot de passe n'est pas stocké dans le HTML : l'authentification réelle est effectuée par Supabase Auth.</p>
+
 </div>
 </div>
 <div aria-hidden="true" class="site-modal" id="resetPasswordModal">
@@ -3044,6 +3048,15 @@ section{padding:88px 0}
 .admin-panel{position:fixed;inset:0;z-index:7900;display:none;overflow:auto;background:#070707;color:#f5f0ea}.admin-panel.open{display:block}.admin-shell{width:min(1250px,calc(100% - 28px));margin:0 auto;padding:25px 0 50px}.admin-top{padding-bottom:20px;border-bottom:1px solid var(--line);margin-bottom:18px}.admin-kicker{font-size:.68rem;letter-spacing:2px;color:var(--gold)}.admin-top h2{font:600 2rem 'Playfair Display',serif;color:var(--gold)}.admin-top p{color:#777;font-size:.75rem}.admin-top-actions{display:flex;gap:8px;flex-wrap:wrap}.admin-grid{display:grid;grid-template-columns:1.25fr .75fr;gap:18px}.admin-card{margin-bottom:18px}.admin-card-head{margin-bottom:12px}.admin-card-head h3{font:600 1.15rem 'Playfair Display',serif;color:var(--gold)}.admin-card-head span{font-size:.68rem;color:#777}.admin-json{width:100%;min-height:420px;background:#050505;color:#ddd;border:1px solid #2d2d2d;border-radius:12px;padding:14px;font:12px/1.55 ui-monospace,SFMono-Regular,Menlo,monospace;resize:vertical;outline:none}.admin-json:focus{border-color:var(--gold)}.stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.stat-box{padding:18px 10px;border:1px solid var(--line);border-radius:13px;text-align:center}.stat-box strong{display:block;color:var(--gold);font:600 1.8rem 'Playfair Display',serif}.stat-box span{display:block;color:#777;font-size:.7rem}.admin-chat-layout{display:grid;grid-template-columns:280px 1fr;min-height:500px;border:1px solid #292929;border-radius:14px;overflow:hidden}.conversation-list{background:#0a0a0a;border-right:1px solid #292929;overflow:auto}.conversation-item{padding:13px;border:0;border-bottom:1px solid #222;background:transparent;color:#ddd;text-align:left;width:100%;display:block}.conversation-item:hover,.conversation-item.active{background:rgba(201,168,76,.08)}.conversation-item strong{display:block}.conversation-item small{color:#777}.admin-conversation{display:flex;flex-direction:column;min-width:0}.conversation-title{padding:13px 15px;border-bottom:1px solid #292929;color:#ddd;font-size:.82rem}.admin-conversation .chat-messages{flex:1;height:auto;min-height:400px}.client-table-wrap{overflow:auto}.client-table{width:100%;border-collapse:collapse;font-size:.78rem}.client-table th,.client-table td{padding:10px;border-bottom:1px solid #222;text-align:left;white-space:nowrap}.client-table th{color:var(--gold);font-weight:600}.client-table td{color:#ccc}.client-table button{padding:6px 10px;border-radius:999px;border:1px solid var(--line);background:transparent;color:#ddd}.client-table button:hover{background:var(--gold);color:#000}.admin-form-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:12px}.admin-form-grid label{display:block;color:#777;font-size:.7rem;margin-bottom:5px}.admin-form-grid input,.admin-form-grid select{width:100%;padding:10px;background:#050505;border:1px solid #2d2d2d;color:#fff;border-radius:9px}.admin-form-actions{grid-column:1/-1;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 @media(max-width:800px){.client-auth-grid,.admin-grid{grid-template-columns:1fr}.admin-chat-layout{grid-template-columns:1fr}.conversation-list{border-right:0;border-bottom:1px solid #292929;max-height:180px}.admin-top{align-items:flex-start;flex-direction:column}.admin-form-grid{grid-template-columns:1fr}.stats-row{grid-template-columns:repeat(3,1fr)}}
 @media(max-width:500px){.client-card,.admin-card{padding:16px}.client-tabs{gap:5px}.client-tab{font-size:.72rem;padding:8px 9px}.stats-row{gap:6px}.stat-box{padding:12px 5px}.stat-box strong{font-size:1.4rem}}
+</style>
+
+<style id="admin-separation-fix">
+/* Séparation stricte de l'espace administration et de l'espace client. */
+body.admin-mode > *:not(#adminPanel):not(script):not(style) { visibility:hidden !important; pointer-events:none !important; }
+body.admin-mode { overflow:hidden !important; background:#070707 !important; }
+.admin-panel { isolation:isolate; z-index:2147483000 !important; }
+#adminLoginSubmit { cursor:pointer !important; opacity:1 !important; pointer-events:auto !important; }
+#adminLoginStatus:empty { display:none !important; min-height:0 !important; padding:0 !important; margin:0 !important; border:0 !important; }
 </style>
 
 <script id="global-modal-close-fix">
