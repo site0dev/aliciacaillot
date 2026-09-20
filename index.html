@@ -2376,7 +2376,15 @@ section{padding:88px 0}
     hero: {
       first_name: 'Alicia',
       last_name: 'Caillot',
-      cta: 'Prendre contact'
+      cta: 'Prendre contact',
+      image_url: '/hero.jpg'
+    },
+    labels: {
+      servicesTitle: 'Prestations',
+      pricesTitle: 'Tarifs',
+      galleryTitle: 'Galerie',
+      aboutTitle: 'À propos',
+      contactTitle: 'Prendre contact'
     },
     about: {
       title: 'À propos',
@@ -2478,9 +2486,25 @@ section{padding:88px 0}
     const h=$('heroTitle');
     if(h){
       h.innerHTML=esc(siteContent.hero.first_name)+' <em>'+esc(siteContent.hero.last_name)+'</em>';
+      h.setAttribute('aria-label',`${siteContent.hero.first_name} ${siteContent.hero.last_name}`);
+      h.title=`${siteContent.hero.first_name} ${siteContent.hero.last_name}`;
     }
+    const logo=document.querySelector('.logo');
+    if(logo) logo.innerHTML=esc(siteContent.hero.first_name)+' <span>'+esc(siteContent.hero.last_name)+'</span>';
+    const heroBg=document.querySelector('.hero-bg');
+    if(heroBg && siteContent.hero.image_url) heroBg.src=siteContent.hero.image_url;
     const cta=document.querySelector('#hero [data-i18n="cta"]');
     if(cta) cta.textContent=siteContent.hero.cta;
+
+    const labels=siteContent.labels||{};
+    const labelMap={
+      '#services .section-title span':labels.servicesTitle,
+      '#prices .section-title span':labels.pricesTitle,
+      '#gallery .section-title span':labels.galleryTitle,
+      '#about .section-title span':labels.aboutTitle,
+      '#contact .container:nth-of-type(2) .section-title span':labels.contactTitle
+    };
+    Object.entries(labelMap).forEach(([selector,value])=>{const el=document.querySelector(selector);if(el && value) el.textContent=value;});
 
     const about=document.querySelector('#about .about-copy');
     if(about){
@@ -2516,6 +2540,28 @@ section{padding:88px 0}
 
     const intro=document.querySelector('#contact .section-intro');
     if(intro) intro.textContent=siteContent.contact.intro;
+    const social=document.querySelector('#siteSocialList');
+    if(social){
+      const c=siteContent.contact||{};
+      const rows=[
+        ['fab fa-x-twitter','X',c.x, c.x ? 'https://x.com/'+String(c.x).replace(/^@/,'') : ''],
+        ['fab fa-instagram','Instagram',c.instagram, c.instagram ? 'https://instagram.com/'+String(c.instagram).replace(/^@/,'') : ''],
+        ['fab fa-signal-messenger','Signal',c.signal,''],
+        ['fas fa-shield-alt','TeleGuard',c.teleguard,''],
+        ['fab fa-telegram','Telegram',c.telegram, c.telegram ? 'https://t.me/'+String(c.telegram).replace(/^@/,'') : ''],
+        ['fas fa-envelope','E-mail',c.email, c.email ? 'mailto:'+c.email : '']
+      ];
+      social.innerHTML='';
+      rows.forEach(([icon,label,value,href])=>{
+        const row=document.createElement('div');row.className='social-row';
+        const i=document.createElement('i');i.className=icon;
+        const lab=document.createElement('span');lab.className='label';lab.textContent=label;
+        const val=document.createElement('span');val.className='value';
+        if(href){const a=document.createElement('a');a.href=href;a.target='_blank';a.rel='noopener noreferrer';a.textContent=value||'';val.appendChild(a);}
+        else {val.appendChild(document.createTextNode(value||''));const b=document.createElement('button');b.className='copy-btn';b.type='button';b.textContent='Copier';b.dataset.copy=value||'';b.addEventListener('click',()=>navigator.clipboard?.writeText(value||''));val.appendChild(b);}
+        row.append(i,lab,val);social.appendChild(row);
+      });
+    }
     const footer=document.querySelector('footer');
     if(footer){
       const spans=footer.querySelectorAll('.container > div:first-child, .container .legal span');
@@ -2526,23 +2572,83 @@ section{padding:88px 0}
     }
   }
 
+  function fieldValue(id){ const el=$(id); return el ? el.value.trim() : ''; }
+  function fillSiteEditor(){
+    const c=siteContent;
+    const set=(id,v)=>{const el=$(id);if(el)el.value=v??''};
+    set('editHeroFirst',c.hero?.first_name); set('editHeroLast',c.hero?.last_name); set('editHeroCta',c.hero?.cta);
+    set('editAboutTitle',c.about?.title); set('editAboutLine1',c.about?.line1); set('editAboutLine2',c.about?.line2); set('editAboutParagraph',c.about?.paragraph); set('editAboutDetails',c.about?.details);
+    set('editServicesTitle',c.labels?.servicesTitle); set('editPricesTitle',c.labels?.pricesTitle); set('editGalleryTitle',c.labels?.galleryTitle); set('editAboutSectionTitle',c.labels?.aboutTitle); set('editContactTitle',c.labels?.contactTitle);
+    set('editContactIntro',c.contact?.intro); set('editContactEmail',c.contact?.email); set('editContactSignal',c.contact?.signal); set('editContactTeleguard',c.contact?.teleguard); set('editContactTelegram',c.contact?.telegram); set('editContactInstagram',c.contact?.instagram); set('editContactX',c.contact?.x);
+    set('editFooterCopyright',c.footer?.copyright);
+    renderServiceEditor(c.services||[]); renderPriceEditor(c.prices||[]);
+    const heroPreview=$('heroImagePreview'); if(heroPreview){heroPreview.src=c.hero?.image_url||'/hero.jpg';}
+  }
+  function renderServiceEditor(items){
+    const wrap=$('servicesEditor'); if(!wrap)return; wrap.innerHTML='';
+    items.forEach((service,si)=>{
+      const card=document.createElement('div');card.className='editor-repeater';
+      card.innerHTML=`<div class="editor-repeater-head"><input class="service-title-input" value="${esc(service.title)}" placeholder="Nom de la prestation"><button type="button" class="btn btn-danger editor-remove-service">Supprimer</button></div><div class="service-items-editor"></div><button type="button" class="btn btn-ghost editor-add-item">+ Ajouter un élément</button>`;
+      const itemsWrap=card.querySelector('.service-items-editor');
+      (service.items||[]).forEach(item=>{addServiceItemRow(itemsWrap,item)});
+      card.querySelector('.editor-add-item').onclick=()=>addServiceItemRow(itemsWrap,'');
+      card.querySelector('.editor-remove-service').onclick=()=>card.remove();
+      wrap.appendChild(card);
+    });
+  }
+  function addServiceItemRow(wrap,value=''){
+    const row=document.createElement('div');row.className='editor-inline';
+    row.innerHTML=`<input class="service-item-input" value="${esc(value)}" placeholder="Texte"><button type="button" class="btn btn-danger btn-small">Supprimer</button>`;
+    row.querySelector('button').onclick=()=>row.remove(); wrap.appendChild(row);
+  }
+  function renderPriceEditor(items){
+    const wrap=$('pricesEditor');if(!wrap)return;wrap.innerHTML='';
+    items.forEach(p=>addPriceRow(wrap,p.label,p.price));
+  }
+  function addPriceRow(wrap,label='',price=''){
+    const row=document.createElement('div');row.className='editor-inline price-editor-row';
+    row.innerHTML=`<input class="price-label-input" value="${esc(label)}" placeholder="Durée / intitulé"><input class="price-value-input" value="${esc(price)}" placeholder="Prix"><button type="button" class="btn btn-danger btn-small">Supprimer</button>`;
+    row.querySelector('button').onclick=()=>row.remove();wrap.appendChild(row);
+  }
+  function collectSiteEditor(){
+    const c=structuredClone(siteContent);
+    c.hero={...(c.hero||{}),first_name:fieldValue('editHeroFirst'),last_name:fieldValue('editHeroLast'),cta:fieldValue('editHeroCta'),image_url:c.hero?.image_url||'/hero.jpg'};
+    c.labels={...(c.labels||{}),servicesTitle:fieldValue('editServicesTitle'),pricesTitle:fieldValue('editPricesTitle'),galleryTitle:fieldValue('editGalleryTitle'),aboutTitle:fieldValue('editAboutSectionTitle'),contactTitle:fieldValue('editContactTitle')};
+    c.about={...(c.about||{}),title:fieldValue('editAboutTitle'),line1:fieldValue('editAboutLine1'),line2:fieldValue('editAboutLine2'),paragraph:fieldValue('editAboutParagraph'),details:fieldValue('editAboutDetails')};
+    c.services=[...document.querySelectorAll('#servicesEditor .editor-repeater')].map(card=>({title:card.querySelector('.service-title-input')?.value.trim()||'',items:[...card.querySelectorAll('.service-item-input')].map(x=>x.value.trim()).filter(Boolean)})).filter(x=>x.title||x.items.length);
+    c.prices=[...document.querySelectorAll('#pricesEditor .price-editor-row')].map(row=>({label:row.querySelector('.price-label-input')?.value.trim()||'',price:row.querySelector('.price-value-input')?.value.trim()||''})).filter(x=>x.label||x.price);
+    c.contact={...(c.contact||{}),intro:fieldValue('editContactIntro'),email:fieldValue('editContactEmail'),signal:fieldValue('editContactSignal'),teleguard:fieldValue('editContactTeleguard'),telegram:fieldValue('editContactTelegram'),instagram:fieldValue('editContactInstagram'),x:fieldValue('editContactX')};
+    c.footer={...(c.footer||{}),copyright:fieldValue('editFooterCopyright')};
+    return c;
+  }
   async function loadSiteContent(){
     const {data,error}=await sb.from('site_content').select('content').eq('id','main').maybeSingle();
-    if(error){console.warn(error); return;}
+    if(error){console.warn(error);}
     renderSiteContent(data?.content || DEFAULT_CONTENT);
-    const editor=$('siteContentJson');
-    if(editor) editor.value=JSON.stringify(siteContent,null,2);
+    fillSiteEditor();
   }
-
   async function saveSiteContent(){
-    let parsed;
-    try{parsed=JSON.parse($('siteContentJson').value);}catch(e){setStatus('siteSaveStatus','JSON invalide.');return;}
+    const parsed=collectSiteEditor();
+    if(!parsed.hero.first_name || !parsed.hero.last_name){setStatus('siteSaveStatus','Le prénom et le nom sont requis.');return;}
     const {data:userData}=await sb.auth.getUser();
     if(!userData?.user){setStatus('siteSaveStatus','Session administrateur requise.');return;}
     const {error}=await sb.from('site_content').upsert({id:'main',content:parsed,updated_by:userData.user.id,updated_at:new Date().toISOString()});
     if(error){setStatus('siteSaveStatus',error.message);return;}
-    renderSiteContent(parsed);
-    setStatus('siteSaveStatus','Site enregistré dans Supabase.',true);
+    renderSiteContent(parsed); fillSiteEditor(); setStatus('siteSaveStatus','Modifications enregistrées.',true);
+  }
+
+  async function uploadHeroImage(file){
+    if(!file||!file.type.startsWith('image/'))return;
+    if(file.size>12*1024*1024){setStatus('siteSaveStatus','Image trop lourde (12 Mo maximum).');return;}
+    const ext=(file.name.split('.').pop()||'jpg').toLowerCase().replace(/[^a-z0-9]/g,'');
+    const path=`hero/${Date.now()}-${Math.random().toString(36).slice(2,8)}.${ext}`;
+    setStatus('siteSaveStatus',"Import de la photo d’accueil…");
+    const {error}=await sb.storage.from(GALLERY_BUCKET).upload(path,file,{cacheControl:'31536000',upsert:false,contentType:file.type});
+    if(error){setStatus('siteSaveStatus',error.message);return;}
+    const {data:urlData}=sb.storage.from(GALLERY_BUCKET).getPublicUrl(path);
+    siteContent.hero={...(siteContent.hero||{}),image_url:urlData.publicUrl};
+    const preview=$('heroImagePreview');if(preview)preview.src=urlData.publicUrl;
+    setStatus('siteSaveStatus','Photo d’accueil importée. Clique sur « Enregistrer le site » pour la publier.',true);
   }
 
   async function getProfile(){
@@ -2827,26 +2933,87 @@ section{padding:88px 0}
 
 
 
-  async function loadGalleryAdmin(){
-    const {data,error}=await sb.from('gallery_items').select('image_url,alt,sort_order,active').order('sort_order',{ascending:true});
-    if(error){console.warn(error);return;}
-    const editor=$('galleryJson');
-    if(editor) editor.value=JSON.stringify((data||[]).map(x=>({image_url:x.image_url,alt:x.alt||'',sort_order:x.sort_order,active:x.active})),null,2);
+  const GALLERY_BUCKET='site-gallery';
+  function storagePathFromUrl(url){
+    const marker=`/storage/v1/object/public/${GALLERY_BUCKET}/`;
+    const i=String(url||'').indexOf(marker);
+    return i>=0 ? decodeURIComponent(String(url).slice(i+marker.length).split('?')[0]) : null;
   }
-
-  async function saveGallery(){
-    let arr;
-    try{arr=JSON.parse($('galleryJson').value);}catch(e){setStatus('gallerySaveStatus','JSON invalide.');return;}
-    if(!Array.isArray(arr)){setStatus('gallerySaveStatus','La galerie doit être un tableau JSON.');return;}
-    const rows=arr.map((x,i)=>({image_url:String(x.image_url||'').trim(),alt:String(x.alt||'').trim(),sort_order:Number.isFinite(Number(x.sort_order))?Number(x.sort_order):i,active:x.active!==false})).filter(x=>x.image_url);
-    const {error:delError}=await sb.from('gallery_items').delete().gte('sort_order',-2147483648);
-    if(delError){setStatus('gallerySaveStatus',delError.message);return;}
-    if(rows.length){
-      const {error}=await sb.from('gallery_items').insert(rows);
-      if(error){setStatus('gallerySaveStatus',error.message);return;}
-    }
-    setStatus('gallerySaveStatus','Galerie enregistrée.',true);
-    await loadPublicGallery();
+  function renderGalleryAdmin(items){
+    const wrap=$('galleryManager');if(!wrap)return;wrap.innerHTML='';
+    if(!items.length){wrap.innerHTML='<div class="admin-help">Aucune photo dans la galerie. Utilise « Ajouter des photos » pour en importer.</div>';return;}
+    items.forEach((item,index)=>{
+      const card=document.createElement('div');card.className='gallery-admin-item';
+      const img=document.createElement('img');img.src=item.image_url;img.alt=item.alt||`Photo ${index+1}`;
+      const body=document.createElement('div');body.className='gallery-admin-body';
+      const title=document.createElement('strong');title.textContent=`Photo ${index+1}`;
+      const alt=document.createElement('input');alt.className='gallery-alt-input';alt.value=item.alt||'';alt.placeholder='Description de la photo';
+      const actions=document.createElement('div');actions.className='editor-actions';
+      const replace=document.createElement('button');replace.type='button';replace.className='btn btn-ghost';replace.textContent='Remplacer';
+      const del=document.createElement('button');del.type='button';del.className='btn btn-danger';del.textContent='Supprimer';
+      const up=document.createElement('button');up.type='button';up.className='btn btn-ghost';up.textContent='↑';up.disabled=index===0;
+      const down=document.createElement('button');down.type='button';down.className='btn btn-ghost';down.textContent='↓';down.disabled=index===items.length-1;
+      actions.append(replace,del,up,down);body.append(title,alt,actions);card.append(img,body);wrap.appendChild(card);
+      replace.onclick=()=>{const input=document.createElement('input');input.type='file';input.accept='image/*';input.onchange=()=>input.files?.[0]&&replaceGalleryFile(item,input.files[0]);input.click()};
+      del.onclick=()=>deleteGalleryItem(item);
+      up.onclick=()=>moveGalleryItem(index,-1);down.onclick=()=>moveGalleryItem(index,1);
+      alt.onchange=()=>updateGalleryAlt(item,alt.value);
+    });
+  }
+  let galleryAdminItems=[];
+  async function loadGalleryAdmin(){
+    const {data,error}=await sb.from('gallery_items').select('id,image_url,alt,sort_order,active').order('sort_order',{ascending:true});
+    if(error){setStatus('gallerySaveStatus',error.message);return;}
+    galleryAdminItems=data||[];renderGalleryAdmin(galleryAdminItems);
+  }
+  async function uploadGalleryFile(file){
+    if(!file||!file.type.startsWith('image/')){setStatus('gallerySaveStatus','Sélectionne une image.');return;}
+    if(file.size>12*1024*1024){setStatus('gallerySaveStatus','Image trop lourde (12 Mo maximum).');return;}
+    const ext=(file.name.split('.').pop()||'jpg').toLowerCase().replace(/[^a-z0-9]/g,'');
+    const path=`gallery/${Date.now()}-${Math.random().toString(36).slice(2,8)}.${ext}`;
+    setStatus('gallerySaveStatus','Import de la photo…');
+    const {error}=await sb.storage.from(GALLERY_BUCKET).upload(path,file,{cacheControl:'31536000',upsert:false,contentType:file.type});
+    if(error){setStatus('gallerySaveStatus',error.message);return;}
+    const {data:urlData}=sb.storage.from(GALLERY_BUCKET).getPublicUrl(path);
+    const nextOrder=galleryAdminItems.reduce((m,x)=>Math.max(m,Number(x.sort_order)||0),-1)+1;
+    const {error:dbError}=await sb.from('gallery_items').insert({image_url:urlData.publicUrl,alt:file.name.replace(/\.[^.]+$/,''),sort_order:nextOrder,active:true});
+    if(dbError){await sb.storage.from(GALLERY_BUCKET).remove([path]);setStatus('gallerySaveStatus',dbError.message);return;}
+    setStatus('gallerySaveStatus','Photo ajoutée.',true);await loadGalleryAdmin();await loadPublicGallery();
+  }
+  async function replaceGalleryFile(item,file){
+    if(!file||!file.type.startsWith('image/'))return;
+    if(file.size>12*1024*1024){setStatus('gallerySaveStatus','Image trop lourde (12 Mo maximum).');return;}
+    const oldPath=storagePathFromUrl(item.image_url);
+    const ext=(file.name.split('.').pop()||'jpg').toLowerCase().replace(/[^a-z0-9]/g,'');
+    const path=`gallery/${Date.now()}-${Math.random().toString(36).slice(2,8)}.${ext}`;
+    setStatus('gallerySaveStatus','Remplacement de la photo…');
+    const {error:upError}=await sb.storage.from(GALLERY_BUCKET).upload(path,file,{cacheControl:'31536000',upsert:false,contentType:file.type});
+    if(upError){setStatus('gallerySaveStatus',upError.message);return;}
+    const {data:urlData}=sb.storage.from(GALLERY_BUCKET).getPublicUrl(path);
+    const {error:dbError}=await sb.from('gallery_items').update({image_url:urlData.publicUrl,alt:file.name.replace(/\.[^.]+$/,'')}).eq('id',item.id);
+    if(dbError){await sb.storage.from(GALLERY_BUCKET).remove([path]);setStatus('gallerySaveStatus',dbError.message);return;}
+    if(oldPath) await sb.storage.from(GALLERY_BUCKET).remove([oldPath]);
+    setStatus('gallerySaveStatus','Photo remplacée.',true);await loadGalleryAdmin();await loadPublicGallery();
+  }
+  async function deleteGalleryItem(item){
+    if(!confirm('Supprimer cette photo de la galerie ?'))return;
+    const {error}=await sb.from('gallery_items').delete().eq('id',item.id);
+    if(error){setStatus('gallerySaveStatus',error.message);return;}
+    const path=storagePathFromUrl(item.image_url);if(path)await sb.storage.from(GALLERY_BUCKET).remove([path]);
+    setStatus('gallerySaveStatus','Photo supprimée.',true);await loadGalleryAdmin();await loadPublicGallery();
+  }
+  async function updateGalleryAlt(item,value){
+    const {error}=await sb.from('gallery_items').update({alt:value.trim()}).eq('id',item.id);
+    if(error)setStatus('gallerySaveStatus',error.message);else setStatus('gallerySaveStatus','Description enregistrée.',true);
+  }
+  async function moveGalleryItem(index,delta){
+    const target=index+delta;if(target<0||target>=galleryAdminItems.length)return;
+    const a=galleryAdminItems[index],b=galleryAdminItems[target];
+    const {error}=await sb.from('gallery_items').update({sort_order:b.sort_order}).eq('id',a.id);
+    if(error){setStatus('gallerySaveStatus',error.message);return;}
+    const {error:error2}=await sb.from('gallery_items').update({sort_order:a.sort_order}).eq('id',b.id);
+    if(error2){setStatus('gallerySaveStatus',error2.message);return;}
+    await loadGalleryAdmin();await loadPublicGallery();
   }
 
   async function loadPublicGallery(){
@@ -2982,8 +3149,15 @@ section{padding:88px 0}
     if(adminRefreshBtn && !adminRefreshBtn.dataset.bound){adminRefreshBtn.addEventListener('click',()=>openAdmin());adminRefreshBtn.dataset.bound='1';}
     const saveSiteContentBtn=$('saveSiteContentBtn');
     if(saveSiteContentBtn && !saveSiteContentBtn.dataset.bound){saveSiteContentBtn.addEventListener('click',saveSiteContent);saveSiteContentBtn.dataset.bound='1';}
-    const saveGalleryBtn=$('saveGalleryBtn');
-    if(saveGalleryBtn && !saveGalleryBtn.dataset.bound){saveGalleryBtn.addEventListener('click',saveGallery);saveGalleryBtn.dataset.bound='1';}
+    const addServiceBtn=$('addServiceBtn');
+    if(addServiceBtn && !addServiceBtn.dataset.bound){addServiceBtn.addEventListener('click',()=>{const wrap=$('servicesEditor');const card=document.createElement('div');card.className='editor-repeater';card.innerHTML='<div class="editor-repeater-head"><input class="service-title-input" placeholder="Nom de la prestation"><button type="button" class="btn btn-danger editor-remove-service">Supprimer</button></div><div class="service-items-editor"></div><button type="button" class="btn btn-ghost editor-add-item">+ Ajouter un élément</button>';const iw=card.querySelector('.service-items-editor');card.querySelector('.editor-add-item').onclick=()=>addServiceItemRow(iw,'');card.querySelector('.editor-remove-service').onclick=()=>card.remove();wrap.appendChild(card);});addServiceBtn.dataset.bound='1';}
+    const addPriceBtn=$('addPriceBtn');
+    if(addPriceBtn && !addPriceBtn.dataset.bound){addPriceBtn.addEventListener('click',()=>addPriceRow($('pricesEditor')));addPriceBtn.dataset.bound='1';}
+    const galleryAddBtn=$('galleryAddBtn');
+    const galleryFileInput=$('galleryFileInput');
+    if(galleryAddBtn && galleryFileInput && !galleryAddBtn.dataset.bound){galleryAddBtn.onclick=()=>galleryFileInput.click();galleryFileInput.onchange=async()=>{const files=[...(galleryFileInput.files||[])];for(const file of files)await uploadGalleryFile(file);galleryFileInput.value='';};galleryAddBtn.dataset.bound='1';}
+    const heroImageBtn=$('heroImageBtn');
+    if(heroImageBtn && !heroImageBtn.dataset.bound){heroImageBtn.onclick=()=>{const input=document.createElement('input');input.type='file';input.accept='image/*';input.onchange=()=>input.files?.[0]&&uploadHeroImage(input.files[0]);input.click()};heroImageBtn.dataset.bound='1';}
     const adminMessageForm=$('adminMessageForm');
     if(adminMessageForm && !adminMessageForm.dataset.bound){adminMessageForm.addEventListener('submit',async e=>{
       e.preventDefault();
@@ -3135,18 +3309,32 @@ section{padding:88px 0}
 <div class="admin-top-actions"><button class="btn btn-ghost" id="adminRefreshBtn" type="button">Actualiser</button><button class="btn btn-ghost" id="adminLogoutBtn" type="button">Déconnexion</button></div>
 </div>
 <div class="admin-grid">
-<section class="admin-card">
-<div class="admin-card-head"><h3>Contenu persistant du site</h3><span>Supabase</span></div>
-<p class="admin-help">Modifie les données ci-dessous puis clique sur « Enregistrer ». Les changements sont stockés dans Supabase et restent après actualisation.</p>
-<label for="siteContentJson">Données éditables du site (JSON)</label>
-<textarea class="admin-json" id="siteContentJson" spellcheck="false"></textarea>
+<section class="admin-card admin-editor-card">
+<div class="admin-card-head"><h3>Modifier le site</h3><span>Sans code</span></div>
+<p class="admin-help">Modifie directement les textes, prestations, tarifs et coordonnées. Aucun JSON ni code n'est nécessaire.</p>
+<div class="editor-section"><h4>Accueil</h4><div class="admin-form-grid">
+<div><label>Prénom</label><input id="editHeroFirst"></div><div><label>Nom</label><input id="editHeroLast"></div><div><label>Bouton principal</label><input id="editHeroCta"></div>
+<div class="editor-media-field"><label>Photo d'accueil</label><div class="hero-admin-media"><img id="heroImagePreview" src="/hero.jpg" alt="Aperçu"><button class="btn btn-ghost" id="heroImageBtn" type="button">Changer la photo</button></div></div>
+</div></div>
+<div class="editor-section"><h4>Titres des rubriques</h4><div class="admin-form-grid">
+<div><label>Prestations</label><input id="editServicesTitle"></div><div><label>Tarifs</label><input id="editPricesTitle"></div><div><label>Galerie</label><input id="editGalleryTitle"></div><div><label>À propos</label><input id="editAboutSectionTitle"></div><div><label>Contact</label><input id="editContactTitle"></div>
+</div></div>
+<div class="editor-section"><h4>À propos</h4><div class="admin-form-grid">
+<div><label>Titre</label><input id="editAboutTitle"></div><div><label>Nom affiché</label><input id="editAboutLine1"></div><div class="full"><label>Présentation courte</label><input id="editAboutLine2"></div><div class="full"><label>Présentation</label><textarea id="editAboutParagraph" rows="4"></textarea></div><div class="full"><label>Détails</label><textarea id="editAboutDetails" rows="4"></textarea></div>
+</div></div>
+<div class="editor-section"><div class="editor-section-head"><h4>Prestations</h4><button class="btn btn-ghost" id="addServiceBtn" type="button">+ Ajouter une prestation</button></div><div id="servicesEditor"></div></div>
+<div class="editor-section"><div class="editor-section-head"><h4>Tarifs</h4><button class="btn btn-ghost" id="addPriceBtn" type="button">+ Ajouter un tarif</button></div><div id="pricesEditor"></div></div>
+<div class="editor-section"><h4>Contact</h4><div class="admin-form-grid">
+<div class="full"><label>Introduction</label><textarea id="editContactIntro" rows="3"></textarea></div><div><label>E-mail</label><input id="editContactEmail"></div><div><label>Signal</label><input id="editContactSignal"></div><div><label>TeleGuard</label><input id="editContactTeleguard"></div><div><label>Telegram</label><input id="editContactTelegram"></div><div><label>Instagram</label><input id="editContactInstagram"></div><div><label>X</label><input id="editContactX"></div>
+</div></div>
+<div class="editor-section"><h4>Pied de page</h4><div><label>Copyright</label><input id="editFooterCopyright"></div></div>
 <div class="admin-row"><button class="btn btn-primary" id="saveSiteContentBtn" type="button">Enregistrer le site</button><span class="status" id="siteSaveStatus"></span></div>
 </section>
 <section class="admin-card">
-<div class="admin-card-head"><h3>Galerie persistante</h3><span>URLs d'images</span></div>
-<p class="admin-help">Une URL par photo, ou un tableau JSON de chaînes. Les photos enregistrées ici remplacent la galerie locale du site.</p>
-<textarea class="admin-json" id="galleryJson" spellcheck="false" style="min-height:220px">[]</textarea>
-<div class="admin-row"><button class="btn btn-primary" id="saveGalleryBtn" type="button">Enregistrer la galerie</button><span class="status" id="gallerySaveStatus"></span></div>
+<div class="admin-card-head"><h3>Galerie photos</h3><span>Ajout · remplacement · suppression</span></div>
+<p class="admin-help">Choisis les photos directement dans la galerie de ton téléphone ou de ton ordinateur. Tu peux ensuite remplacer, supprimer, réordonner et modifier leur description.</p>
+<div class="gallery-upload-bar"><input accept="image/*" id="galleryFileInput" multiple type="file" hidden><button class="btn btn-primary" id="galleryAddBtn" type="button">+ Ajouter des photos</button><span class="status" id="gallerySaveStatus"></span></div>
+<div class="gallery-manager" id="galleryManager"><div class="admin-help">Chargement…</div></div>
 </section>
 <section class="admin-card">
 <div class="admin-card-head"><h3>Statistiques</h3><span>Temps réel</span></div>
@@ -3427,5 +3615,10 @@ body.admin-mode { overflow:hidden !important; background:#070707 !important; }
   color: #FFFFFF !important;
 }
 </style>
+
+<style id="admin-content-editor">
+.editor-section{margin:20px 0;padding-top:18px;border-top:1px solid #242424}.editor-section:first-child{padding-top:0;border-top:0}.editor-section h4{margin:0 0 12px;color:var(--gold);font:600 1rem 'Playfair Display',serif}.editor-section-head{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:12px}.admin-form-grid .full{grid-column:1/-1}.admin-form-grid textarea{width:100%;padding:10px;background:#050505;border:1px solid #2d2d2d;color:#fff;border-radius:9px;resize:vertical}.editor-repeater{border:1px solid #292929;border-radius:12px;padding:12px;margin-bottom:10px;background:#080808}.editor-repeater-head{display:grid;grid-template-columns:1fr auto;gap:8px;margin-bottom:9px}.service-items-editor{display:grid;gap:7px;margin-bottom:8px}.editor-inline{display:grid;grid-template-columns:1fr auto;gap:7px;margin-bottom:7px}.price-editor-row{grid-template-columns:1fr .45fr auto}.editor-inline input,.editor-repeater input{width:100%;padding:9px;background:#050505;border:1px solid #2d2d2d;color:#fff;border-radius:8px}.btn-small{padding:7px 10px!important;font-size:.7rem!important}.btn-danger{border:1px solid #713047!important;background:transparent!important;color:#ffb0c8!important}.btn-danger:hover{background:#7a1230!important;color:#fff!important}.hero-admin-media{display:flex;align-items:center;gap:12px;flex-wrap:wrap}.hero-admin-media img{width:90px;height:70px;object-fit:cover;border-radius:9px;border:1px solid #333;background:#111}.gallery-upload-bar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:12px 0 16px}.gallery-manager{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.gallery-admin-item{display:grid;grid-template-columns:120px 1fr;gap:10px;border:1px solid #292929;border-radius:12px;padding:10px;background:#080808}.gallery-admin-item>img{width:120px;height:150px;object-fit:cover;border-radius:8px;background:#111}.gallery-admin-body{display:flex;flex-direction:column;gap:9px;min-width:0}.gallery-admin-body strong{color:#ddd}.gallery-alt-input{width:100%;padding:9px;background:#050505;border:1px solid #2d2d2d;color:#fff;border-radius:8px}.editor-actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:auto}.editor-actions .btn{padding:8px 10px}.gallery-admin-item .editor-actions .btn:nth-last-child(-n+2){padding-inline:11px}@media(max-width:700px){.gallery-manager{grid-template-columns:1fr}.gallery-admin-item{grid-template-columns:90px 1fr}.gallery-admin-item>img{width:90px;height:120px}.price-editor-row{grid-template-columns:1fr 1fr auto}}
+</style>
+
 </body>
 </html>
