@@ -2550,7 +2550,21 @@ section{padding:88px 0}
     const logo=document.querySelector('.logo');
     if(logo) logo.innerHTML=esc(siteContent.hero.first_name)+' <span>'+esc(siteContent.hero.last_name)+'</span>';
     const heroBg=document.querySelector('.hero-bg');
-    if(heroBg && siteContent.hero.image_url) heroBg.src=siteContent.hero.image_url;
+    if(heroBg){
+      const heroUrl=String(siteContent.hero?.image_url||'').trim();
+      heroBg.loading='eager';
+      heroBg.decoding='async';
+      heroBg.setAttribute('fetchpriority','high');
+      if(heroUrl){
+        // Les uploads Hero utilisent déjà un chemin unique dans Supabase.
+        // On force néanmoins le navigateur à abandonner toute ancienne image
+        // lorsqu'une URL sans version est rencontrée.
+        const cacheBuster=heroUrl.includes('?')?'&':'?';
+        heroBg.src=heroUrl + cacheBuster + 'siteVersion=' + encodeURIComponent(siteContent.updated_at||siteContent.hero?.updated_at||'published');
+      }else{
+        heroBg.src='/hero.jpg';
+      }
+    }
     const cta=document.querySelector('#hero [data-i18n="cta"]');
     if(cta) cta.textContent=siteContent.hero.cta;
 
@@ -2679,10 +2693,30 @@ section{padding:88px 0}
     c.footer={...(c.footer||{}),copyright:fieldValue('editFooterCopyright')};
     return c;
   }
-  async function loadSiteContent(){
+  async function fetchSiteContent(){
     const {data,error}=await sb.from('site_content').select('content').eq('id','main').maybeSingle();
-    if(error){console.warn(error);}
-    renderSiteContent(data?.content || DEFAULT_CONTENT);
+    if(error){
+      console.warn('Chargement du contenu du site:',error.message);
+      return null;
+    }
+    return data?.content || null;
+  }
+
+  async function loadPublicSiteContent(){
+    try{
+      const content=await fetchSiteContent();
+      // Le site public doit toujours utiliser la version enregistrée dans Supabase.
+      // Le contenu par défaut ne sert qu'en cas d'absence de donnée publiée.
+      renderSiteContent(content || DEFAULT_CONTENT);
+    }catch(error){
+      console.warn('Contenu public:',error);
+      renderSiteContent(DEFAULT_CONTENT);
+    }
+  }
+
+  async function loadSiteContent(){
+    const content=await fetchSiteContent();
+    renderSiteContent(content || DEFAULT_CONTENT);
     fillSiteEditor();
   }
   async function saveSiteContent(){
@@ -2690,9 +2724,15 @@ section{padding:88px 0}
     if(!parsed.hero.first_name || !parsed.hero.last_name){setStatus('siteSaveStatus','Le prénom et le nom sont requis.');return;}
     const {data:userData}=await sb.auth.getUser();
     if(!userData?.user){setStatus('siteSaveStatus','Session administrateur requise.');return;}
-    const {error}=await sb.from('site_content').upsert({id:'main',content:parsed,updated_by:userData.user.id,updated_at:new Date().toISOString()});
+    const publishedAt=new Date().toISOString();
+    const {error}=await sb.from('site_content').upsert({id:'main',content:{...parsed,updated_at:publishedAt},updated_by:userData.user.id,updated_at:publishedAt});
     if(error){setStatus('siteSaveStatus',error.message);return;}
-    renderSiteContent(parsed); fillSiteEditor(); setStatus('siteSaveStatus','Modifications enregistrées.',true);
+    siteContent={...parsed,updated_at:publishedAt};
+    renderSiteContent(siteContent);
+    fillSiteEditor();
+    // Réaffiche immédiatement la version réellement publiée depuis Supabase.
+    await loadPublicSiteContent();
+    setStatus('siteSaveStatus','Modifications enregistrées et publiées.',true);
   }
 
   async function uploadHeroImage(file){
@@ -3765,6 +3805,12 @@ section{padding:88px 0}
     }
   });
 
+
+  /* Chargement public indépendant de l'authentification.
+     Ainsi le Hero enregistré dans Supabase est visible même sans connexion
+     et reste visible après actualisation. */
+  loadPublicSiteContent();
+  loadPublicGallery();
 
   /* Restauration explicite de la session stockée dans localStorage. */
   restorePersistedSession();
