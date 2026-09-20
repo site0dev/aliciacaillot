@@ -1692,7 +1692,7 @@ Remise en main propre pour le premier rendez-vous. Paiement en espèces accepté
 <div class="site-modal-top"><div><h2>Espace client</h2><p>Votre conversation privée avec Alicia Caillot.</p></div><button aria-label="Fermer" class="modal-x" data-close-modal="clientAccountModal" type="button">×</button></div>
 <div id="accountState">
 <div class="account-state-head"><div><strong id="accountName">Compte connecté</strong><small id="accountEmail"></small></div><button class="btn btn-ghost" id="logoutBtn" type="button">Déconnexion</button></div>
-<div class="chat-box" id="clientChat"><div class="chat-head"><strong>Conversation privée</strong><span id="chatStatus">Connexion…</span></div><div class="chat-messages" id="clientMessages"></div><form class="chat-compose" id="clientMessageForm"><input autocomplete="off" id="clientMessageInput" maxlength="2000" placeholder="Écrivez votre message…" required=""/><button aria-label="Envoyer" class="chat-send" type="submit"><i class="fas fa-paper-plane"></i></button></form></div>
+<div class="chat-box" id="clientChat"><div class="chat-head"><strong>Conversation privée</strong><span class="chat-head-actions"><span id="chatStatus">Connexion…</span><button class="chat-notify-btn" data-notify-button type="button">Activer les notifications</button></span></div><div class="chat-messages" id="clientMessages"></div><form class="chat-compose" id="clientMessageForm"><input autocomplete="off" id="clientMessageInput" maxlength="2000" placeholder="Écrivez votre message…" required=""/><button aria-label="Envoyer" class="chat-send" type="submit"><i class="fas fa-paper-plane"></i></button></form></div>
 </div>
 </div>
 </div>
@@ -2431,7 +2431,13 @@ section{padding:88px 0}
     return;
   }
 
-  const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+    auth: {
+      persistSession: true,
+      autoRefreshToken: true,
+      detectSessionInUrl: true
+    }
+  });
   window.__siteSupabase = sb;
 
   let currentUser = null;
@@ -2440,6 +2446,7 @@ section{padding:88px 0}
   let currentAdminConversationId = null;
   let messageChannel = null;
   let adminMessageChannel = null;
+  let adminNotificationChannel = null;
   let siteContent = structuredClone(DEFAULT_CONTENT);
   let clientCache = [];
   let conversationCache = [];
@@ -2660,6 +2667,80 @@ section{padding:88px 0}
     return currentProfile;
   }
 
+  async function requestBrowserNotifications(){
+    if(!('Notification' in window)) return false;
+    if(Notification.permission==='granted') return true;
+    if(Notification.permission==='denied') return false;
+    try{
+      const permission=await Notification.requestPermission();
+      updateNotificationButtons();
+      return permission==='granted';
+    }catch(e){
+      console.warn('Notifications navigateur:',e);
+      return false;
+    }
+  }
+
+  function updateNotificationButtons(){
+    const permission=('Notification' in window)?Notification.permission:'unsupported';
+    document.querySelectorAll('[data-notify-button]').forEach(btn=>{
+      if(permission==='granted'){
+        btn.textContent='Notifications activées';
+        btn.disabled=true;
+      }else if(permission==='denied'){
+        btn.textContent='Notifications bloquées';
+        btn.disabled=true;
+      }else if(permission==='unsupported'){
+        btn.textContent='Notifications indisponibles';
+        btn.disabled=true;
+      }else{
+        btn.textContent='Activer les notifications';
+        btn.disabled=false;
+      }
+    });
+  }
+
+  function notifyNewMessage(message,who){
+    if(!message || message.sender_id===currentUser?.id) return;
+    const text=String(message.body||'').trim();
+    if(!text) return;
+    const title=who==='admin'?'Nouveau message client':'Nouveau message d’Alicia Caillot';
+    if('Notification' in window && Notification.permission==='granted'){
+      try{
+        const n=new Notification(title,{
+          body:text.length>140?text.slice(0,137)+'…':text,
+          icon:'/favicon.ico',
+          tag:'alicia-message-'+String(message.conversation_id||'general'),
+          renotify:true
+        });
+        n.onclick=()=>{window.focus();n.close();};
+      }catch(e){console.warn('Notification:',e);}
+    }
+    if(document.visibilityState==='visible' && typeof showToast==='function'){
+      showToast(title+' : '+(text.length>70?text.slice(0,67)+'…':text));
+    }
+  }
+
+  function bindNotificationButtons(){
+    document.querySelectorAll('[data-notify-button]').forEach(btn=>{
+      if(btn.dataset.bound) return;
+      btn.addEventListener('click',async()=>{await requestBrowserNotifications();updateNotificationButtons();});
+      btn.dataset.bound='1';
+    });
+    updateNotificationButtons();
+  }
+
+  async function startAdminMessageNotifications(){
+    if(adminNotificationChannel) sb.removeChannel(adminNotificationChannel);
+    adminNotificationChannel=sb.channel('admin-message-notifications')
+      .on('postgres_changes',{event:'INSERT',schema:'public',table:'messages'},payload=>notifyNewMessage(payload.new,'admin'))
+      .subscribe();
+  }
+
+  async function stopAdminMessageNotifications(){
+    if(adminNotificationChannel){await sb.removeChannel(adminNotificationChannel);adminNotificationChannel=null;}
+  }
+
   async function ensureConversation(){
     if(!currentUser)return null;
     let {data,error}=await sb.from('conversations').select('*').eq('client_id',currentUser.id).order('created_at',{ascending:true}).limit(1).maybeSingle();
@@ -2695,6 +2776,7 @@ section{padding:88px 0}
     messageChannel=sb.channel('client-chat-'+currentConversationId)
       .on('postgres_changes',{event:'INSERT',schema:'public',table:'messages',filter:`conversation_id=eq.${currentConversationId}`},payload=>{
         const msg=payload.new;
+        notifyNewMessage(msg,'client');
         const el=$('clientMessages');
         const d=document.createElement('div');d.className='chat-message'+(msg.sender_id===currentUser?.id?' me':'');
         const t=document.createElement('div');t.textContent=msg.body;
@@ -2825,6 +2907,7 @@ section{padding:88px 0}
     try{
       setStatus('chatStatus','Déconnexion…');
       if(messageChannel){await sb.removeChannel(messageChannel);messageChannel=null;}
+      await stopAdminMessageNotifications();
       await sb.auth.signOut();
     }catch(e){
       console.error('Déconnexion client:',e);
@@ -2919,6 +3002,8 @@ section{padding:88px 0}
       document.querySelectorAll('.site-modal.open').forEach(m=>{m.classList.remove('open');m.setAttribute('aria-hidden','true');});
       $('adminPanel').classList.add('open');$('adminPanel').setAttribute('aria-hidden','false');
       await Promise.all([loadSiteContent(),loadGalleryAdmin(),loadAdminStats(),loadConversations(),loadClients(),loadContactRequests()]);
+      await startAdminMessageNotifications();
+      updateNotificationButtons();
       return true;
     }catch(err){
       console.error('Ouverture administration:',err);
@@ -2961,7 +3046,34 @@ section{padding:88px 0}
     });
   }
   let galleryAdminItems=[];
+  async function ensureRootGalleryItems(){
+    if(siteContent?._galleryRootImported) return;
+    const {data,error}=await sb.from('gallery_items').select('image_url');
+    if(error){console.warn('Galerie existante:',error.message);return;}
+    const existing=new Set((data||[]).map(x=>x.image_url));
+    const missing=galleryFiles.map((file,index)=>({
+      image_url:new URL('/'+file,location.origin).href,
+      alt:`Alicia Caillot — photo ${String(index+1).padStart(2,'0')}`,
+      sort_order:index,
+      active:true
+    })).filter(x=>!existing.has(x.image_url));
+    if(missing.length){
+      const maxExisting=(data||[]).reduce((m,x)=>Math.max(m,Number(x.sort_order)||0),-1);
+      missing.forEach((x,i)=>x.sort_order=maxExisting+i+1);
+      const {error:insertError}=await sb.from('gallery_items').insert(missing);
+      if(insertError){console.warn('Import de la galerie existante:',insertError.message);return;}
+    }
+    const updated={...siteContent,_galleryRootImported:true};
+    siteContent=updated;
+    const {data:userData}=await sb.auth.getUser();
+    if(userData?.user){
+      const {error:updateError}=await sb.from('site_content').upsert({id:'main',content:updated,updated_by:userData.user.id,updated_at:new Date().toISOString()});
+      if(updateError) console.warn('Marqueur galerie:',updateError.message);
+    }
+  }
+
   async function loadGalleryAdmin(){
+    await ensureRootGalleryItems();
     const {data,error}=await sb.from('gallery_items').select('id,image_url,alt,sort_order,active').order('sort_order',{ascending:true});
     if(error){setStatus('gallerySaveStatus',error.message);return;}
     galleryAdminItems=data||[];renderGalleryAdmin(galleryAdminItems);
@@ -3018,8 +3130,15 @@ section{padding:88px 0}
 
   async function loadPublicGallery(){
     const {data,error}=await sb.from('gallery_items').select('image_url,alt,sort_order,active').eq('active',true).order('sort_order',{ascending:true});
-    if(error || !data?.length) return;
     const grid=$('galleryGrid');
+    if(error || !grid) return;
+    if(!data?.length){
+      grid.innerHTML='<div class="gallery-empty">Aucune photo dans la galerie.</div>';
+      const prev=$('galleryPrev'),next=$('galleryNext'),page=$('galleryPage');
+      if(prev)prev.disabled=true;if(next)next.disabled=true;if(page)page.textContent='';
+      return;
+    }
+
     if(!grid) return;
     const prev=$('galleryPrev'),next=$('galleryNext'),page=$('galleryPage');
     grid.innerHTML=''; let batches=[];
@@ -3136,6 +3255,7 @@ section{padding:88px 0}
     if(adminLogoutBtn && !adminLogoutBtn.dataset.bound){adminLogoutBtn.addEventListener('click',async()=>{
       try{
         if(adminMessageChannel){await sb.removeChannel(adminMessageChannel);adminMessageChannel=null;}
+        await stopAdminMessageNotifications();
         await sb.auth.signOut();
       }catch(e){console.error('Déconnexion admin:',e);}
       finally{
@@ -3171,6 +3291,7 @@ section{padding:88px 0}
     if(cancelClientEdit && !cancelClientEdit.dataset.bound){cancelClientEdit.addEventListener('click',()=>{$('clientEditWrap').hidden=true;});cancelClientEdit.dataset.bound='1';}
     const clientEditForm=$('clientEditForm');
     if(clientEditForm && !clientEditForm.dataset.bound){clientEditForm.addEventListener('submit',handleClientEditSubmit);clientEditForm.dataset.bound='1';}
+    bindNotificationButtons();
   }
 
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',bindAdminUI,{once:true});
@@ -3250,6 +3371,7 @@ section{padding:88px 0}
       handledAuthUserId=null;
       if(messageChannel){sb.removeChannel(messageChannel);messageChannel=null;}
       if(adminMessageChannel){sb.removeChannel(adminMessageChannel);adminMessageChannel=null;}
+      if(adminNotificationChannel){sb.removeChannel(adminNotificationChannel);adminNotificationChannel=null;}
       document.body.classList.remove('admin-mode');
       $('adminPanel')?.classList.remove('open');
       showAuth();
@@ -3350,7 +3472,7 @@ section{padding:88px 0}
 <div class="contact-requests-list" id="contactRequestsList"><div class="admin-help">Chargement…</div></div>
 </section>
 <section class="admin-card admin-chat-card">
-<div class="admin-card-head"><h3>Conversations clients</h3><span id="adminChatStatus">Chargement…</span></div>
+<div class="admin-card-head"><h3>Conversations clients</h3><span class="admin-chat-head-actions"><span id="adminChatStatus">Chargement…</span><button class="chat-notify-btn" data-notify-button type="button">Activer les notifications</button></span></div>
 <div class="admin-chat-layout">
 <aside class="conversation-list" id="conversationList"></aside>
 <div class="admin-conversation">
@@ -3819,5 +3941,14 @@ body.admin-mode { overflow:hidden !important; background:#070707 !important; }
 }
 </style>
 
+
+<style id="notifications-v14">
+.chat-head-actions,.admin-chat-head-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+.chat-notify-btn{border:1px solid rgba(201,168,76,.45);background:transparent;color:#f2ede7;border-radius:999px;padding:6px 10px;font:inherit;font-size:.68rem;cursor:pointer}
+.chat-notify-btn:hover:not(:disabled){background:rgba(201,168,76,.12);color:#fff}
+.chat-notify-btn:disabled{opacity:.65;cursor:default}
+#adminPanel .chat-notify-btn{color:#f5f0ea}
+@media(max-width:560px){.chat-head-actions,.admin-chat-head-actions{gap:5px}.chat-notify-btn{font-size:.62rem;padding:5px 8px}}
+</style>
 </body>
 </html>
