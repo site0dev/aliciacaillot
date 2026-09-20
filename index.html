@@ -3005,10 +3005,37 @@ section{padding:88px 0}
 
   const dashboardNav=$('clientDashboardNav');
   if(dashboardNav && !dashboardNav.dataset.bound){
-    dashboardNav.addEventListener('click',()=>{
+    dashboardNav.addEventListener('click',async()=>{
       setMenu(false);
-      openModal('clientAccountModal');
-      if(currentUser) showAccount();
+
+      /*
+       * Si une session existe déjà, le clic sur "Tableau de bord"
+       * ouvre immédiatement le véritable espace client, même si
+       * currentUser n'a pas encore été réhydraté après un rafraîchissement.
+       */
+      try{
+        let user=currentUser;
+        if(!user?.id){
+          const {data,error}=await sb.auth.getSession();
+          if(error) throw error;
+          user=data?.session?.user||null;
+          if(user) currentUser=user;
+        }
+
+        if(user?.id){
+          openModal('clientAccountModal');
+          await showAccount();
+          return;
+        }
+
+        /* Aucune session : retour vers la connexion. */
+        showAuth();
+        const loginBtn=document.querySelector('[data-open-auth="login"]');
+        if(loginBtn) loginBtn.click();
+      }catch(error){
+        console.error('Ouverture du tableau de bord:',error);
+        showAuth();
+      }
     });
     dashboardNav.dataset.bound='1';
   }
