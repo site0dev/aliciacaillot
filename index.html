@@ -3214,5 +3214,50 @@ body.admin-mode { overflow:hidden !important; background:#070707 !important; }
 })();
 </script>
 
+
+<style id="assistant-base-colors-final">
+/* Retour aux couleurs de base de l'assistant. */
+#aiPanel .ai-avatar {
+  background: #7A1230 !important;
+  color: #FFFFFF !important;
+  border: 1px solid #7A1230 !important;
+}
+#aiPanel .ai-avatar i {
+  color: #FFFFFF !important;
+  opacity: 1 !important;
+}
+#aiPanel .ai-close {
+  background: #000000 !important;
+  color: #FFFFFF !important;
+  border: 1px solid #333333 !important;
+  width: 34px !important;
+  height: 34px !important;
+  min-width: 34px !important;
+  border-radius: 50% !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-size: 1.2rem !important;
+  line-height: 1 !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+#aiPanel .ai-close:hover,
+#aiPanel .ai-close:focus-visible {
+  background: #7A1230 !important;
+  color: #FFFFFF !important;
+  border-color: #7A1230 !important;
+}
+/* Le bouton flottant et l'envoi gardent également la couleur de marque. */
+#aiFab,
+#aiPanel .ai-send {
+  background: #7A1230 !important;
+  color: #FFFFFF !important;
+}
+#aiFab i,
+#aiPanel .ai-send i {
+  color: #FFFFFF !important;
+}
+</style>
 </body>
 </html>
