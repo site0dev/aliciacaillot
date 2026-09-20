@@ -1410,6 +1410,7 @@ textarea:focus-visible {
 }
 </style>
 
+<meta name="site-version" content="v15-auth-persistence">
 </head>
 <body><div aria-hidden="true" id="site-discreet-note" style="display:none">Site d’information et de prise de contact réservé aux adultes.</div>
 <div aria-labelledby="age-title" aria-modal="true" id="age-overlay" role="dialog">
@@ -2433,6 +2434,8 @@ section{padding:88px 0}
 
   const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
     auth: {
+      storage: window.localStorage,
+      storageKey: 'alicia-caillot-auth',
       persistSession: true,
       autoRefreshToken: true,
       detectSessionInUrl: true
@@ -3133,10 +3136,23 @@ section{padding:88px 0}
     const grid=$('galleryGrid');
     if(error || !grid) return;
     if(!data?.length){
-      grid.innerHTML='<div class="gallery-empty">Aucune photo dans la galerie.</div>';
+      const rootFiles=Array.from({length:40},(_,i)=>String(i+1).padStart(2,'0')+'.jpg');
+      const rootImages=[];
+      for(const file of rootFiles){
+        const url=new URL('/'+file,location.origin).href;
+        try{
+          const response=await fetch(url,{method:'HEAD',cache:'no-store'});
+          if(response.ok) rootImages.push({image_url:url,alt:`Alicia Caillot — photo ${file.replace('.jpg','')}`});
+        }catch(e){}
+      }
+      if(rootImages.length){
+        data=rootImages;
+      }else{
+        grid.innerHTML='<div class="gallery-empty">Aucune photo dans la galerie.</div>';
       const prev=$('galleryPrev'),next=$('galleryNext'),page=$('galleryPage');
-      if(prev)prev.disabled=true;if(next)next.disabled=true;if(page)page.textContent='';
-      return;
+        if(prev)prev.disabled=true;if(next)next.disabled=true;if(page)page.textContent='';
+        return;
+      }
     }
 
     if(!grid) return;
@@ -3299,10 +3315,45 @@ section{padding:88px 0}
 
   let authHandling = false;
   let handledAuthUserId = null;
+  let authBootComplete = false;
+  let authRestorePromise = null;
+
+  async function restorePersistedSession(session=null){
+    if(authRestorePromise) return authRestorePromise;
+    authRestorePromise=(async()=>{
+      try{
+        let activeSession=session;
+        if(!activeSession){
+          const result=await sb.auth.getSession();
+          if(result.error) throw result.error;
+          activeSession=result.data?.session||null;
+        }
+        authBootComplete=true;
+        if(activeSession?.user){
+          currentUser=activeSession.user;
+          await afterAuth(activeSession.user);
+        }else{
+          currentUser=null;
+          currentProfile=null;
+          showAuth();
+        }
+      }catch(err){
+        console.error('Restauration de session:',err);
+        authBootComplete=true;
+        showAuth();
+      }finally{
+        authRestorePromise=null;
+      }
+    })();
+    return authRestorePromise;
+  }
 
   async function afterAuth(userFromSession=null){
-    if(authHandling) return;
     const user = userFromSession || currentUser;
+    if(user?.id && handledAuthUserId===user.id){
+      if(document.body.classList.contains('admin-mode') || document.getElementById('clientAccountModal')?.classList.contains('open')) return;
+    }
+    if(authHandling) return;
     if(!user?.id) return;
     currentUser=user;
 
@@ -3358,12 +3409,8 @@ section{padding:88px 0}
     if(session?.user){
       currentUser=session.user;
       if(event==='SIGNED_IN' || event==='INITIAL_SESSION'){
-        /* Ne pas await dans le callback Supabase : on laisse le SDK terminer son cycle. */
-        queueMicrotask(()=>{
-          if(handledAuthUserId!==session.user.id || !document.getElementById('clientAccountModal')?.classList.contains('open')){
-            afterAuth(session.user);
-          }
-        });
+        /* La session persistante est restaurée aussi bien après une reconnexion qu'après un rafraîchissement. */
+        queueMicrotask(()=>restorePersistedSession(session));
       }
     }else if(event==='SIGNED_OUT'){
       currentUser=null;
@@ -3378,14 +3425,17 @@ section{padding:88px 0}
     }
   });
 
-  /* Initial session : getSession permet aussi de récupérer la session après un retour OAuth. */
-  sb.auth.getSession().then(({data,error})=>{
-    if(error){console.error('Lecture session Supabase:',error);return;}
-    if(data.session){
-      currentUser=data.session.user;
-      afterAuth(data.session.user);
-    }else{
-      showAuth();
+  /* Restauration explicite de la session stockée dans localStorage. */
+  restorePersistedSession();
+
+  /* Si l'utilisateur revient sur l'onglet, on vérifie que la session existe toujours. */
+  document.addEventListener('visibilitychange',()=>{
+    if(document.visibilityState==='visible' && authBootComplete){
+      sb.auth.getSession().then(({data})=>{
+        if(data?.session?.user && handledAuthUserId!==data.session.user.id){
+          restorePersistedSession(data.session);
+        }
+      }).catch(err=>console.warn('Restauration session après retour:',err));
     }
   });
 
