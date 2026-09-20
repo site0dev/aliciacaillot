@@ -1121,6 +1121,295 @@ button[class*="brand"] i, button[class*="red"] i, button[class*="burgundy"] i,
 }
 </style>
 
+
+<style id="final-global-legibility-v4">
+/* ===== Correction finale de lisibilité : toutes les surfaces sombres ===== */
+
+/* Les modales du site sont sombres : aucun texte noir ne doit y rester. */
+.site-modal,
+.site-modal-card,
+.auth-screen-modal,
+.auth-screen-modal .site-modal-card,
+#adminAccessModal .site-modal-card,
+#resetPasswordModal .site-modal-card,
+#clientAccountModal .site-modal-card {
+  color:#F7F7F7 !important;
+}
+
+.site-modal-card p,
+.site-modal-card span,
+.site-modal-card li,
+.site-modal-card small,
+.site-modal-card label,
+.site-modal-card legend,
+.site-modal-card .security-note,
+.site-modal-card .site-modal-top p,
+.site-modal-card .form label,
+.site-modal-card .check,
+.site-modal-card .check span {
+  color:#F2F2F2 !important;
+}
+
+.site-modal-card h1,
+.site-modal-card h2,
+.site-modal-card h3,
+.site-modal-card h4,
+.site-modal-card h5,
+.site-modal-card h6 {
+  color:#FFFFFF !important;
+  text-shadow:none !important;
+}
+
+.site-modal-card a,
+.site-modal-card .auth-screen-links button {
+  color:#F2A6BD !important;
+  font-weight:600 !important;
+}
+.site-modal-card a:hover,
+.site-modal-card a:focus-visible,
+.site-modal-card .auth-screen-links button:hover,
+.site-modal-card .auth-screen-links button:focus-visible {
+  color:#FFFFFF !important;
+}
+
+/* Champs : fond clair + texte sombre + placeholder réellement visible. */
+.site-modal-card input,
+.site-modal-card textarea,
+.site-modal-card select {
+  background:#FFFFFF !important;
+  color:#111111 !important;
+  border:1px solid #9A9A9A !important;
+  caret-color:#7A1230 !important;
+}
+.site-modal-card input::placeholder,
+.site-modal-card textarea::placeholder {
+  color:#555555 !important;
+  opacity:1 !important;
+}
+.site-modal-card input:focus,
+.site-modal-card textarea:focus,
+.site-modal-card select:focus {
+  border-color:#7A1230 !important;
+  box-shadow:0 0 0 3px rgba(122,18,48,.20) !important;
+  outline:none !important;
+}
+
+/* Cases à cocher : texte blanc sur fond sombre, case visible. */
+.site-modal-card .check {
+  color:#F2F2F2 !important;
+  background:transparent !important;
+}
+.site-modal-card .check input[type="checkbox"] {
+  width:20px !important;
+  height:20px !important;
+  min-width:20px !important;
+  accent-color:#7A1230 !important;
+  margin-top:3px !important;
+  opacity:1 !important;
+}
+.site-modal-card .check input[type="checkbox"]:focus-visible {
+  outline:3px solid rgba(242,166,189,.55) !important;
+  outline-offset:2px !important;
+}
+
+/* Boutons bordeaux : texte et icônes blancs, sans opacité héritée. */
+.site-modal-card .btn-primary,
+.site-modal-card button.btn-primary,
+.site-modal-card .brand-button,
+.site-modal-card .burgundy-button,
+.site-modal-card .bordeaux-button {
+  background:#8B123B !important;
+  color:#FFFFFF !important;
+  border-color:#8B123B !important;
+  font-weight:800 !important;
+  text-shadow:none !important;
+}
+.site-modal-card .btn-primary:hover,
+.site-modal-card .btn-primary:focus-visible,
+.site-modal-card .brand-button:hover,
+.site-modal-card .burgundy-button:hover,
+.site-modal-card .bordeaux-button:hover {
+  background:#6F0E2F !important;
+  color:#FFFFFF !important;
+  border-color:#6F0E2F !important;
+}
+.site-modal-card .btn-primary i,
+.site-modal-card .brand-button i,
+.site-modal-card .burgundy-button i,
+.site-modal-card .bordeaux-button i {
+  color:#FFFFFF !important;
+  opacity:1 !important;
+}
+
+/* Croix de fermeture : toujours blanche et très contrastée. */
+.site-modal-card .modal-x {
+  background:#8B123B !important;
+  color:#FFFFFF !important;
+  border:2px solid #FFFFFF !important;
+  font-weight:900 !important;
+  text-shadow:none !important;
+  opacity:1 !important;
+}
+.site-modal-card .modal-x:hover,
+.site-modal-card .modal-x:focus-visible {
+  background:#FFFFFF !important;
+  color:#7A1230 !important;
+  outline:3px solid rgba(242,166,189,.45) !important;
+  outline-offset:2px !important;
+}
+
+/* Les statuts vides ne génèrent plus de bande bordeaux. */
+.site-modal-card .status:empty,
+.status:empty {
+  display:none !important;
+  min-height:0 !important;
+  height:0 !important;
+  margin:0 !important;
+  padding:0 !important;
+  background:transparent !important;
+  border:0 !important;
+}
+.site-modal-card .status:not(:empty),
+.status:not(:empty) {
+  min-height:0 !important;
+  margin-top:10px !important;
+  padding:9px 11px !important;
+  border-radius:8px !important;
+  background:rgba(139,18,59,.18) !important;
+  border:1px solid rgba(242,166,189,.35) !important;
+  color:#FFFFFF !important;
+  font-weight:600 !important;
+}
+
+/* Google : aucun élément bordeaux parasite dessous. */
+.site-modal-card .google-auth-btn {
+  background:#FFFFFF !important;
+  color:#111111 !important;
+  border:2px solid #777777 !important;
+  box-shadow:none !important;
+  font-weight:800 !important;
+}
+.site-modal-card .google-auth-btn i {
+  color:#7A1230 !important;
+  opacity:1 !important;
+}
+.site-modal-card .google-auth-btn:hover,
+.site-modal-card .google-auth-btn:focus-visible {
+  background:#F4F4F4 !important;
+  color:#000000 !important;
+  border-color:#7A1230 !important;
+}
+
+/* ===== Assistant ===== */
+#aiPanel,
+#aiPanel * {
+  text-shadow:none !important;
+}
+#aiPanel {
+  color:#F5F5F5 !important;
+  background:#0B0B0B !important;
+  border:2px solid rgba(201,168,76,.55) !important;
+}
+#aiPanel .ai-head {
+  background:#050505 !important;
+  color:#FFFFFF !important;
+  border-bottom:1px solid #444 !important;
+}
+#aiPanel .ai-head strong,
+#aiPanel .ai-head small,
+#aiPanel .ai-head span {
+  color:#FFFFFF !important;
+}
+#aiPanel .ai-head small { opacity:1 !important; color:#D8D8D8 !important; }
+#aiPanel .ai-avatar {
+  background:#C9A84C !important;
+  color:#080808 !important;
+  border:1px solid #FFFFFF !important;
+}
+#aiPanel .ai-avatar i { color:#080808 !important; opacity:1 !important; }
+#aiPanel .ai-close {
+  background:#7A1230 !important;
+  color:#FFFFFF !important;
+  border:2px solid #FFFFFF !important;
+  font-weight:900 !important;
+}
+#aiPanel .ai-close:hover,
+#aiPanel .ai-close:focus-visible {
+  background:#FFFFFF !important;
+  color:#7A1230 !important;
+}
+#aiPanel .ai-messages { background:#0B0B0B !important; }
+#aiPanel .ai-msg,
+#aiPanel .ai-msg * {
+  color:#FFFFFF !important;
+}
+#aiPanel .ai-msg.bot {
+  background:#1A1A1A !important;
+  border:1px solid #444 !important;
+}
+#aiPanel .ai-msg.user {
+  background:#4B1730 !important;
+  border:1px solid #A85A79 !important;
+  color:#FFFFFF !important;
+}
+#aiPanel .ai-chips button,
+#aiPanel .ai-chip {
+  background:#171717 !important;
+  color:#FFFFFF !important;
+  border:1px solid #777 !important;
+  font-weight:700 !important;
+}
+#aiPanel .ai-chips button:hover,
+#aiPanel .ai-chips button:focus-visible,
+#aiPanel .ai-chip:hover,
+#aiPanel .ai-chip:focus-visible {
+  background:#7A1230 !important;
+  color:#FFFFFF !important;
+  border-color:#FFFFFF !important;
+}
+#aiPanel .ai-disclaimer {
+  color:#D0D0D0 !important;
+  background:#0B0B0B !important;
+}
+#aiPanel .ai-input {
+  background:#080808 !important;
+  border-top:1px solid #444 !important;
+}
+#aiPanel .ai-input input {
+  background:#171717 !important;
+  color:#FFFFFF !important;
+  border:1px solid #777 !important;
+}
+#aiPanel .ai-input input::placeholder { color:#D0D0D0 !important; opacity:1 !important; }
+#aiPanel .ai-send {
+  background:#7A1230 !important;
+  color:#FFFFFF !important;
+  border:2px solid #FFFFFF !important;
+}
+#aiPanel .ai-send i { color:#FFFFFF !important; opacity:1 !important; }
+#aiFab {
+  color:#FFFFFF !important;
+  border:2px solid #FFFFFF !important;
+}
+#aiFab i { color:#FFFFFF !important; opacity:1 !important; }
+
+/* Sélection de texte : texte toujours lisible sur le fond bordeaux. */
+::selection {
+  background:#7A1230 !important;
+  color:#FFFFFF !important;
+}
+
+/* Focus clavier très visible partout. */
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline:3px solid rgba(122,18,48,.70) !important;
+  outline-offset:2px !important;
+}
+</style>
+
 </head>
 <body><div aria-hidden="true" id="site-discreet-note" style="display:none">Site d’information et de prise de contact réservé aux adultes.</div>
 <div aria-labelledby="age-title" aria-modal="true" id="age-overlay" role="dialog">
@@ -2074,8 +2363,8 @@ section{padding:88px 0}
      Remplace uniquement ces 2 valeurs par celles de ton projet Supabase.
      Ne mets JAMAIS la service_role key ici.
   */
-  const SUPABASE_URL = 'YOUR_SUPABASE_URL';
-  const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';
+  const SUPABASE_URL = 'https://nlgotqsttpczorkjkpde.supabase.co';
+  const SUPABASE_ANON_KEY = 'sb_publishable_LzFZIFwKHoQqysPcY-tnBA_n-wZtVtP';
 
   const ADMIN_USERNAME = 'alicaillot';
   const ADMIN_AUTH_EMAIL = 'aliciacaillot@boiseo.online';
