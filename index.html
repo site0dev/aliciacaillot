@@ -2953,7 +2953,16 @@ section{padding:88px 0}
   }
 
   async function appendMessage(container,m){
-    const d=document.createElement('div');d.className='chat-message'+(m.sender_id===currentUser?.id?' me':'');
+    if(!container||!m)return;
+    // Le trigger Supabase et le broadcast client peuvent tous deux annoncer
+    // le même message. L'ID évite tout doublon tout en gardant l'affichage instantané.
+    if(m.id){
+      const existing=container.querySelector(`[data-message-id="${CSS.escape(String(m.id))}"]`);
+      if(existing)return existing;
+    }
+    const d=document.createElement('div');
+    d.className='chat-message'+(m.sender_id===currentUser?.id?' me':'');
+    if(m.id)d.dataset.messageId=String(m.id);
     if(m.body && m.body!=='📎 Fichier joint'){const text=document.createElement('div');text.textContent=m.body;d.appendChild(text);}
     if(m.attachment_path){
       const box=document.createElement('div');box.className='chat-attachment';
@@ -2968,7 +2977,9 @@ section{padding:88px 0}
         const a=document.createElement('a');a.href=url;a.target='_blank';a.rel='noopener';a.download=m.attachment_name||'';a.textContent='📎 '+(m.attachment_name||'Fichier joint');box.appendChild(a);
       }else{label.textContent='Fichier indisponible ou accès expiré.';}
     }
-    const time=document.createElement('small');time.textContent=new Date(m.created_at).toLocaleString('fr-FR');d.appendChild(time);container.appendChild(d);container.scrollTop=container.scrollHeight;
+    const time=document.createElement('small');time.textContent=new Date(m.created_at||Date.now()).toLocaleString('fr-FR');d.appendChild(time);
+    container.appendChild(d);container.scrollTop=container.scrollHeight;
+    return d;
   }
 
   async function renderMessages(container,messages){
@@ -3020,18 +3031,55 @@ section{padding:88px 0}
     if(sendBtn)sendBtn.disabled=true;
     try{
       if(files.length){
-        for(const file of files){
-          const uploaded=await uploadChatFile(file,conversationId);
-          const {error}=await sb.from('messages').insert({conversation_id:conversationId,sender_id:currentUser.id,body:body||'📎 Fichier joint',attachment_path:uploaded.path,attachment_name:uploaded.name,attachment_type:uploaded.type,attachment_size:uploaded.size});
-          if(error){await sb.storage.from(CHAT_BUCKET).remove([uploaded.path]);throw error;}
-        }
+        // Les uploads sont parallélisés : plusieurs fichiers ne bloquent plus
+        // chacun le suivant.
+        const uploadedFiles=await Promise.all(files.map(file=>uploadChatFile(file,conversationId)));
+        const rows=uploadedFiles.map(uploaded=>({
+          conversation_id:conversationId,sender_id:currentUser.id,
+          body:body||'📎 Fichier joint',attachment_path:uploaded.path,
+          attachment_name:uploaded.name,attachment_type:uploaded.type,attachment_size:uploaded.size
+        }));
+        const {data:inserted,error}=await sb.from('messages').insert(rows).select('*');
+        if(error){await sb.storage.from(CHAT_BUCKET).remove(uploadedFiles.map(x=>x.path));throw error;}
+        const target=isClient?$('clientMessages'): $('adminMessages');
+        for(const msg of (inserted||[])) await appendMessage(target,msg);
+        // Broadcast immédiat en complément du trigger SQL. Le dédoublonnage
+        // par ID empêche toute double apparition.
+        await fastBroadcastMessages(inserted||[],isClient);
       }else{
-        const {error}=await sb.from('messages').insert({conversation_id:conversationId,sender_id:currentUser.id,body});
-        if(error)throw error;
+        // Affichage local immédiat : l'utilisateur voit le message sans
+        // attendre le retour du canal Realtime. La base reste la source de vérité.
+        const optimistic={id:'pending-'+crypto.randomUUID(),conversation_id:conversationId,sender_id:currentUser.id,body,created_at:new Date().toISOString()};
+        const target=isClient?$('clientMessages'): $('adminMessages');
+        const optimisticNode=await appendMessage(target,optimistic);
+        const {data:inserted,error}=await sb.from('messages').insert({conversation_id:conversationId,sender_id:currentUser.id,body}).select('*').single();
+        if(error){optimisticNode?.remove();throw error;}
+        optimisticNode?.remove();
+        await appendMessage(target,inserted);
+        await fastBroadcastMessages([inserted],isClient);
       }
-      input.value='';files.length=0;renderPendingFiles(kind);status.textContent=isClient?'En ligne':(conversationCache.length+' conversation(s)');
-    }catch(error){console.error('Envoi message/fichier:',error);status.textContent='Envoi impossible : '+error.message;}
-    finally{if(sendBtn)sendBtn.disabled=false;}
+      input.value='';files.length=0;renderPendingFiles(kind);
+      status.textContent=isClient?'En ligne':(conversationCache.length+' conversation(s)');
+    }catch(error){
+      console.error('Envoi message/fichier:',error);
+      status.textContent='Envoi impossible : '+error.message;
+    }finally{if(sendBtn)sendBtn.disabled=false;}
+  }
+
+  async function fastBroadcastMessages(messages,isClient){
+    const list=(messages||[]).filter(Boolean);
+    if(!list.length)return;
+    try{
+      await sb.realtime.setAuth();
+      const channel=isClient?messageChannel:adminMessageChannel;
+      if(!channel)return;
+      await Promise.all(list.map(msg=>channel.send({
+        type:'broadcast',event:'INSERT',payload:{new:msg}
+      })));
+    }catch(error){
+      // Le trigger SQL reste le mécanisme de secours fiable.
+      console.warn('Broadcast rapide:',error);
+    }
   }
 
   async function showAccount(){
@@ -3484,24 +3532,62 @@ section{padding:88px 0}
     setStatus('gallerySaveStatus','Photo remplacée.',true);await loadGalleryAdmin();await loadPublicGallery();
   }
   async function deleteGalleryItem(item){
+    if(!item?.id)return;
     if(!confirm('Supprimer cette photo de la galerie ?'))return;
-    const {error}=await sb.from('gallery_items').delete().eq('id',item.id);
-    if(error){setStatus('gallerySaveStatus',error.message);return;}
-    const path=storagePathFromUrl(item.image_url);if(path)await sb.storage.from(GALLERY_BUCKET).remove([path]);
-    setStatus('gallerySaveStatus','Photo supprimée.',true);await loadGalleryAdmin();await loadPublicGallery();
+    setStatus('gallerySaveStatus','Suppression…');
+    try{
+      const {error}=await sb.from('gallery_items').delete().eq('id',item.id);
+      if(error)throw error;
+      const path=storagePathFromUrl(item.image_url);
+      if(path){
+        const storageResult=await sb.storage.from(GALLERY_BUCKET).remove([path]);
+        if(storageResult.error)console.warn('Suppression fichier Storage:',storageResult.error.message);
+      }
+      // Recompacte les positions afin que ↑ / ↓ restent toujours cohérents.
+      const {data:remaining,error:listError}=await sb.from('gallery_items').select('id').order('sort_order',{ascending:true});
+      if(listError)throw listError;
+      for(let i=0;i<(remaining||[]).length;i++){
+        const r=await sb.from('gallery_items').update({sort_order:i}).eq('id',remaining[i].id);
+        if(r.error)throw r.error;
+      }
+      setStatus('gallerySaveStatus','Photo supprimée.',true);
+      await loadGalleryAdmin();
+      await loadPublicGallery();
+    }catch(error){
+      console.error('Suppression galerie:',error);
+      setStatus('gallerySaveStatus','Suppression impossible : '+(error.message||error));
+      await loadGalleryAdmin();
+    }
   }
   async function updateGalleryAlt(item,value){
     const {error}=await sb.from('gallery_items').update({alt:value.trim()}).eq('id',item.id);
     if(error)setStatus('gallerySaveStatus',error.message);else setStatus('gallerySaveStatus','Description enregistrée.',true);
   }
   async function moveGalleryItem(index,delta){
-    const target=index+delta;if(target<0||target>=galleryAdminItems.length)return;
+    const target=index+delta;
+    if(target<0||target>=galleryAdminItems.length)return;
     const a=galleryAdminItems[index],b=galleryAdminItems[target];
-    const {error}=await sb.from('gallery_items').update({sort_order:b.sort_order}).eq('id',a.id);
-    if(error){setStatus('gallerySaveStatus',error.message);return;}
-    const {error:error2}=await sb.from('gallery_items').update({sort_order:a.sort_order}).eq('id',b.id);
-    if(error2){setStatus('gallerySaveStatus',error2.message);return;}
-    await loadGalleryAdmin();await loadPublicGallery();
+    if(!a?.id||!b?.id)return;
+    const aOrder=Number(a.sort_order),bOrder=Number(b.sort_order);
+    setStatus('gallerySaveStatus','Déplacement…');
+    try{
+      // Évite tout conflit éventuel d’unicité sur sort_order : on libère
+      // d’abord les deux positions avec une valeur temporaire unique.
+      const temp=-(Date.now()+Math.floor(Math.random()*100000));
+      let r=await sb.from('gallery_items').update({sort_order:temp}).eq('id',a.id);
+      if(r.error)throw r.error;
+      r=await sb.from('gallery_items').update({sort_order:aOrder}).eq('id',b.id);
+      if(r.error)throw r.error;
+      r=await sb.from('gallery_items').update({sort_order:bOrder}).eq('id',a.id);
+      if(r.error)throw r.error;
+      setStatus('gallerySaveStatus','Photo déplacée.',true);
+      await loadGalleryAdmin();
+      await loadPublicGallery();
+    }catch(error){
+      console.error('Déplacement galerie:',error);
+      setStatus('gallerySaveStatus','Déplacement impossible : '+(error.message||error));
+      await loadGalleryAdmin();
+    }
   }
 
   async function loadPublicGallery(){
