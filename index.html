@@ -2366,9 +2366,11 @@ section{padding:88px 0}
   const SUPABASE_URL = 'https://nlgotqsttpczorkjkpde.supabase.co';
   const SUPABASE_ANON_KEY = 'sb_publishable_LzFZIFwKHoQqysPcY-tnBA_n-wZtVtP';
   const SITE_URL = 'https://aliciacaillot.boiseo.online/';
+  const APP_VERSION = 'v10-auth-logout';
 
   const ADMIN_USERNAME = 'alicaillot';
   const ADMIN_AUTH_EMAIL = 'aliciacaillot@boiseo.online';
+  console.info('Alicia Caillot app', APP_VERSION);
 
   const DEFAULT_CONTENT = {
     hero: {
@@ -2641,14 +2643,55 @@ section{padding:88px 0}
     }
   });
 
+  let loginInProgress=false;
   $('clientLoginForm').addEventListener('submit',async e=>{
     e.preventDefault();
+    if(loginInProgress)return;
+    const form=e.currentTarget;
+    const submit=form.querySelector('button[type=submit]');
     const login=$('loginUsername').value.trim(),password=$('loginPassword').value;
-    setStatus('loginStatus','Connexion…');
     const email=login.includes('@') ? login : (login===ADMIN_USERNAME ? ADMIN_AUTH_EMAIL : login);
-    const {data,error}=await sb.auth.signInWithPassword({email,password});
-    if(error){setStatus('loginStatus','Connexion impossible : '+error.message);return;}
-    await afterAuth();
+    loginInProgress=true;
+    if(submit)submit.disabled=true;
+    setStatus('loginStatus','Connexion…');
+
+    try{
+      /* Sécurité UX : si le réseau ou l'API Auth ne répond pas,
+         l'écran ne reste plus indéfiniment sur « Connexion… ». */
+      const result=await Promise.race([
+        sb.auth.signInWithPassword({email,password}),
+        new Promise(resolve=>setTimeout(()=>resolve({data:null,error:new Error('Le serveur de connexion ne répond pas. Vérifiez votre connexion Internet puis réessayez.')}),15000))
+      ]);
+      const {data,error}=result;
+      if(error){
+        console.error('Connexion Supabase:',error);
+        setStatus('loginStatus','Connexion impossible : '+error.message);
+        return;
+      }
+
+      currentUser=data?.user || currentUser;
+      if(!currentUser?.id){
+        setStatus('loginStatus','Connexion impossible : session utilisateur introuvable.');
+        return;
+      }
+
+      /* L'espace correspondant s'ouvre immédiatement. Les vérifications
+         profil/conversation/admin se font ensuite sans bloquer le bouton. */
+      setStatus('loginStatus','Connexion réussie.',true);
+      if(email.toLowerCase()!==ADMIN_AUTH_EMAIL.toLowerCase()){
+        closeModal('authLoginModal');
+        openModal('clientAccountModal');
+      }else{
+        setStatus('loginStatus','Vérification de l’accès administrateur…');
+      }
+      queueMicrotask(()=>afterAuth(currentUser));
+    }catch(err){
+      console.error('Connexion:',err);
+      setStatus('loginStatus','Connexion impossible : '+(err?.message||'erreur inconnue'));
+    }finally{
+      loginInProgress=false;
+      if(submit)submit.disabled=false;
+    }
   });
   $('googleLoginBtn')?.addEventListener('click',async()=>{
     setStatus('loginStatus','Ouverture de Google…');
@@ -2682,7 +2725,23 @@ section{padding:88px 0}
     setTimeout(()=>closeModal('resetPasswordModal'),900);
   });
 
-  $('logoutBtn').addEventListener('click',async()=>{await sb.auth.signOut();currentUser=null;currentProfile=null;if(messageChannel)sb.removeChannel(messageChannel);showAuth();});
+  async function logoutClient(){
+    try{
+      setStatus('chatStatus','Déconnexion…');
+      if(messageChannel){await sb.removeChannel(messageChannel);messageChannel=null;}
+      await sb.auth.signOut();
+    }catch(e){
+      console.error('Déconnexion client:',e);
+    }finally{
+      currentUser=null;
+      currentProfile=null;
+      currentConversationId=null;
+      handledAuthUserId=null;
+      closeModal('clientAccountModal');
+      showAuth();
+    }
+  }
+  $('logoutBtn').addEventListener('click',logoutClient);
   $('clientMessageForm').addEventListener('submit',async e=>{
     e.preventDefault();
     const body=$('clientMessageInput').value.trim();
@@ -2764,7 +2823,23 @@ section{padding:88px 0}
     await Promise.all([loadSiteContent(),loadGalleryAdmin(),loadAdminStats(),loadConversations(),loadClients(),loadContactRequests()]);
   }
 
-  $('adminLogoutBtn').addEventListener('click',async()=>{await sb.auth.signOut();document.body.classList.remove('admin-mode');$('adminPanel').classList.remove('open');$('adminPanel').setAttribute('aria-hidden','true');});
+  $('adminLogoutBtn').addEventListener('click',async()=>{
+    try{
+      if(adminMessageChannel){await sb.removeChannel(adminMessageChannel);adminMessageChannel=null;}
+      await sb.auth.signOut();
+    }catch(e){
+      console.error('Déconnexion admin:',e);
+    }finally{
+      currentUser=null;
+      currentProfile=null;
+      currentAdminConversationId=null;
+      handledAuthUserId=null;
+      document.body.classList.remove('admin-mode');
+      $('adminPanel').classList.remove('open');
+      $('adminPanel').setAttribute('aria-hidden','true');
+      showAuth();
+    }
+  });
   $('adminRefreshBtn').addEventListener('click',openAdmin);
   $('saveSiteContentBtn').addEventListener('click',saveSiteContent);
 
