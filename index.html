@@ -1664,7 +1664,10 @@ Remise en main propre pour le premier rendez-vous. Paiement en espèces accepté
 <div class="site-modal-card auth-screen-card">
 <div class="site-modal-top"><div><h2>Inscription</h2><p>Créez votre compte client.</p></div><button aria-label="Fermer" class="modal-x" data-close-modal="authSignupModal" type="button">×</button></div>
 <form class="form auth-form" id="clientSignupForm">
-<div><label for="signupName">Nom et prénom</label><input autocomplete="name" id="signupName" placeholder="Votre nom et prénom" required="" type="text"/></div>
+<div><label for="signupFirstName">Prénom</label><input autocomplete="given-name" id="signupFirstName" placeholder="Votre prénom" required="" type="text"/></div>
+<div><label for="signupLastName">Nom</label><input autocomplete="family-name" id="signupLastName" placeholder="Votre nom" required="" type="text"/></div>
+<div><label for="signupCity">Ville</label><input autocomplete="address-level2" id="signupCity" placeholder="Votre ville" required="" type="text"/></div>
+<div><label for="signupPostalCode">Code postal</label><input autocomplete="postal-code" id="signupPostalCode" placeholder="Votre code postal" required="" type="text"/></div>
 <div><label for="signupEmail">Adresse mail</label><input autocomplete="email" id="signupEmail" placeholder="votre@email.com" required="" type="email"/></div>
 <div><label for="signupPhone">Téléphone</label><input autocomplete="tel" id="signupPhone" placeholder="Votre numéro" required="" type="tel"/></div>
 <div><label for="signupPassword">Mot de passe</label><input autocomplete="new-password" id="signupPassword" minlength="8" placeholder="8 caractères minimum" required="" type="password"/></div>
@@ -1689,11 +1692,36 @@ Remise en main propre pour le premier rendez-vous. Paiement en espèces accepté
 </div>
 </div>
 <div aria-hidden="true" class="site-modal" id="clientAccountModal">
-<div class="site-modal-card">
-<div class="site-modal-top"><div><h2>Espace client</h2><p>Votre conversation privée avec Alicia Caillot.</p></div><button aria-label="Fermer" class="modal-x" data-close-modal="clientAccountModal" type="button">×</button></div>
+<div class="site-modal-card client-space-card">
+<div class="site-modal-top"><div><h2>Espace client</h2><p>Votre espace privé avec Alicia Caillot.</p></div><button aria-label="Fermer" class="modal-x" data-close-modal="clientAccountModal" type="button">×</button></div>
 <div id="accountState">
-<div class="account-state-head"><div><strong id="accountName">Compte connecté</strong><small id="accountEmail"></small></div><button class="btn btn-ghost" id="logoutBtn" type="button">Déconnexion</button></div>
-<div class="chat-box" id="clientChat"><div class="chat-head"><strong>Conversation privée</strong><span class="chat-head-actions"><span id="chatStatus">Connexion…</span><button class="chat-notify-btn" data-notify-button type="button">Activer les notifications</button></span></div><div class="chat-messages" id="clientMessages"></div><form class="chat-compose" id="clientMessageForm"><input autocomplete="off" id="clientMessageInput" maxlength="2000" placeholder="Écrivez votre message…" required=""/><button aria-label="Envoyer" class="chat-send" type="submit"><i class="fas fa-paper-plane"></i></button></form></div>
+<div class="client-profile-head">
+  <div class="client-avatar-wrap"><img id="clientAvatar" class="client-avatar" src="/hero.jpg" alt="Photo de profil"><button class="client-avatar-btn" id="clientAvatarBtn" type="button" aria-label="Modifier la photo"><i class="fas fa-camera"></i></button><input id="clientAvatarInput" type="file" accept="image/*" hidden></div>
+  <div class="client-profile-summary"><strong id="accountName">Compte connecté</strong><small id="accountEmail"></small><span id="clientProfileStatus">Profil</span></div>
+  <button class="btn btn-ghost" id="logoutBtn" type="button">Déconnexion</button>
+</div>
+<div class="client-tabs" role="tablist" aria-label="Espace client">
+ <button class="client-tab active" type="button" data-client-tab="messages">Messages</button>
+ <button class="client-tab" type="button" data-client-tab="profile">Profil</button>
+ <button class="client-tab" type="button" data-client-tab="settings">Paramètres</button>
+</div>
+<section class="client-tab-panel active" data-client-panel="messages">
+<div class="chat-box" id="clientChat"><div class="chat-head"><strong>Conversation privée</strong><span class="chat-head-actions"><span id="chatStatus">Connexion…</span><button class="chat-notify-btn" data-notify-button type="button">Activer les notifications</button></span></div><div class="chat-messages" id="clientMessages"></div><form class="chat-compose" id="clientMessageForm"><div class="chat-compose-tools"><button class="chat-attach" id="clientAttachBtn" type="button" aria-label="Joindre un fichier"><i class="fas fa-paperclip"></i></button><input id="clientAttachmentInput" type="file" accept="*/*" hidden multiple></div><input autocomplete="off" id="clientMessageInput" maxlength="2000" placeholder="Écrivez votre message…"/><button aria-label="Envoyer" class="chat-send" type="submit"><i class="fas fa-paper-plane"></i></button></form><div class="chat-attachment-list" id="clientAttachmentList"></div></div>
+</section>
+<section class="client-tab-panel" data-client-panel="profile" hidden>
+<form class="client-profile-form" id="clientProfileForm">
+ <div class="client-profile-form-grid"><div><label for="clientFirstName">Prénom</label><input id="clientFirstName" autocomplete="given-name" required></div><div><label for="clientLastName">Nom</label><input id="clientLastName" autocomplete="family-name" required></div><div><label for="clientCity">Ville</label><input id="clientCity" autocomplete="address-level2"></div><div><label for="clientPostalCode">Code postal</label><input id="clientPostalCode" autocomplete="postal-code"></div><div class="full"><label for="clientPhone">Téléphone</label><input id="clientPhone" autocomplete="tel"></div></div>
+ <div class="client-form-actions"><button class="btn btn-primary" type="submit">Enregistrer le profil</button><span class="status" id="clientProfileSaveStatus"></span></div>
+</form>
+</section>
+<section class="client-tab-panel" data-client-panel="settings" hidden>
+<form class="client-profile-form" id="clientPasswordForm">
+ <h3>Mot de passe</h3><p class="client-help">Modifiez votre mot de passe sans quitter votre espace.</p>
+ <div class="client-profile-form-grid"><div><label for="clientNewPassword">Nouveau mot de passe</label><input id="clientNewPassword" autocomplete="new-password" minlength="8" type="password" required></div><div><label for="clientNewPassword2">Confirmation</label><input id="clientNewPassword2" autocomplete="new-password" minlength="8" type="password" required></div></div>
+ <div class="client-form-actions"><button class="btn btn-primary" type="submit">Changer le mot de passe</button><span class="status" id="clientPasswordStatus"></span></div>
+</form>
+<div class="client-notify-settings"><strong>Notifications</strong><p>Autorise les notifications navigateur pour être prévenu des nouveaux messages.</p><button class="chat-notify-btn" data-notify-button type="button">Activer les notifications</button></div>
+</section>
 </div>
 </div>
 </div>
@@ -2367,7 +2395,10 @@ section{padding:88px 0}
   const SUPABASE_URL = 'https://nlgotqsttpczorkjkpde.supabase.co';
   const SUPABASE_ANON_KEY = 'sb_publishable_LzFZIFwKHoQqysPcY-tnBA_n-wZtVtP';
   const SITE_URL = 'https://aliciacaillot.boiseo.online/';
-  const APP_VERSION = 'v11-auth-admin-fix';
+  const APP_VERSION = 'v16-client-profile-chat-files';
+  const CHAT_BUCKET = 'chat-files';
+  const PROFILE_BUCKET = 'profile-media';
+  const MAX_CHAT_FILE_SIZE = 50 * 1024 * 1024;
 
   const ADMIN_USERNAME = 'alicaillot';
   const ADMIN_AUTH_EMAIL = 'aliciacaillot@boiseo.online';
@@ -2450,6 +2481,9 @@ section{padding:88px 0}
   let messageChannel = null;
   let adminMessageChannel = null;
   let adminNotificationChannel = null;
+  let clientNotificationChannel = null;
+  let clientPendingFiles = [];
+  let adminPendingFiles = [];
   let siteContent = structuredClone(DEFAULT_CONTENT);
   let clientCache = [];
   let conversationCache = [];
@@ -2665,9 +2699,100 @@ section{padding:88px 0}
     const {data:userData}=await sb.auth.getUser();
     currentUser=userData?.user||null;
     if(!currentUser){currentProfile=null;return null;}
-    const {data}=await sb.from('profiles').select('*').eq('id',currentUser.id).maybeSingle();
+    const {data,error}=await sb.from('profiles').select('*').eq('id',currentUser.id).maybeSingle();
+    if(error) console.warn('Profil:',error.message);
     currentProfile=data||null;
     return currentProfile;
+  }
+
+  function splitFullName(profile,user){
+    const first=profile?.first_name || user?.user_metadata?.first_name || '';
+    const last=profile?.last_name || user?.user_metadata?.last_name || '';
+    if(first||last) return {first,last};
+    const full=profile?.full_name || user?.user_metadata?.full_name || '';
+    const parts=String(full).trim().split(/\s+/).filter(Boolean);
+    return {first:parts.shift()||'',last:parts.join(' ')};
+  }
+
+  async function refreshClientProfileUI(){
+    if(!currentUser)return;
+    const profile=currentProfile||{};
+    const names=splitFullName(profile,currentUser);
+    $('accountName').textContent=(names.first+' '+names.last).trim()||currentUser.email||'Compte connecté';
+    $('accountEmail').textContent=currentUser.email||'';
+    $('clientFirstName').value=names.first;
+    $('clientLastName').value=names.last;
+    $('clientCity').value=profile.city||currentUser.user_metadata?.city||'';
+    $('clientPostalCode').value=profile.postal_code||currentUser.user_metadata?.postal_code||'';
+    $('clientPhone').value=profile.phone||currentUser.phone||currentUser.user_metadata?.phone||'';
+    const avatarPath=profile.avatar_url||currentUser.user_metadata?.avatar_url||'';
+    if(avatarPath){
+      const {data,error}=await sb.storage.from(PROFILE_BUCKET).createSignedUrl(avatarPath,3600);
+      if(!error&&data?.signedUrl) $('clientAvatar').src=data.signedUrl;
+    }
+  }
+
+  async function uploadClientAvatar(file){
+    if(!currentUser||!file)return;
+    if(!file.type.startsWith('image/')){setStatus('clientProfileSaveStatus','Choisis une image.');return;}
+    if(file.size>8*1024*1024){setStatus('clientProfileSaveStatus','Photo trop lourde (8 Mo maximum).');return;}
+    const ext=(file.name.split('.').pop()||'jpg').toLowerCase().replace(/[^a-z0-9]/g,'')||'jpg';
+    const path=`${currentUser.id}/avatar-${Date.now()}.${ext}`;
+    setStatus('clientProfileSaveStatus','Import de la photo…');
+    const {error}=await sb.storage.from(PROFILE_BUCKET).upload(path,file,{upsert:false,contentType:file.type,cacheControl:'3600'});
+    if(error){setStatus('clientProfileSaveStatus',error.message);return;}
+    const old=currentProfile?.avatar_url||'';
+    const {error:dbError}=await sb.from('profiles').update({avatar_url:path}).eq('id',currentUser.id);
+    if(dbError){await sb.storage.from(PROFILE_BUCKET).remove([path]);setStatus('clientProfileSaveStatus',dbError.message);return;}
+    currentProfile={...(currentProfile||{}),avatar_url:path};
+    const {data:signed}=await sb.storage.from(PROFILE_BUCKET).createSignedUrl(path,3600);
+    if(signed?.signedUrl)$('clientAvatar').src=signed.signedUrl;
+    if(old) await sb.storage.from(PROFILE_BUCKET).remove([old]);
+    setStatus('clientProfileSaveStatus','Photo de profil mise à jour.',true);
+  }
+
+  async function saveClientProfile(e){
+    e.preventDefault();
+    if(!currentUser)return;
+    const first=$('clientFirstName').value.trim(),last=$('clientLastName').value.trim();
+    const payload={
+      first_name:first,last_name:last,full_name:`${first} ${last}`.trim(),
+      city:$('clientCity').value.trim(),postal_code:$('clientPostalCode').value.trim(),phone:$('clientPhone').value.trim()
+    };
+    const {data,error}=await sb.from('profiles').update(payload).eq('id',currentUser.id).select().single();
+    if(error){setStatus('clientProfileSaveStatus',error.message);return;}
+    currentProfile=data||{...(currentProfile||{}),...payload};
+    await refreshClientProfileUI();
+    setStatus('clientProfileSaveStatus','Profil enregistré.',true);
+  }
+
+  async function changeClientPassword(e){
+    e.preventDefault();
+    const p1=$('clientNewPassword').value,p2=$('clientNewPassword2').value;
+    if(p1.length<8){setStatus('clientPasswordStatus','Le mot de passe doit contenir au moins 8 caractères.');return;}
+    if(p1!==p2){setStatus('clientPasswordStatus','Les mots de passe ne correspondent pas.');return;}
+    const {error}=await sb.auth.updateUser({password:p1});
+    if(error){setStatus('clientPasswordStatus',error.message);return;}
+    e.currentTarget.reset();setStatus('clientPasswordStatus','Mot de passe modifié.',true);
+  }
+
+  function bindClientTabs(){
+    document.querySelectorAll('[data-client-tab]').forEach(btn=>{
+      if(btn.dataset.bound)return;
+      btn.addEventListener('click',()=>{
+        const target=btn.dataset.clientTab;
+        document.querySelectorAll('[data-client-tab]').forEach(b=>b.classList.toggle('active',b===btn));
+        document.querySelectorAll('[data-client-panel]').forEach(p=>{const on=p.dataset.clientPanel===target;p.classList.toggle('active',on);p.hidden=!on;});
+      });btn.dataset.bound='1';
+    });
+  }
+
+  async function initClientSpace(){
+    bindClientTabs();
+    await refreshClientProfileUI();
+    bindNotificationButtons();
+    await ensureConversation();
+    await loadClientChat();
   }
 
   async function requestBrowserNotifications(){
@@ -2706,22 +2831,16 @@ section{padding:88px 0}
   function notifyNewMessage(message,who){
     if(!message || message.sender_id===currentUser?.id) return;
     const text=String(message.body||'').trim();
-    if(!text) return;
+    const hasFile=!!message.attachment_path;
+    const preview=text && text!=='📎 Fichier joint' ? text : (hasFile?'Nouveau fichier reçu':'Nouveau message');
     const title=who==='admin'?'Nouveau message client':'Nouveau message d’Alicia Caillot';
     if('Notification' in window && Notification.permission==='granted'){
       try{
-        const n=new Notification(title,{
-          body:text.length>140?text.slice(0,137)+'…':text,
-          icon:'/favicon.ico',
-          tag:'alicia-message-'+String(message.conversation_id||'general'),
-          renotify:true
-        });
+        const n=new Notification(title,{body:preview.length>140?preview.slice(0,137)+'…':preview,icon:'/favicon.ico',tag:'alicia-message-'+String(message.conversation_id||'general'),renotify:true});
         n.onclick=()=>{window.focus();n.close();};
       }catch(e){console.warn('Notification:',e);}
     }
-    if(document.visibilityState==='visible' && typeof showToast==='function'){
-      showToast(title+' : '+(text.length>70?text.slice(0,67)+'…':text));
-    }
+    if(document.visibilityState==='visible' && typeof showToast==='function') showToast(title+' : '+(preview.length>70?preview.slice(0,67)+'…':preview));
   }
 
   function bindNotificationButtons(){
@@ -2734,13 +2853,20 @@ section{padding:88px 0}
   }
 
   async function startAdminMessageNotifications(){
-    if(adminNotificationChannel) sb.removeChannel(adminNotificationChannel);
-    adminNotificationChannel=sb.channel('admin-message-notifications')
-      .on('postgres_changes',{event:'INSERT',schema:'public',table:'messages'},payload=>notifyNewMessage(payload.new,'admin'))
-      .subscribe();
+    bindNotificationButtons();
+    if(adminMessageChannel)await sb.removeChannel(adminMessageChannel);
+    await sb.realtime.setAuth();
+    adminMessageChannel=sb.channel('admin-inbox',{config:{private:true}})
+      .on('broadcast',{event:'INSERT'},async payload=>{
+        const msg=payload?.payload?.new || payload?.new || payload?.payload?.record || payload?.record;
+        if(!msg || msg.sender_id===currentUser?.id)return;
+        notifyNewMessage(msg,'admin');
+        if(msg.conversation_id===currentAdminConversationId) await appendMessage($('adminMessages'),msg);
+        else loadConversations();
+      }).subscribe(status=>{if(status==='SUBSCRIBED')$('adminChatStatus').textContent=(conversationCache.length||0)+' conversation(s) · En ligne';});
   }
-
   async function stopAdminMessageNotifications(){
+    if(adminMessageChannel){await sb.removeChannel(adminMessageChannel);adminMessageChannel=null;}
     if(adminNotificationChannel){await sb.removeChannel(adminNotificationChannel);adminNotificationChannel=null;}
   }
 
@@ -2757,50 +2883,108 @@ section{padding:88px 0}
     return data;
   }
 
-  function renderMessages(container,messages){
+  async function signedChatUrl(path){
+    if(!path)return null;
+    const {data,error}=await sb.storage.from(CHAT_BUCKET).createSignedUrl(path,3600);
+    return error?null:data?.signedUrl||null;
+  }
+
+  function fileKind(type,name){
+    const t=String(type||'').toLowerCase(),n=String(name||'').toLowerCase();
+    if(t.startsWith('image/'))return 'image';
+    if(t.startsWith('video/'))return 'video';
+    if(t.startsWith('audio/'))return 'audio';
+    if(t==='application/pdf'||n.endsWith('.pdf'))return 'pdf';
+    return 'file';
+  }
+
+  async function appendMessage(container,m){
+    const d=document.createElement('div');d.className='chat-message'+(m.sender_id===currentUser?.id?' me':'');
+    if(m.body && m.body!=='📎 Fichier joint'){const text=document.createElement('div');text.textContent=m.body;d.appendChild(text);}
+    if(m.attachment_path){
+      const box=document.createElement('div');box.className='chat-attachment';
+      const label=document.createElement('span');label.textContent='Chargement du fichier…';box.appendChild(label);d.appendChild(box);
+      const url=await signedChatUrl(m.attachment_path);
+      box.innerHTML='';
+      if(url){
+        const kind=fileKind(m.attachment_type,m.attachment_name);
+        if(kind==='image'){const img=document.createElement('img');img.src=url;img.alt=m.attachment_name||'Image';img.loading='lazy';box.appendChild(img);}
+        else if(kind==='video'){const v=document.createElement('video');v.src=url;v.controls=true;v.preload='metadata';box.appendChild(v);}
+        else if(kind==='audio'){const a=document.createElement('audio');a.src=url;a.controls=true;box.appendChild(a);}
+        const a=document.createElement('a');a.href=url;a.target='_blank';a.rel='noopener';a.download=m.attachment_name||'';a.textContent='📎 '+(m.attachment_name||'Fichier joint');box.appendChild(a);
+      }else{label.textContent='Fichier indisponible ou accès expiré.';}
+    }
+    const time=document.createElement('small');time.textContent=new Date(m.created_at).toLocaleString('fr-FR');d.appendChild(time);container.appendChild(d);container.scrollTop=container.scrollHeight;
+  }
+
+  async function renderMessages(container,messages){
     container.innerHTML='';
-    (messages||[]).forEach(m=>{
-      const d=document.createElement('div');
-      d.className='chat-message'+(m.sender_id===currentUser?.id?' me':'');
-      const text=document.createElement('div');text.textContent=m.body;
-      const time=document.createElement('small');time.textContent=new Date(m.created_at).toLocaleString('fr-FR');
-      d.append(text,time);container.appendChild(d);
-    });
-    container.scrollTop=container.scrollHeight;
+    for(const m of (messages||[])) await appendMessage(container,m);
   }
 
   async function loadClientChat(){
     if(!currentConversationId)return;
     const {data,error}=await sb.from('messages').select('*').eq('conversation_id',currentConversationId).order('created_at',{ascending:true});
     if(error){$('chatStatus').textContent='Erreur';return;}
-    renderMessages($('clientMessages'),data);
+    await renderMessages($('clientMessages'),data);
     $('chatStatus').textContent='En ligne';
-    if(messageChannel) sb.removeChannel(messageChannel);
-    messageChannel=sb.channel('client-chat-'+currentConversationId)
-      .on('postgres_changes',{event:'INSERT',schema:'public',table:'messages',filter:`conversation_id=eq.${currentConversationId}`},payload=>{
-        const msg=payload.new;
+    if(messageChannel)await sb.removeChannel(messageChannel);
+    await sb.realtime.setAuth();
+    messageChannel=sb.channel('conversation:'+currentConversationId,{config:{private:true}})
+      .on('broadcast',{event:'INSERT'},async payload=>{
+        const msg=payload?.payload?.new || payload?.new || payload?.payload?.record || payload?.record;
+        if(!msg || msg.conversation_id!==currentConversationId || msg.sender_id===currentUser?.id)return;
+        await appendMessage($('clientMessages'),msg);
         notifyNewMessage(msg,'client');
-        const el=$('clientMessages');
-        const d=document.createElement('div');d.className='chat-message'+(msg.sender_id===currentUser?.id?' me':'');
-        const t=document.createElement('div');t.textContent=msg.body;
-        const time=document.createElement('small');time.textContent=new Date(msg.created_at).toLocaleString('fr-FR');
-        d.append(t,time);el.appendChild(d);el.scrollTop=el.scrollHeight;
-      }).subscribe();
+      }).subscribe(status=>{if(status==='SUBSCRIBED')$('chatStatus').textContent='En ligne';});
+  }
+
+  async function uploadChatFile(file,conversationId){
+    if(!file||!conversationId||!currentUser)return null;
+    if(file.size>MAX_CHAT_FILE_SIZE) throw new Error('Fichier trop volumineux. Limite actuelle : 50 Mo.');
+    const safeName=file.name.replace(/[^a-zA-Z0-9._-]/g,'_').slice(-120)||'fichier';
+    const path=`chat/${conversationId}/${Date.now()}-${crypto.randomUUID()}-${safeName}`;
+    const {error}=await sb.storage.from(CHAT_BUCKET).upload(path,file,{upsert:false,contentType:file.type||'application/octet-stream',cacheControl:'3600'});
+    if(error)throw error;
+    return {path,name:file.name,type:file.type||'application/octet-stream',size:file.size};
+  }
+
+  function renderPendingFiles(kind){
+    const files=kind==='client'?clientPendingFiles:adminPendingFiles;
+    const wrap=$(kind==='client'?'clientAttachmentList':'adminAttachmentList');if(!wrap)return;
+    wrap.innerHTML='';files.forEach((f,i)=>{const item=document.createElement('span');item.className='pending-file';item.textContent=f.name+' ';const b=document.createElement('button');b.type='button';b.textContent='×';b.onclick=()=>{files.splice(i,1);renderPendingFiles(kind)};item.appendChild(b);wrap.appendChild(item);});
+  }
+
+  async function sendChatMessage(kind){
+    const isClient=kind==='client', conversationId=isClient?currentConversationId:currentAdminConversationId;
+    const input=$(isClient?'clientMessageInput':'adminMessageInput');
+    const status=$(isClient?'chatStatus':'adminChatStatus');
+    const files=isClient?clientPendingFiles:adminPendingFiles;
+    const body=input.value.trim();
+    if(!conversationId||!currentUser||(!body&&!files.length))return;
+    const sendBtn=$(isClient?'clientMessageForm':'adminMessageForm')?.querySelector('button.chat-send');
+    if(sendBtn)sendBtn.disabled=true;
+    try{
+      if(files.length){
+        for(const file of files){
+          const uploaded=await uploadChatFile(file,conversationId);
+          const {error}=await sb.from('messages').insert({conversation_id:conversationId,sender_id:currentUser.id,body:body||'📎 Fichier joint',attachment_path:uploaded.path,attachment_name:uploaded.name,attachment_type:uploaded.type,attachment_size:uploaded.size});
+          if(error){await sb.storage.from(CHAT_BUCKET).remove([uploaded.path]);throw error;}
+        }
+      }else{
+        const {error}=await sb.from('messages').insert({conversation_id:conversationId,sender_id:currentUser.id,body});
+        if(error)throw error;
+      }
+      input.value='';files.length=0;renderPendingFiles(kind);status.textContent=isClient?'En ligne':(conversationCache.length+' conversation(s)');
+    }catch(error){console.error('Envoi message/fichier:',error);status.textContent='Envoi impossible : '+error.message;}
+    finally{if(sendBtn)sendBtn.disabled=false;}
   }
 
   async function showAccount(){
-    if(!currentUser) return;
+    if(!currentUser)return;
     $('accountState').hidden=false;
     document.querySelectorAll('.auth-form').forEach(f=>f.hidden=true);
-    $('accountName').textContent=currentProfile?.full_name || currentUser.user_metadata?.full_name || currentUser.email;
-    $('accountEmail').textContent=currentUser.email || '';
-    try{
-      await ensureConversation();
-      await loadClientChat();
-    }catch(e){
-      console.error('Messagerie client:',e);
-      $('chatStatus').textContent='Messagerie indisponible : '+(e?.message||'erreur inconnue');
-    }
+    try{await initClientSpace();}catch(e){console.error('Espace client:',e);$('chatStatus').textContent='Messagerie indisponible';}
   }
 
   function showAuth(){ closeModal('clientAccountModal'); }
@@ -2820,18 +3004,13 @@ section{padding:88px 0}
 
   $('clientSignupForm').addEventListener('submit',async e=>{
     e.preventDefault();
-    const name=$('signupName').value.trim(),email=$('signupEmail').value.trim(),phone=$('signupPhone').value.trim(),p1=$('signupPassword').value,p2=$('signupPassword2').value;
+    const first=$('signupFirstName').value.trim(),last=$('signupLastName').value.trim(),email=$('signupEmail').value.trim(),phone=$('signupPhone').value.trim(),city=$('signupCity').value.trim(),postal=$('signupPostalCode').value.trim(),p1=$('signupPassword').value,p2=$('signupPassword2').value;
     if(p1!==p2){setStatus('signupStatus','Les mots de passe ne correspondent pas.');return;}
     setStatus('signupStatus','Création du compte…');
-    const {data,error}=await sb.auth.signUp({
-      email,password:p1,
-      options:{emailRedirectTo:SITE_URL,data:{full_name:name,phone,language:(document.documentElement.lang||'fr').slice(0,2)}}
-    });
+    const full_name=`${first} ${last}`.trim();
+    const {data,error}=await sb.auth.signUp({email,password:p1,options:{emailRedirectTo:SITE_URL,data:{first_name:first,last_name:last,full_name,phone,city,postal_code:postal,language:(document.documentElement.lang||'fr').slice(0,2)}}});
     if(error){setStatus('signupStatus',error.message);return;}
-    if(data.user){
-      setStatus('signupStatus','Compte créé. Vérifie l’e-mail envoyé par Alicia Caillot pour confirmer ton compte.',true);
-      e.currentTarget.reset();
-    }
+    if(data.user){setStatus('signupStatus','Compte créé. Vérifie l’e-mail envoyé par Alicia Caillot pour confirmer ton compte.',true);e.currentTarget.reset();}
   });
 
   let loginInProgress=false;
@@ -2910,6 +3089,7 @@ section{padding:88px 0}
     try{
       setStatus('chatStatus','Déconnexion…');
       if(messageChannel){await sb.removeChannel(messageChannel);messageChannel=null;}
+      if(clientNotificationChannel){await sb.removeChannel(clientNotificationChannel);clientNotificationChannel=null;}
       await stopAdminMessageNotifications();
       await sb.auth.signOut();
     }catch(e){
@@ -2924,14 +3104,13 @@ section{padding:88px 0}
     }
   }
   $('logoutBtn').addEventListener('click',logoutClient);
-  $('clientMessageForm').addEventListener('submit',async e=>{
-    e.preventDefault();
-    const body=$('clientMessageInput').value.trim();
-    if(!body||!currentConversationId)return;
-    const {error}=await sb.from('messages').insert({conversation_id:currentConversationId,sender_id:currentUser.id,body});
-    if(error){$('chatStatus').textContent=error.message;return;}
-    $('clientMessageInput').value='';
-  });
+  $('clientMessageForm').addEventListener('submit',async e=>{e.preventDefault();await sendChatMessage('client');});
+  $('clientProfileForm')?.addEventListener('submit',saveClientProfile);
+  $('clientPasswordForm')?.addEventListener('submit',changeClientPassword);
+  $('clientAvatarBtn')?.addEventListener('click',()=>$('clientAvatarInput')?.click());
+  $('clientAvatarInput')?.addEventListener('change',()=>{const f=$('clientAvatarInput').files?.[0];if(f)uploadClientAvatar(f);});
+  $('clientAttachBtn')?.addEventListener('click',()=>$('clientAttachmentInput')?.click());
+  $('clientAttachmentInput')?.addEventListener('change',()=>{clientPendingFiles=[...clientPendingFiles,...($('clientAttachmentInput').files||[])];renderPendingFiles('client');$('clientAttachmentInput').value='';});
 
   async function handleAdminLogin(e){
     e.preventDefault();
@@ -3136,7 +3315,7 @@ section{padding:88px 0}
     const grid=$('galleryGrid');
     if(error || !grid) return;
     if(!data?.length){
-      const rootFiles=Array.from({length:40},(_,i)=>String(i+1).padStart(2,'0')+'.jpg');
+      const rootFiles=Array.from({length:40},(_,i)=>{const n=i+1;return n<10?String(n).padStart(2,'0')+'.jpg':String(n).padStart(3,'0')+'.jpg';});
       const rootImages=[];
       for(const file of rootFiles){
         const url=new URL('/'+file,location.origin).href;
@@ -3218,24 +3397,18 @@ section{padding:88px 0}
     [...document.querySelectorAll('.conversation-item')].find(x=>x.querySelector('strong')?.textContent===(p.full_name||p.email||'Client'))?.classList.add('active');
     const {data,error}=await sb.from('messages').select('*').eq('conversation_id',c.id).order('created_at',{ascending:true});
     if(error){$('adminMessages').textContent=error.message;return;}
-    const oldUser=currentUser;
-    renderMessages($('adminMessages'),data.map(m=>({...m,sender_id:m.sender_id})));
+    await renderMessages($('adminMessages'),data);
     $('adminMessageInput').disabled=false;
-    $('adminMessageForm').querySelector('button').disabled=false;
-    if(adminMessageChannel)sb.removeChannel(adminMessageChannel);
-    adminMessageChannel=sb.channel('admin-chat-'+c.id).on('postgres_changes',{event:'INSERT',schema:'public',table:'messages',filter:`conversation_id=eq.${c.id}`},payload=>{
-      const m=payload.new;
-      const el=$('adminMessages');const d=document.createElement('div');d.className='chat-message'+(m.sender_id===currentUser?.id?' me':'');
-      const t=document.createElement('div');t.textContent=m.body;const tm=document.createElement('small');tm.textContent=new Date(m.created_at).toLocaleString('fr-FR');d.append(t,tm);el.appendChild(d);el.scrollTop=el.scrollHeight;
-    }).subscribe();
-    currentUser=oldUser;
+    $('adminMessageForm').querySelector('button.chat-send').disabled=false;
+    /* Le canal admin global est créé une seule fois par openAdmin(). */
+    if(!adminMessageChannel) await startAdminMessageNotifications();
   }
 
   async function loadClients(){
-    const {data,error}=await sb.from('profiles').select('id,full_name,email,phone,city,postal_code,status,created_at').order('created_at',{ascending:false});
+    const {data,error}=await sb.from('profiles').select('id,first_name,last_name,full_name,email,phone,city,postal_code,status,avatar_url,created_at').order('created_at',{ascending:false});
     if(error){$('clientTableWrap').textContent=error.message;return;}
     clientCache=data||[];
-    const rows=clientCache.map(p=>`<tr><td>${esc(p.full_name||'')}</td><td>${esc(p.email||'')}</td><td>${esc(p.phone||'')}</td><td>${esc(p.city||'')}</td><td>${esc(p.status||'active')}</td><td><button type="button" data-edit-client="${p.id}">Modifier</button></td></tr>`).join('');
+    const rows=clientCache.map(p=>`<tr><td>${esc(p.first_name||'')} ${esc(p.last_name||'')}</td><td>${esc(p.email||'')}</td><td>${esc(p.phone||'')}</td><td>${esc(p.city||'')}</td><td>${esc(p.status||'active')}</td><td><button type="button" data-edit-client="${p.id}">Modifier</button></td></tr>`).join('');
     $('clientTableWrap').innerHTML='<table class="client-table"><thead><tr><th>Nom</th><th>E-mail</th><th>Téléphone</th><th>Ville</th><th>Statut</th><th></th></tr></thead><tbody>'+rows+'</tbody></table>';
     $('clientTableWrap').querySelectorAll('[data-edit-client]').forEach(b=>b.addEventListener('click',()=>startClientEdit(b.dataset.editClient)));
   }
@@ -3295,18 +3468,14 @@ section{padding:88px 0}
     const heroImageBtn=$('heroImageBtn');
     if(heroImageBtn && !heroImageBtn.dataset.bound){heroImageBtn.onclick=()=>{const input=document.createElement('input');input.type='file';input.accept='image/*';input.onchange=()=>input.files?.[0]&&uploadHeroImage(input.files[0]);input.click()};heroImageBtn.dataset.bound='1';}
     const adminMessageForm=$('adminMessageForm');
-    if(adminMessageForm && !adminMessageForm.dataset.bound){adminMessageForm.addEventListener('submit',async e=>{
-      e.preventDefault();
-      const body=$('adminMessageInput').value.trim();
-      if(!body||!currentAdminConversationId||!currentUser)return;
-      const {error}=await sb.from('messages').insert({conversation_id:currentAdminConversationId,sender_id:currentUser.id,body});
-      if(error){$('adminChatStatus').textContent=error.message;return;}
-      $('adminMessageInput').value='';
-    });adminMessageForm.dataset.bound='1';}
+    if(adminMessageForm && !adminMessageForm.dataset.bound){adminMessageForm.addEventListener('submit',async e=>{e.preventDefault();await sendChatMessage('admin');});adminMessageForm.dataset.bound='1';}
+    const adminAttachBtn=$('adminAttachBtn'),adminAttachmentInput=$('adminAttachmentInput');
+    if(adminAttachBtn && adminAttachmentInput && !adminAttachBtn.dataset.bound){adminAttachBtn.onclick=()=>adminAttachmentInput.click();adminAttachmentInput.onchange=()=>{adminPendingFiles=[...adminPendingFiles,...(adminAttachmentInput.files||[])];renderPendingFiles('admin');adminAttachmentInput.value='';};adminAttachBtn.dataset.bound='1';}
     const cancelClientEdit=$('cancelClientEdit');
     if(cancelClientEdit && !cancelClientEdit.dataset.bound){cancelClientEdit.addEventListener('click',()=>{$('clientEditWrap').hidden=true;});cancelClientEdit.dataset.bound='1';}
     const clientEditForm=$('clientEditForm');
     if(clientEditForm && !clientEditForm.dataset.bound){clientEditForm.addEventListener('submit',handleClientEditSubmit);clientEditForm.dataset.bound='1';}
+    bindClientTabs();
     bindNotificationButtons();
   }
 
@@ -3417,6 +3586,7 @@ section{padding:88px 0}
       currentProfile=null;
       handledAuthUserId=null;
       if(messageChannel){sb.removeChannel(messageChannel);messageChannel=null;}
+      if(clientNotificationChannel){sb.removeChannel(clientNotificationChannel);clientNotificationChannel=null;}
       if(adminMessageChannel){sb.removeChannel(adminMessageChannel);adminMessageChannel=null;}
       if(adminNotificationChannel){sb.removeChannel(adminNotificationChannel);adminNotificationChannel=null;}
       document.body.classList.remove('admin-mode');
@@ -3529,9 +3699,11 @@ section{padding:88px 0}
 <div class="conversation-title" id="conversationTitle">Sélectionne une conversation</div>
 <div class="chat-messages" id="adminMessages"></div>
 <form class="chat-compose" id="adminMessageForm">
-<input autocomplete="off" disabled="" id="adminMessageInput" maxlength="2000" placeholder="Répondre au client…" required=""/>
+<div class="chat-compose-tools"><button class="chat-attach" id="adminAttachBtn" type="button" aria-label="Joindre un fichier"><i class="fas fa-paperclip"></i></button><input id="adminAttachmentInput" type="file" accept="*/*" hidden multiple></div>
+<input autocomplete="off" id="adminMessageInput" disabled="" maxlength="2000" placeholder="Répondre au client…"/>
 <button aria-label="Envoyer" class="chat-send" disabled="" type="submit"><i class="fas fa-paper-plane"></i></button>
 </form>
+<div class="chat-attachment-list" id="adminAttachmentList"></div>
 </div>
 </div>
 </section>
@@ -3992,6 +4164,13 @@ body.admin-mode { overflow:hidden !important; background:#070707 !important; }
 </style>
 
 
+
+<style id="client-professional-chat-v16">
+.client-space-card{max-height:min(92svh,900px);overflow:auto}
+.client-profile-head{display:grid;grid-template-columns:auto 1fr auto;gap:14px;align-items:center;padding:4px 0 18px;border-bottom:1px solid rgba(255,255,255,.16)}
+.client-avatar-wrap{position:relative;width:72px;height:72px;flex:0 0 auto}.client-avatar{width:72px;height:72px;border-radius:50%;object-fit:cover;border:2px solid var(--gold,#d4af37);background:#161616}.client-avatar-btn{position:absolute;right:-3px;bottom:-3px;width:28px;height:28px;border-radius:50%;border:1px solid #fff;background:#7a1230;color:#fff;display:grid;place-items:center;cursor:pointer}.client-profile-summary{min-width:0;display:flex;flex-direction:column;gap:3px}.client-profile-summary strong{color:#fff!important;font-size:1.05rem}.client-profile-summary small{color:#d7d0c8!important;overflow:hidden;text-overflow:ellipsis}.client-profile-summary span{font-size:.72rem;color:#72d39a}.client-tabs{display:flex;gap:8px;flex-wrap:wrap;margin:16px 0}.client-tab{border:1px solid rgba(255,255,255,.18);background:#101010;color:#d8d0c8;padding:9px 14px;border-radius:999px;cursor:pointer}.client-tab.active{background:#7a1230;color:#fff;border-color:#9b2b50}.client-tab-panel[hidden]{display:none!important}.client-profile-form{background:#101010;border:1px solid #3d3d3d;border-radius:14px;padding:16px}.client-profile-form h3{color:#fff;margin:0 0 6px}.client-help{color:#bfb7af;font-size:.82rem;margin:0 0 14px}.client-profile-form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.client-profile-form-grid .full{grid-column:1/-1}.client-profile-form label{display:block;color:#f5f0ea;font-size:.78rem;margin-bottom:5px}.client-profile-form input{width:100%;box-sizing:border-box;background:#fff;color:#161616;border:1px solid #bbb;border-radius:10px;padding:11px 12px;font:inherit}.client-form-actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:14px}.client-notify-settings{margin-top:14px;padding:14px;border:1px solid #3d3d3d;border-radius:14px;background:#0d0d0d}.client-notify-settings strong{color:#fff}.client-notify-settings p{color:#c8c0b8;font-size:.8rem}.chat-compose{display:flex!important;align-items:center;gap:7px}.chat-compose-tools{display:flex;align-items:center}.chat-attach{width:40px;height:40px;border-radius:50%;border:1px solid #777;background:#171717;color:#fff;cursor:pointer;display:grid;place-items:center}.chat-attach:hover{border-color:var(--gold);color:var(--gold)}.chat-attachment-list{display:flex;flex-wrap:wrap;gap:6px;padding:6px 10px;background:#111}.pending-file{display:inline-flex;align-items:center;gap:4px;max-width:100%;padding:5px 8px;border:1px solid #555;border-radius:999px;background:#1a1a1a;color:#eee;font-size:.7rem}.pending-file button{border:0;background:none;color:#ffb4c5;cursor:pointer;font-size:1rem}.chat-attachment{display:grid;gap:7px;margin-top:7px}.chat-attachment img{max-width:min(260px,100%);max-height:300px;border-radius:10px;object-fit:contain;background:#111}.chat-attachment video{max-width:min(320px,100%);max-height:300px;border-radius:10px;background:#000}.chat-attachment audio{max-width:100%}.chat-attachment a{color:#fff!important;text-decoration:underline;word-break:break-word}.chat-message{word-break:break-word}.chat-message small{display:block;margin-top:6px}.chat-notify-btn{white-space:nowrap}
+@media(max-width:620px){.client-profile-head{grid-template-columns:auto 1fr}.client-profile-head>#logoutBtn{grid-column:1/-1;width:100%}.client-profile-form-grid{grid-template-columns:1fr}.client-profile-form-grid .full{grid-column:auto}.chat-compose{gap:5px}.chat-attach{width:38px;height:38px}.chat-send{width:44px!important;height:44px!important}.chat-compose input{min-width:0}}
+</style>
 <style id="notifications-v14">
 .chat-head-actions,.admin-chat-head-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:flex-end}
 .chat-notify-btn{border:1px solid rgba(201,168,76,.45);background:transparent;color:#f2ede7;border-radius:999px;padding:6px 10px;font:inherit;font-size:.68rem;cursor:pointer}
