@@ -3051,14 +3051,17 @@ section{padding:88px 0}
   if(dashboardNav && !dashboardNav.dataset.bound){
     dashboardNav.addEventListener('click',async()=>{
       setMenu(false);
-      const user=await getPersistedUser();
+      let user=currentUser;
+      try{ user=await getPersistedUser() || currentUser; }catch(e){ console.warn('Session tableau de bord:',e); }
       if(!user?.id){
+        /* Ici seulement, aucune session n'est connue. */
         updateAuthNavigation(false,false);
         showAuth();
         document.querySelector('[data-open-auth="login"]')?.click();
         return;
       }
       currentUser=user;
+      handledAuthUserId=user.id;
       updateAuthNavigation(true,false);
       openModal('clientAccountModal');
       await showAccount();
@@ -3257,26 +3260,69 @@ section{padding:88px 0}
   }
 
   async function openAdmin(){
+    /*
+      Une erreur secondaire (profil, statistiques, galerie, réseau, etc.) ne
+      doit JAMAIS fermer l'espace administrateur alors que la session Auth est
+      encore valide. On valide d'abord uniquement la session + le rôle, puis
+      on ouvre l'espace et on charge le contenu indépendamment.
+    */
     try{
-      const profile=await getProfile();
       const {data:userData,error:userError}=await sb.auth.getUser();
       if(userError||!userData?.user) throw userError||new Error('Session administrateur introuvable.');
-      const {data:adminRow,error:adminError}=await sb.from('admin_users').select('*').eq('user_id',userData.user.id).maybeSingle();
+
+      const {data:adminRow,error:adminError}=await sb.from('admin_users')
+        .select('user_id,username,active')
+        .eq('user_id',userData.user.id)
+        .maybeSingle();
       if(adminError) throw adminError;
-      if(!adminRow?.active){await sb.auth.signOut();throw new Error('Ce compte n’a pas les droits administrateur.');}
+      if(!adminRow?.active){
+        await sb.auth.signOut();
+        throw new Error('Ce compte n’a pas les droits administrateur.');
+      }
+
       currentUser=userData.user;
-      currentProfile=profile||null;
-      $('adminIdentity').textContent='Connectée : '+(profile?.full_name||userData.user.email)+' · '+adminRow.username;
+      currentProfile=null;
+      updateAuthNavigation(true,true);
+
+      /* Ouverture stable : elle intervient avant les requêtes secondaires. */
       document.body.classList.add('admin-mode');
       document.body.classList.remove('modal-open');
       document.querySelectorAll('.site-modal.open').forEach(m=>{m.classList.remove('open');m.setAttribute('aria-hidden','true');});
-      $('adminPanel').classList.add('open');$('adminPanel').setAttribute('aria-hidden','false');
-      await Promise.all([loadSiteContent(),loadGalleryAdmin(),loadAdminStats(),loadConversations(),loadClients(),loadContactRequests()]);
-      await startAdminMessageNotifications();
+      const panel=$('adminPanel');
+      if(panel){panel.classList.add('open');panel.setAttribute('aria-hidden','false');}
+
+      /* Le profil est facultatif pour afficher l'espace. */
+      try{ currentProfile=await getProfile(); }catch(e){ console.warn('Profil admin:',e); }
+      $('adminIdentity').textContent='Connectée : '+(currentProfile?.full_name||userData.user.email)+' · '+adminRow.username;
+
+      /* Aucun Promise.all qui pourrait fermer tout le panneau en cas d'échec. */
+      const tasks=[
+        ['site',()=>loadSiteContent()],
+        ['galerie',()=>loadGalleryAdmin()],
+        ['statistiques',()=>loadAdminStats()],
+        ['conversations',()=>loadConversations()],
+        ['clients',()=>loadClients()],
+        ['demandes',()=>loadContactRequests()],
+        ['notifications',()=>startAdminMessageNotifications()]
+      ];
+      const results=await Promise.allSettled(tasks.map(([,fn])=>fn()));
+      results.forEach((r,i)=>{if(r.status==='rejected')console.warn('Chargement admin '+tasks[i][0]+':',r.reason);});
       updateNotificationButtons();
       return true;
     }catch(err){
       console.error('Ouverture administration:',err);
+      /* Ne ferme pas l'espace si une session valide existe encore. */
+      try{
+        const {data}=await sb.auth.getSession();
+        if(data?.session?.user?.id){
+          currentUser=data.session.user;
+          updateAuthNavigation(true,true);
+          document.body.classList.add('admin-mode');
+          $('adminPanel')?.classList.add('open');
+          $('adminPanel')?.setAttribute('aria-hidden','false');
+          return true;
+        }
+      }catch(e){ console.warn('Vérification session admin après erreur:',e); }
       document.body.classList.remove('admin-mode');
       $('adminPanel')?.classList.remove('open');
       $('adminPanel')?.setAttribute('aria-hidden','true');
@@ -3590,8 +3636,10 @@ section{padding:88px 0}
           currentUser=activeSession.user;
           await afterAuth(activeSession.user);
         }else{
+          /* Absence CONFIRMÉE de session : seul ce cas déconnecte l'interface. */
           currentUser=null;
           currentProfile=null;
+          handledAuthUserId=null;
           authBootComplete=true;
           updateAuthNavigation(false,false);
           showAuth();
@@ -3599,11 +3647,16 @@ section{padding:88px 0}
         authBootComplete=true;
       }catch(err){
         console.error('Restauration de session:',err);
-        currentUser=null;
-        currentProfile=null;
+        /* Une erreur réseau/storage n'est pas une déconnexion.
+           On conserve l'état connecté déjà connu au lieu de fermer le dashboard. */
         authBootComplete=true;
-        updateAuthNavigation(false,false);
-        showAuth();
+        if(currentUser?.id){
+          updateAuthNavigation(true, authUIState==='admin');
+          if(authUIState==='client' && !$('clientAccountModal')?.classList.contains('open')){
+            openModal('clientAccountModal');
+          }
+          if(authUIState==='admin') $('adminPanel')?.classList.add('open');
+        }
       }finally{
         authRestorePromise=null;
       }
@@ -3613,11 +3666,24 @@ section{padding:88px 0}
 
   async function afterAuth(userFromSession=null){
     const user = userFromSession || currentUser;
-    if(user?.id && handledAuthUserId===user.id){
-      if(document.body.classList.contains('admin-mode') || document.getElementById('clientAccountModal')?.classList.contains('open')) return;
+    if(!user?.id) return;
+
+    /* Si la même session revient (INITIAL_SESSION/TOKEN_REFRESHED), on ne
+       considère jamais cela comme une déconnexion. On répare simplement l'UI
+       si elle a disparu entre-temps. */
+    if(handledAuthUserId===user.id && !authHandling){
+      if(authUIState==='client'){
+        updateAuthNavigation(true,false);
+        if(!$('clientAccountModal')?.classList.contains('open')) openModal('clientAccountModal');
+        return;
+      }
+      if(authUIState==='admin'){
+        updateAuthNavigation(true,true);
+        if(!$('adminPanel')?.classList.contains('open')) await openAdmin();
+        return;
+      }
     }
     if(authHandling) return;
-    if(!user?.id) return;
     currentUser=user;
 
     /* La session existe ; le rôle est vérifié juste après. */
@@ -3709,12 +3775,17 @@ section{padding:88px 0}
             restorePersistedSession(data.session);
           }
         }else if(authUIState!=='guest'){
+          /* getSession() est la source de vérité ici : absence confirmée. */
           currentUser=null;
+          currentProfile=null;
           handledAuthUserId=null;
           updateAuthNavigation(false,false);
           showAuth();
         }
-      }).catch(err=>console.warn('Restauration session après retour:',err));
+      }).catch(err=>{
+        /* Une erreur de lecture n'est pas un SIGNED_OUT. */
+        console.warn('Restauration session après retour:',err);
+      });
     }
   });
 
