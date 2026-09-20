@@ -2463,10 +2463,33 @@ section{padding:88px 0}
     return;
   }
 
+  /*
+   * Auth persistante : on conserve UNE clé stable pour toute l'application.
+   * Si une ancienne version de Supabase a utilisé sa clé standard, on la
+   * migre une seule fois vers la clé Alicia avant d'initialiser le client.
+   */
+  const AUTH_STORAGE_KEY = 'alicia-caillot-auth';
+  const SUPABASE_PROJECT_REF = SUPABASE_URL.replace(/^https?:\/\//,'').split('.')[0];
+  (function migrateAuthStorage(){
+    try{
+      const target=window.localStorage.getItem(AUTH_STORAGE_KEY);
+      if(target) return;
+      const candidates=[
+        `sb-${SUPABASE_PROJECT_REF}-auth-token`,
+        `sb_${SUPABASE_PROJECT_REF}_auth-token`,
+        'supabase.auth.token'
+      ];
+      for(const key of candidates){
+        const value=window.localStorage.getItem(key);
+        if(value){ window.localStorage.setItem(AUTH_STORAGE_KEY,value); break; }
+      }
+    }catch(e){ console.warn('Migration session locale:',e); }
+  })();
+
   const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
     auth: {
       storage: window.localStorage,
-      storageKey: 'alicia-caillot-auth',
+      storageKey: AUTH_STORAGE_KEY,
       persistSession: true,
       autoRefreshToken: true,
       detectSessionInUrl: true
@@ -2987,19 +3010,40 @@ section{padding:88px 0}
     try{await initClientSpace();}catch(e){console.error('Espace client:',e);$('chatStatus').textContent='Messagerie indisponible';}
   }
 
+  let authUIState='unknown';
+
   function updateAuthNavigation(authenticated=false, isAdmin=false){
     const dashboardItem=$('clientDashboardNavItem');
     const authItems=document.querySelectorAll('.client-auth-item');
     const separator=document.querySelector('.nav-auth-separator');
+    const loggedIn=!!authenticated;
 
-    if(authenticated){
-      authItems.forEach(item=>{item.hidden=true;});
-      if(separator) separator.hidden=true;
-      if(dashboardItem) dashboardItem.hidden=!!isAdmin;
-    }else{
-      authItems.forEach(item=>{item.hidden=false;});
-      if(separator) separator.hidden=false;
-      if(dashboardItem) dashboardItem.hidden=true;
+    authUIState=loggedIn ? (isAdmin ? 'admin' : 'client') : 'guest';
+
+    authItems.forEach(item=>{ item.hidden=loggedIn; });
+    if(separator) separator.hidden=loggedIn;
+
+    /* Le tableau de bord appartient à l'espace client.
+       L'administrateur reste dans son espace séparé. */
+    if(dashboardItem){
+      dashboardItem.hidden=!(loggedIn && !isAdmin);
+      dashboardItem.setAttribute('aria-hidden',String(!(loggedIn && !isAdmin)));
+    }
+  }
+
+  async function getPersistedUser(){
+    try{
+      const {data,error}=await sb.auth.getSession();
+      if(error) throw error;
+      const session=data?.session;
+      if(!session?.user?.id) return null;
+      /* getUser force une validation de la session côté Supabase. */
+      const {data:userData,error:userError}=await sb.auth.getUser();
+      if(userError) throw userError;
+      return userData?.user || session.user;
+    }catch(error){
+      console.warn('Lecture session persistante:',error);
+      return null;
     }
   }
 
@@ -3007,44 +3051,25 @@ section{padding:88px 0}
   if(dashboardNav && !dashboardNav.dataset.bound){
     dashboardNav.addEventListener('click',async()=>{
       setMenu(false);
-
-      /*
-       * Si une session existe déjà, le clic sur "Tableau de bord"
-       * ouvre immédiatement le véritable espace client, même si
-       * currentUser n'a pas encore été réhydraté après un rafraîchissement.
-       */
-      try{
-        let user=currentUser;
-        if(!user?.id){
-          const {data,error}=await sb.auth.getSession();
-          if(error) throw error;
-          user=data?.session?.user||null;
-          if(user) currentUser=user;
-        }
-
-        if(user?.id){
-          openModal('clientAccountModal');
-          await showAccount();
-          return;
-        }
-
-        /* Aucune session : retour vers la connexion. */
+      const user=await getPersistedUser();
+      if(!user?.id){
+        updateAuthNavigation(false,false);
         showAuth();
-        const loginBtn=document.querySelector('[data-open-auth="login"]');
-        if(loginBtn) loginBtn.click();
-      }catch(error){
-        console.error('Ouverture du tableau de bord:',error);
-        showAuth();
+        document.querySelector('[data-open-auth="login"]')?.click();
+        return;
       }
+      currentUser=user;
+      updateAuthNavigation(true,false);
+      openModal('clientAccountModal');
+      await showAccount();
     });
     dashboardNav.dataset.bound='1';
   }
 
-  updateAuthNavigation(false, false);
-
+  /* Au démarrage, on attend la restauration avant de choisir l'interface. */
   function showAuth(){
     closeModal('clientAccountModal');
-    updateAuthNavigation(false, false);
+    if(authBootComplete) updateAuthNavigation(false,false);
   }
 
   $('contactForm')?.addEventListener('submit',async e=>{
@@ -3200,6 +3225,7 @@ section{padding:88px 0}
         throw new Error('Ce compte n’a pas les droits administrateur.');
       }
       setStatus('adminLoginStatus','Accès administrateur validé.',true);
+      updateAuthNavigation(true, true);
       const opened=await openAdmin();
       if(!opened) throw new Error('Impossible d’ouvrir l’espace administrateur.');
     }catch(err){
@@ -3559,18 +3585,24 @@ section{padding:88px 0}
           if(result.error) throw result.error;
           activeSession=result.data?.session||null;
         }
-        authBootComplete=true;
-        if(activeSession?.user){
+
+        if(activeSession?.user?.id){
           currentUser=activeSession.user;
           await afterAuth(activeSession.user);
         }else{
           currentUser=null;
           currentProfile=null;
+          authBootComplete=true;
+          updateAuthNavigation(false,false);
           showAuth();
         }
+        authBootComplete=true;
       }catch(err){
         console.error('Restauration de session:',err);
+        currentUser=null;
+        currentProfile=null;
         authBootComplete=true;
+        updateAuthNavigation(false,false);
         showAuth();
       }finally{
         authRestorePromise=null;
@@ -3588,8 +3620,7 @@ section{padding:88px 0}
     if(!user?.id) return;
     currentUser=user;
 
-    /* La navigation suit la session persistante, y compris après actualisation. */
-    updateAuthNavigation(true, false);
+    /* La session existe ; le rôle est vérifié juste après. */
 
     /*
       Important : l'ouverture de l'espace client ne doit pas dépendre d'une
@@ -3608,6 +3639,7 @@ section{padding:88px 0}
       if(!adminError && admin?.active){
         updateAuthNavigation(true, true);
         await openAdmin();
+        authBootComplete=true;
         handledAuthUserId=user.id;
         return;
       }
@@ -3616,6 +3648,7 @@ section{padding:88px 0}
         .select('*').eq('id',user.id).maybeSingle();
       if(profileError) console.warn('Profil client:',profileError.message);
       currentProfile=profile||null;
+      updateAuthNavigation(true, false);
 
       /* Affichage immédiat de l'espace client. */
       openModal('clientAccountModal');
@@ -3629,6 +3662,7 @@ section{padding:88px 0}
     }catch(e){
       console.error('Initialisation authentification:',e);
       /* Même en cas d'erreur secondaire, l'utilisateur reste connecté et voit son espace. */
+      updateAuthNavigation(true, false);
       openModal('clientAccountModal');
       await showAccount();
     }finally{
@@ -3643,8 +3677,8 @@ section{padding:88px 0}
     }
     if(session?.user){
       currentUser=session.user;
-      if(event==='SIGNED_IN' || event==='INITIAL_SESSION'){
-        /* La session persistante est restaurée aussi bien après une reconnexion qu'après un rafraîchissement. */
+      if(event==='SIGNED_IN' || event==='INITIAL_SESSION' || event==='TOKEN_REFRESHED'){
+        /* Toute session fournie par Supabase est réhydratée dans la même file. */
         queueMicrotask(()=>restorePersistedSession(session));
       }
     }else if(event==='SIGNED_OUT'){
@@ -3669,8 +3703,16 @@ section{padding:88px 0}
   document.addEventListener('visibilitychange',()=>{
     if(document.visibilityState==='visible' && authBootComplete){
       sb.auth.getSession().then(({data})=>{
-        if(data?.session?.user && handledAuthUserId!==data.session.user.id){
-          restorePersistedSession(data.session);
+        if(data?.session?.user){
+          currentUser=data.session.user;
+          if(handledAuthUserId!==data.session.user.id || authUIState==='guest' || authUIState==='unknown'){
+            restorePersistedSession(data.session);
+          }
+        }else if(authUIState!=='guest'){
+          currentUser=null;
+          handledAuthUserId=null;
+          updateAuthNavigation(false,false);
+          showAuth();
         }
       }).catch(err=>console.warn('Restauration session après retour:',err));
     }
