@@ -2366,7 +2366,7 @@ section{padding:88px 0}
   const SUPABASE_URL = 'https://nlgotqsttpczorkjkpde.supabase.co';
   const SUPABASE_ANON_KEY = 'sb_publishable_LzFZIFwKHoQqysPcY-tnBA_n-wZtVtP';
   const SITE_URL = 'https://aliciacaillot.boiseo.online/';
-  const APP_VERSION = 'v10-auth-logout';
+  const APP_VERSION = 'v11-auth-admin-fix';
 
   const ADMIN_USERNAME = 'alicaillot';
   const ADMIN_AUTH_EMAIL = 'aliciacaillot@boiseo.online';
@@ -2715,16 +2715,6 @@ section{padding:88px 0}
     setStatus('resetStatus','Un lien de réinitialisation a été envoyé à cette adresse.',true);
   });
 
-  $('resetPasswordForm').addEventListener('submit',async e=>{
-    e.preventDefault();
-    const p1=$('newPassword').value,p2=$('newPassword2').value;
-    if(p1!==p2){setStatus('resetPasswordStatus','Les mots de passe ne correspondent pas.');return;}
-    const {error}=await sb.auth.updateUser({password:p1});
-    if(error){setStatus('resetPasswordStatus',error.message);return;}
-    setStatus('resetPasswordStatus','Mot de passe modifié.',true);
-    setTimeout(()=>closeModal('resetPasswordModal'),900);
-  });
-
   async function logoutClient(){
     try{
       setStatus('chatStatus','Déconnexion…');
@@ -2751,46 +2741,43 @@ section{padding:88px 0}
     $('clientMessageInput').value='';
   });
 
-  /* Accès administration : 7 clics sur « Alicia » de l'entête en 10 secondes. */
-  const adminTrigger=$('headerAliciaTrigger');
-  let adminClickCount=0,adminFirstClickAt=0,adminClickResetTimer=null;
-  if(adminTrigger){
-    adminTrigger.addEventListener('click',event=>{
-      event.preventDefault();
-      event.stopPropagation();
-      const now=Date.now();
-      if(!adminFirstClickAt || now-adminFirstClickAt>10000){
-        adminFirstClickAt=now;
-        adminClickCount=0;
+  async function handleAdminLogin(e){
+    e.preventDefault();
+    const username=$('adminUsername')?.value.trim()||'',password=$('adminPassword')?.value||'';
+    const status=$('adminLoginStatus');
+    const submit=$('adminLoginSubmit');
+    const accepted=username.toLowerCase()===ADMIN_USERNAME.toLowerCase() || username.toLowerCase()===ADMIN_AUTH_EMAIL.toLowerCase();
+    if(!accepted){setStatus('adminLoginStatus','Identifiant administrateur incorrect.');return;}
+    if(!password){setStatus('adminLoginStatus','Mot de passe requis.');return;}
+    if(submit)submit.disabled=true;
+    setStatus('adminLoginStatus','Vérification…');
+    try{
+      const result=await Promise.race([
+        sb.auth.signInWithPassword({email:ADMIN_AUTH_EMAIL,password}),
+        new Promise(resolve=>setTimeout(()=>resolve({data:null,error:new Error('Le serveur de connexion ne répond pas. Vérifiez votre connexion Internet puis réessayez.')}),15000))
+      ]);
+      if(result.error) throw result.error;
+      const {data:userData,error:userError}=await sb.auth.getUser();
+      if(userError||!userData?.user) throw userError||new Error('Session administrateur introuvable.');
+      currentUser=userData.user;
+      const {data:adminRow,error:adminError}=await sb.from('admin_users').select('user_id,username,active').eq('user_id',currentUser.id).maybeSingle();
+      if(adminError) throw adminError;
+      if(!adminRow?.active){
+        await sb.auth.signOut();
+        throw new Error('Ce compte n’a pas les droits administrateur.');
       }
-      adminClickCount++;
-      clearTimeout(adminClickResetTimer);
-      adminClickResetTimer=setTimeout(()=>{
-        adminClickCount=0;
-        adminFirstClickAt=0;
-      },10000);
-      if(adminClickCount>=7){
-        adminClickCount=0;
-        adminFirstClickAt=0;
-        clearTimeout(adminClickResetTimer);
-        openModal('adminAccessModal');
-      }
-    });
+      setStatus('adminLoginStatus','Accès administrateur validé.',true);
+      const opened=await openAdmin();
+      if(!opened) throw new Error('Impossible d’ouvrir l’espace administrateur.');
+    }catch(err){
+      console.error('Connexion administrateur:',err);
+      setStatus('adminLoginStatus','Accès refusé : '+(err?.message||'erreur inconnue'));
+    }finally{
+      if(submit)submit.disabled=false;
+    }
   }
 
-  $('adminLoginForm').addEventListener('submit',async e=>{
-    e.preventDefault();
-    const username=$('adminUsername').value.trim(),password=$('adminPassword').value;
-    const adminLoginAccepted = username.toLowerCase()===ADMIN_USERNAME.toLowerCase() || username.toLowerCase()===ADMIN_AUTH_EMAIL.toLowerCase();
-    if(!adminLoginAccepted){setStatus('adminLoginStatus','Identifiant administrateur incorrect.');return;}
-    setStatus('adminLoginStatus','Vérification…');
-    const {error}=await sb.auth.signInWithPassword({email:ADMIN_AUTH_EMAIL,password});
-    if(error){setStatus('adminLoginStatus','Accès refusé : '+error.message);return;}
-    const {data:adminRow}=await sb.from('admin_users').select('user_id,username,active').eq('user_id',(await sb.auth.getUser()).data.user.id).maybeSingle();
-    if(!adminRow?.active){await sb.auth.signOut();setStatus('adminLoginStatus','Ce compte n’a pas les droits administrateur.');return;}
-    closeModal('adminAccessModal');
-    await openAdmin();
-  });
+
 
   async function loadContactRequests(){
     const wrap=$('contactRequestsList');
@@ -2811,37 +2798,33 @@ section{padding:88px 0}
   }
 
   async function openAdmin(){
-    const profile=await getProfile();
-    const {data:userData}=await sb.auth.getUser();
-    const {data:adminRow}=await sb.from('admin_users').select('*').eq('user_id',userData.user.id).maybeSingle();
-    if(!adminRow?.active){await sb.auth.signOut();return;}
-    $('adminIdentity').textContent='Connectée : '+(profile?.full_name||userData.user.email)+' · '+adminRow.username;
-    document.body.classList.add('admin-mode');
-    document.body.classList.remove('modal-open');
-    document.querySelectorAll('.site-modal.open').forEach(m=>{m.classList.remove('open');m.setAttribute('aria-hidden','true');});
-    $('adminPanel').classList.add('open');$('adminPanel').setAttribute('aria-hidden','false');
-    await Promise.all([loadSiteContent(),loadGalleryAdmin(),loadAdminStats(),loadConversations(),loadClients(),loadContactRequests()]);
+    try{
+      const profile=await getProfile();
+      const {data:userData,error:userError}=await sb.auth.getUser();
+      if(userError||!userData?.user) throw userError||new Error('Session administrateur introuvable.');
+      const {data:adminRow,error:adminError}=await sb.from('admin_users').select('*').eq('user_id',userData.user.id).maybeSingle();
+      if(adminError) throw adminError;
+      if(!adminRow?.active){await sb.auth.signOut();throw new Error('Ce compte n’a pas les droits administrateur.');}
+      currentUser=userData.user;
+      currentProfile=profile||null;
+      $('adminIdentity').textContent='Connectée : '+(profile?.full_name||userData.user.email)+' · '+adminRow.username;
+      document.body.classList.add('admin-mode');
+      document.body.classList.remove('modal-open');
+      document.querySelectorAll('.site-modal.open').forEach(m=>{m.classList.remove('open');m.setAttribute('aria-hidden','true');});
+      $('adminPanel').classList.add('open');$('adminPanel').setAttribute('aria-hidden','false');
+      await Promise.all([loadSiteContent(),loadGalleryAdmin(),loadAdminStats(),loadConversations(),loadClients(),loadContactRequests()]);
+      return true;
+    }catch(err){
+      console.error('Ouverture administration:',err);
+      document.body.classList.remove('admin-mode');
+      $('adminPanel')?.classList.remove('open');
+      $('adminPanel')?.setAttribute('aria-hidden','true');
+      return false;
+    }
   }
 
-  $('adminLogoutBtn').addEventListener('click',async()=>{
-    try{
-      if(adminMessageChannel){await sb.removeChannel(adminMessageChannel);adminMessageChannel=null;}
-      await sb.auth.signOut();
-    }catch(e){
-      console.error('Déconnexion admin:',e);
-    }finally{
-      currentUser=null;
-      currentProfile=null;
-      currentAdminConversationId=null;
-      handledAuthUserId=null;
-      document.body.classList.remove('admin-mode');
-      $('adminPanel').classList.remove('open');
-      $('adminPanel').setAttribute('aria-hidden','true');
-      showAuth();
-    }
-  });
-  $('adminRefreshBtn').addEventListener('click',openAdmin);
-  $('saveSiteContentBtn').addEventListener('click',saveSiteContent);
+
+
 
 
   async function loadGalleryAdmin(){
@@ -2891,7 +2874,6 @@ section{padding:88px 0}
     update();
   }
 
-  $('saveGalleryBtn').addEventListener('click',saveGallery);
 
   async function loadAdminStats(){
     const [c,m,cv]=await Promise.all([
@@ -2947,15 +2929,6 @@ section{padding:88px 0}
     currentUser=oldUser;
   }
 
-  $('adminMessageForm').addEventListener('submit',async e=>{
-    e.preventDefault();
-    const body=$('adminMessageInput').value.trim();
-    if(!body||!currentAdminConversationId||!currentUser)return;
-    const {error}=await sb.from('messages').insert({conversation_id:currentAdminConversationId,sender_id:currentUser.id,body});
-    if(error){showToast(error.message);return;}
-    $('adminMessageInput').value='';
-  });
-
   async function loadClients(){
     const {data,error}=await sb.from('profiles').select('id,full_name,email,phone,city,postal_code,status,created_at').order('created_at',{ascending:false});
     if(error){$('clientTableWrap').textContent=error.message;return;}
@@ -2971,14 +2944,63 @@ section{padding:88px 0}
     $('editClientId').value=p.id;$('editClientName').value=p.full_name||'';$('editClientPhone').value=p.phone||'';$('editClientCity').value=p.city||'';$('editClientPostal').value=p.postal_code||'';$('editClientStatus').value=p.status||'active';
     $('clientEditWrap').scrollIntoView({behavior:'smooth',block:'center'});
   }
-  $('cancelClientEdit').addEventListener('click',()=>{$('clientEditWrap').hidden=true;});
-  $('clientEditForm').addEventListener('submit',async e=>{
+  async function handleClientEditSubmit(e){
     e.preventDefault();
     const id=$('editClientId').value;
     const {error}=await sb.from('profiles').update({full_name:$('editClientName').value.trim(),phone:$('editClientPhone').value.trim(),city:$('editClientCity').value.trim(),postal_code:$('editClientPostal').value.trim(),status:$('editClientStatus').value}).eq('id',id);
     if(error){setStatus('clientEditStatus',error.message);return;}
     setStatus('clientEditStatus','Client mis à jour.',true);await loadClients();await loadAdminStats();
-  });
+  }
+
+  function bindAdminUI(){
+    const resetPasswordForm=$('resetPasswordForm');
+    if(resetPasswordForm && !resetPasswordForm.dataset.bound){resetPasswordForm.addEventListener('submit',async e=>{
+      e.preventDefault();
+      const p1=$('newPassword').value,p2=$('newPassword2').value;
+      if(p1!==p2){setStatus('resetPasswordStatus','Les mots de passe ne correspondent pas.');return;}
+      const {error}=await sb.auth.updateUser({password:p1});
+      if(error){setStatus('resetPasswordStatus',error.message);return;}
+      setStatus('resetPasswordStatus','Mot de passe modifié.',true);
+      setTimeout(()=>closeModal('resetPasswordModal'),900);
+    });resetPasswordForm.dataset.bound='1';}
+    const adminLoginForm=$('adminLoginForm');
+    if(adminLoginForm && !adminLoginForm.dataset.bound){adminLoginForm.addEventListener('submit',handleAdminLogin);adminLoginForm.dataset.bound='1';}
+    const adminLogoutBtn=$('adminLogoutBtn');
+    if(adminLogoutBtn && !adminLogoutBtn.dataset.bound){adminLogoutBtn.addEventListener('click',async()=>{
+      try{
+        if(adminMessageChannel){await sb.removeChannel(adminMessageChannel);adminMessageChannel=null;}
+        await sb.auth.signOut();
+      }catch(e){console.error('Déconnexion admin:',e);}
+      finally{
+        currentUser=null;currentProfile=null;currentAdminConversationId=null;handledAuthUserId=null;
+        document.body.classList.remove('admin-mode');
+        $('adminPanel')?.classList.remove('open');$('adminPanel')?.setAttribute('aria-hidden','true');
+        showAuth();
+      }
+    });adminLogoutBtn.dataset.bound='1';}
+    const adminRefreshBtn=$('adminRefreshBtn');
+    if(adminRefreshBtn && !adminRefreshBtn.dataset.bound){adminRefreshBtn.addEventListener('click',()=>openAdmin());adminRefreshBtn.dataset.bound='1';}
+    const saveSiteContentBtn=$('saveSiteContentBtn');
+    if(saveSiteContentBtn && !saveSiteContentBtn.dataset.bound){saveSiteContentBtn.addEventListener('click',saveSiteContent);saveSiteContentBtn.dataset.bound='1';}
+    const saveGalleryBtn=$('saveGalleryBtn');
+    if(saveGalleryBtn && !saveGalleryBtn.dataset.bound){saveGalleryBtn.addEventListener('click',saveGallery);saveGalleryBtn.dataset.bound='1';}
+    const adminMessageForm=$('adminMessageForm');
+    if(adminMessageForm && !adminMessageForm.dataset.bound){adminMessageForm.addEventListener('submit',async e=>{
+      e.preventDefault();
+      const body=$('adminMessageInput').value.trim();
+      if(!body||!currentAdminConversationId||!currentUser)return;
+      const {error}=await sb.from('messages').insert({conversation_id:currentAdminConversationId,sender_id:currentUser.id,body});
+      if(error){$('adminChatStatus').textContent=error.message;return;}
+      $('adminMessageInput').value='';
+    });adminMessageForm.dataset.bound='1';}
+    const cancelClientEdit=$('cancelClientEdit');
+    if(cancelClientEdit && !cancelClientEdit.dataset.bound){cancelClientEdit.addEventListener('click',()=>{$('clientEditWrap').hidden=true;});cancelClientEdit.dataset.bound='1';}
+    const clientEditForm=$('clientEditForm');
+    if(clientEditForm && !clientEditForm.dataset.bound){clientEditForm.addEventListener('submit',handleClientEditSubmit);clientEditForm.dataset.bound='1';}
+  }
+
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',bindAdminUI,{once:true});
+  else bindAdminUI();
 
   let authHandling = false;
   let handledAuthUserId = null;
