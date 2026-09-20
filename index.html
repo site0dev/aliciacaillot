@@ -2365,6 +2365,7 @@ section{padding:88px 0}
   */
   const SUPABASE_URL = 'https://nlgotqsttpczorkjkpde.supabase.co';
   const SUPABASE_ANON_KEY = 'sb_publishable_LzFZIFwKHoQqysPcY-tnBA_n-wZtVtP';
+  const SITE_URL = 'https://aliciacaillot.boiseo.online/';
 
   const ADMIN_USERNAME = 'alicaillot';
   const ADMIN_AUTH_EMAIL = 'aliciacaillot@boiseo.online';
@@ -2595,11 +2596,18 @@ section{padding:88px 0}
   }
 
   async function showAccount(){
+    if(!currentUser) return;
     $('accountState').hidden=false;
     document.querySelectorAll('.auth-form').forEach(f=>f.hidden=true);
-    $('accountName').textContent=currentProfile?.full_name || currentUser.email;
-    $('accountEmail').textContent=currentUser.email;
-    try{await ensureConversation();await loadClientChat();}catch(e){$('chatStatus').textContent=e.message;}
+    $('accountName').textContent=currentProfile?.full_name || currentUser.user_metadata?.full_name || currentUser.email;
+    $('accountEmail').textContent=currentUser.email || '';
+    try{
+      await ensureConversation();
+      await loadClientChat();
+    }catch(e){
+      console.error('Messagerie client:',e);
+      $('chatStatus').textContent='Messagerie indisponible : '+(e?.message||'erreur inconnue');
+    }
   }
 
   function showAuth(){ closeModal('clientAccountModal'); }
@@ -2624,7 +2632,7 @@ section{padding:88px 0}
     setStatus('signupStatus','Création du compte…');
     const {data,error}=await sb.auth.signUp({
       email,password:p1,
-      options:{emailRedirectTo:location.origin+location.pathname,data:{full_name:name,phone}}
+      options:{emailRedirectTo:SITE_URL,data:{full_name:name,phone,language:(document.documentElement.lang||'fr').slice(0,2)}}
     });
     if(error){setStatus('signupStatus',error.message);return;}
     if(data.user){
@@ -2644,13 +2652,13 @@ section{padding:88px 0}
   });
   $('googleLoginBtn')?.addEventListener('click',async()=>{
     setStatus('loginStatus','Ouverture de Google…');
-    const {error}=await sb.auth.signInWithOAuth({provider:'google',options:{redirectTo:location.origin+location.pathname}});
+    const {error}=await sb.auth.signInWithOAuth({provider:'google',options:{redirectTo:SITE_URL}});
     if(error)setStatus('loginStatus','Connexion Google impossible : '+error.message);
   });
 
   $('googleSignupBtn')?.addEventListener('click',async()=>{
     setStatus('signupStatus','Ouverture de Google…');
-    const {error}=await sb.auth.signInWithOAuth({provider:'google',options:{redirectTo:location.origin+location.pathname}});
+    const {error}=await sb.auth.signInWithOAuth({provider:'google',options:{redirectTo:SITE_URL}});
     if(error)setStatus('signupStatus','Inscription Google impossible : '+error.message);
   });
 
@@ -2659,7 +2667,7 @@ section{padding:88px 0}
     e.preventDefault();
     const email=$('resetEmail').value.trim();
     setStatus('resetStatus','Envoi du lien…');
-    const {error}=await sb.auth.resetPasswordForEmail(email,{redirectTo:location.origin+location.pathname+'#reset'});
+    const {error}=await sb.auth.resetPasswordForEmail(email,{redirectTo:SITE_URL+'#reset'});
     if(error){setStatus('resetStatus',error.message);return;}
     setStatus('resetStatus','Un lien de réinitialisation a été envoyé à cette adresse.',true);
   });
@@ -2897,32 +2905,95 @@ section{padding:88px 0}
     setStatus('clientEditStatus','Client mis à jour.',true);await loadClients();await loadAdminStats();
   });
 
-  async function afterAuth(){
-    const p=await getProfile();
-    const {data:userData}=await sb.auth.getUser();
-    if(!userData?.user)return;
-    const {data:admin}=await sb.from('admin_users').select('user_id,active').eq('user_id',userData.user.id).maybeSingle();
-    if(admin?.active){ await openAdmin(); return; }
-    currentProfile=p;currentUser=userData.user;showAccount();
-    ['authLoginModal','authSignupModal','authResetModal'].forEach(id=>closeModal(id));
-    openModal('clientAccountModal');
+  let authHandling = false;
+  let handledAuthUserId = null;
+
+  async function afterAuth(userFromSession=null){
+    if(authHandling) return;
+    const user = userFromSession || currentUser;
+    if(!user?.id) return;
+    currentUser=user;
+
+    /*
+      Important : l'ouverture de l'espace client ne doit pas dépendre d'une
+      requête profiles/conversations. Une erreur RLS ou une table indisponible
+      ne doit plus laisser l'utilisateur bloqué sur la page d'accueil.
+    */
+    authHandling=true;
+    try{
+      ['authLoginModal','authSignupModal','authResetModal'].forEach(id=>closeModal(id));
+
+      const {data:admin,error:adminError}=await sb.from('admin_users')
+        .select('user_id,active,username')
+        .eq('user_id',user.id)
+        .maybeSingle();
+
+      if(!adminError && admin?.active){
+        await openAdmin();
+        handledAuthUserId=user.id;
+        return;
+      }
+
+      const {data:profile,error:profileError}=await sb.from('profiles')
+        .select('*').eq('id',user.id).maybeSingle();
+      if(profileError) console.warn('Profil client:',profileError.message);
+      currentProfile=profile||null;
+
+      /* Affichage immédiat de l'espace client. */
+      openModal('clientAccountModal');
+      await showAccount();
+      handledAuthUserId=user.id;
+
+      /* Nettoyage du code/hash OAuth après établissement de la session. */
+      if(location.search || location.hash && location.hash !== '#reset'){
+        try{history.replaceState({},document.title,SITE_URL);}catch(e){}
+      }
+    }catch(e){
+      console.error('Initialisation authentification:',e);
+      /* Même en cas d'erreur secondaire, l'utilisateur reste connecté et voit son espace. */
+      openModal('clientAccountModal');
+      await showAccount();
+    }finally{
+      authHandling=false;
+    }
   }
 
-  sb.auth.onAuthStateChange(async (event,session)=>{
-    if(event==='PASSWORD_RECOVERY'){openModal('resetPasswordModal');return;}
+  sb.auth.onAuthStateChange((event,session)=>{
+    if(event==='PASSWORD_RECOVERY'){
+      openModal('resetPasswordModal');
+      return;
+    }
     if(session?.user){
       currentUser=session.user;
-      if(event==='SIGNED_IN') await afterAuth();
-    } else {
-      currentUser=null;currentProfile=null;
-      if($('accountState'))showAuth();
+      if(event==='SIGNED_IN' || event==='INITIAL_SESSION'){
+        /* Ne pas await dans le callback Supabase : on laisse le SDK terminer son cycle. */
+        queueMicrotask(()=>{
+          if(handledAuthUserId!==session.user.id || !document.getElementById('clientAccountModal')?.classList.contains('open')){
+            afterAuth(session.user);
+          }
+        });
+      }
+    }else if(event==='SIGNED_OUT'){
+      currentUser=null;
+      currentProfile=null;
+      handledAuthUserId=null;
+      if(messageChannel){sb.removeChannel(messageChannel);messageChannel=null;}
+      if(adminMessageChannel){sb.removeChannel(adminMessageChannel);adminMessageChannel=null;}
+      document.body.classList.remove('admin-mode');
+      $('adminPanel')?.classList.remove('open');
+      showAuth();
     }
   });
 
-  /* Initial session */
-  sb.auth.getSession().then(async ({data})=>{
-    if(data.session){currentUser=data.session.user;await afterAuth();}
-    else showAuth();
+  /* Initial session : getSession permet aussi de récupérer la session après un retour OAuth. */
+  sb.auth.getSession().then(({data,error})=>{
+    if(error){console.error('Lecture session Supabase:',error);return;}
+    if(data.session){
+      currentUser=data.session.user;
+      afterAuth(data.session.user);
+    }else{
+      showAuth();
+    }
   });
 
   loadSiteContent();
