@@ -3052,9 +3052,12 @@ section{padding:88px 0}
     if(dash) dash.querySelector('button')?.setAttribute('aria-controls',isAdmin ? 'adminPanel' : 'clientAccountModal');
     if(dash) {
       const label=dash.querySelector('button');
-      if(label) label.innerHTML=isAdmin
-        ? '<i class="fas fa-shield-halved"></i> Administration'
-        : '<i class="fas fa-gauge-high"></i> Tableau de bord';
+      // Le menu public ne doit JAMAIS afficher « Administration ».
+      // Même un compte administrateur voit uniquement « Tableau de bord ».
+      if(label) {
+        label.innerHTML='<i class="fas fa-gauge-high"></i> Tableau de bord';
+        label.setAttribute('aria-controls','clientAccountModal');
+      }
     }
   }
 
@@ -3068,15 +3071,13 @@ section{padding:88px 0}
         openModal('authLoginModal');
         return;
       }
+
+      // Ce bouton est STRICTEMENT le tableau de bord.
+      // Il ne doit jamais ouvrir l'administration, même pour le compte admin.
       currentUser=data.session.user;
-      const {data:adminRow}=await sb.from('admin_users').select('user_id,active,username').eq('user_id',currentUser.id).maybeSingle();
-      if(adminRow?.active){
-        window.__explicitAdminOpen=true;
-        await openAdmin();
-      }else{
-        openModal('clientAccountModal');
-        await showAccount();
-      }
+      updateAuthNavigation(true,false);
+      openModal('clientAccountModal');
+      await showAccount();
     });
     dashboardNavBtn.dataset.bound='1';
   }
@@ -4386,5 +4387,22 @@ body.admin-mode { overflow:hidden !important; background:#070707 !important; }
 #adminPanel .chat-notify-btn{color:#f5f0ea}
 @media(max-width:560px){.chat-head-actions,.admin-chat-head-actions{gap:5px}.chat-notify-btn{font-size:.62rem;padding:5px 8px}}
 </style>
+
+<script id="public-admin-access-guard-v2">
+(() => {
+  'use strict';
+  // Sécurité d'interface : aucune entrée « Administration » dans le menu public.
+  const enforcePublicDashboard = () => {
+    const btn = document.getElementById('dashboardNavBtn');
+    if (btn) {
+      btn.innerHTML = '<i class="fas fa-gauge-high"></i> Tableau de bord';
+      btn.setAttribute('aria-controls','clientAccountModal');
+      btn.removeAttribute('data-admin');
+    }
+  };
+  enforcePublicDashboard();
+  document.addEventListener('DOMContentLoaded', enforcePublicDashboard, {once:true});
+})();
+</script>
 </body>
 </html>
